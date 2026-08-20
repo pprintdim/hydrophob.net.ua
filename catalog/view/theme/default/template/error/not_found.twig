@@ -1,0 +1,16 @@
+{{ header }}
+    <main class="main" id="content">
+        <section class="about" id="error-not-found">
+            <div class="container">
+                <div class="about__inner">
+					<h1 class="about__title page-title">{{ heading_title }}</h1>
+					<p class="about__descr">{{ text_error }}<br/>&nbsp;<br/>&nbsp;<hr/><br/>&nbsp;</p>
+					<div class="buttons clearfix">
+						<div class="pull-right"><a href="{{ continue }}" class="btn btn-primary">{{ button_continue }}</a></div>
+					</div>
+					{{ content_bottom }}
+                </div>
+            </div>
+        </section>
+	</main>
+{{ footer }}

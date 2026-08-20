@@ -1,0 +1,252 @@
+{{ header }}{{ column_left }}
+<div id="content">
+	<div class="page-header">
+		<div class="container-fluid">
+			<div class="pull-right">		
+				<button type="submit" form="form-shipping" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+				<a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a>
+			</div>
+			<h1>{{ heading_title }}</h1>
+			<ul class="breadcrumb">
+			{% for breadcrumb in breadcrumbs %}
+				<li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+			{% endfor %}
+			</ul>
+		</div>
+	</div>
+	<div class="container-fluid">
+		{% if error_warning %}
+		<div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+			<button type="button" class="close" data-dismiss="alert">&times;</button>
+		</div>
+		{% endif %}
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title"><i class="fa fa-pencil"></i> {{ text_edit }}</h3>
+			</div>
+			<div class="panel-body">
+				<form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-{{ shipping }}" class="form-horizontal">
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="input-cost">{{ entry_status_mod }}</label>
+						<div class="col-sm-10">
+							<select name="shipping_s_shipping_status" class="form-control">
+							{% if shipping_s_shipping_status == 1 %}
+								<option value="1" selected="selected">{{ text_enabled }}</option>
+								<option value="0">{{ text_disabled }}</option>
+							{% else %}
+								<option value="1">{{ text_enabled }}</option>
+								<option value="0" selected="selected">{{ text_disabled }}</option>
+							{% endif %}
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">{{ entry_sort_order }}</label>
+						<div class="col-sm-10">
+								<input type="text" name="shipping_s_shipping_sort_order" value="{{ shipping_s_shipping_sort_order }}" placeholder="{{ entry_sort_order }}" class="form-control" />
+						</div>
+					</div>
+			        <div class="row">
+			            <div class="col-sm-2">
+						<ul  class="nav nav-pills nav-stacked">
+						{% set row = 1 %}
+						{% for module in modules %}
+							<li> <a href="#tab-module-{{ row }}" data-toggle="tab" id="module-{{ row }}">{{ module.name }}&nbsp;<img src="view/image/delete.png" alt="" onclick="$('.tab a:first').trigger('click'); $('#module-{{ row }}').remove(); $('#tab-module-{{ row }}').remove(); return false;" /></a></li>
+						{% set row = row + 1 %}
+						{% endfor %}
+								<li id="module-add">
+			            			<button type="button" class="btn btn-primary" onclick="addModule();"><img src="view/image/add.png" alt=""/></button>
+			            				{% set row = 1 %}
+			            			</button>
+			            		</li>
+			            	</ul>
+			             </div>
+                      </div>
+					  
+						<div class="tab-content" >
+							{% for module in modules %}
+							<div id="tab-module-{{ row }}" class="tab-pane">
+								<div class="form-group required">
+									<label class="col-sm-2 control-label" for="name">{{ entry_name }}</label>
+									<div class="col-sm-10">
+										<input class="form-control" type="text" name="shipping_s_shipping[{{ row }}][name]" value="{{ module.name }}"  placeholder="{{ entry_name }}"  id="name" class="form-control"  />
+									</div>
+								</div>
+								<div  class="form-group">
+									<label class="col-sm-2 control-label" for="description">{{ entry_description }}</label>
+									<div class="col-sm-10">
+										<textarea class="form-control" id="description" name="shipping_s_shipping[{{ row }}][description]" rows="3" placeholder="{{ entry_description }}">{{ module.description }}</textarea>
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="col-sm-2 control-label" for="status">{{ entry_status }}</label>
+									<div class="col-sm-2">
+										<select class="form-control" id="status" name="shipping_s_shipping[{{ row }}][status]">
+									{% if module.status %}
+											<option value="1" selected="selected">{{ text_enabled }}</option>
+											<option value="0">{{ text_disabled }}</option>
+									{% else %}
+											<option value="1">{{ text_enabled }}</option>
+											<option value="0" selected="selected">{{ text_disabled }}</option>
+									{% endif %}
+										</select>								
+
+									</div>
+									<label class="col-sm-2 control-label" for="tax_class">{{ entry_tax_class }}</label>
+									<div class="col-sm-2">
+										<select class="form-control" id="tax_class" name="shipping_s_shipping[{{ row }}][tax_class_id]">
+											<option value="0">{{ text_none }}</option>
+									{% for tax_class in tax_classes %}
+									{% if tax_class.tax_class_id == module.tax_class_id %}
+											<option value="{{ tax_class.tax_class_id }}" selected="selected">{{ tax_class.title }}</option>
+									{% else %}
+											<option value="{{ tax_class.tax_class_id }}">{{ tax_class.title }}</option>
+									{% endif %}
+									{% endfor %}
+										</select>
+									</div>
+									<label class="col-sm-2 control-label" for="geo_zone">{{ entry_geo_zone }}</label>
+									<div class="col-sm-2">
+										<select class="form-control" id="geo_zone" name="shipping_s_shipping[{{ row }}][geo_zone_id]">
+											<option value="0">{{ text_all_zones }}</option>
+									{% for geo_zone in geo_zones %}
+									{% if geo_zone.geo_zone_id == module.geo_zone_id %}
+											<option value="{{ geo_zone.geo_zone_id }}" selected="selected">{{ geo_zone.name }}</option>
+									{% else %}
+											<option value="{{ geo_zone.geo_zone_id }}">{{ geo_zone.name }}</option>
+									{% endif %}
+									{% endfor %}
+										</select>
+									</div>			
+								</div>
+								
+								<div  class="form-group">
+									<label class="col-sm-2 control-label" for="type_price">{{ entry_type_price }}</label>
+									<div class="col-sm-2">
+										<select class="form-control" id="type_price" name="shipping_s_shipping[{{ row }}][type_cost]">
+									{% if module.type_cost == 1 %}
+											<option value="1" selected="selected">{{ text_fix }}</option>
+											<option value="2">{{ text_procent }}</option>
+									{% else %}
+											<option value="1">{{ text_fix }}</option>
+											<option value="2" selected="selected">{{ text_procent }}</option>
+									{% endif %}
+										</select>
+									</div>								
+									<label class="col-sm-2 control-label" for="price">{{ entry_price }}</label>
+									<div class="col-sm-2">
+										<input class="form-control" type="text" name="shipping_s_shipping[{{ row }}][cost]" placeholder="{{ entry_price }}" id="price" value="{{ module.cost }}" id="price"/>
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="col-sm-2 control-label" for="input-image{{ row }}">{{ entry_image }}</label>
+									<div class="col-sm-10">
+										<a href="" id="thumb-image{{ row }}" data-toggle="image" class="img-thumbnail"><img src="{% if module.thumb %} {{ module.thumb }} {% else %} {{ no_image }} {% endif %}" alt="" title="" data-placeholder="{{ placeholder }}" /></a>
+										<input type="hidden" name="shipping_s_shipping[{{ row }}][image]" value="{{ module.image }}" id="input-image{{ row }}" />
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="col-sm-2 control-label" for="free"><span data-toggle="tooltip" title="{{ help_free }}">{{ entry_free }}</span></label>
+									<div class="col-sm-2">
+										<input class="form-control" type="text" id="free" name="shipping_s_shipping[{{ row }}][free]" value="{{ module.free }}" placeholder="{{ entry_free }}" />
+									</div>
+								</div>			 
+                             </div>
+						{% set row = row + 1 %}
+						{% endfor %}
+                       </div>
+                  </form>
+                </div>
+              </div>
+           </div>
+        </div>
+
+<script type="text/javascript"><!--
+var row = {{ row }};
+
+function addModule() {	
+
+	html = 	'	<div id="tab-module-' + row + '" class="tab-pane">';
+    html += ' 		<div class="form-group required">';
+	html += '       	<label class="col-sm-2 control-label" for="name">{{ entry_name }}</label>';
+	html += '   		<div class="col-sm-10">';
+    html += '  				<input type="text" name="shipping_s_shipping[' + row + '][name]" value=""  id="name" class="form-control" />';
+    html += '    		</div>';
+	html += '		</div>';
+	html += '		<div class="form-group">';
+	html += '			<label class="col-sm-2 control-label" for="description">{{ entry_description }}</label>';
+    html += '       	<div class="col-sm-10">';
+	html += '				<textarea class="form-control" id="description" name="shipping_s_shipping[' + row + '][description]"  rows="3"></textarea>';
+    html += '      		</div>';
+	html += '	  	</div>';
+	html += '		<div class="form-group">';
+	html += '			<label class="col-sm-2 control-label"  for="type_price">{{ entry_type_price }}</label>';
+    html += '     		<div class="col-sm-2">';
+	html += '				<select class="form-control" id="type_price" name="shipping_s_shipping[' + row + '][type_cost]">';
+    html += '  					<option value="1" >{{ text_fix }}</option>';
+    html += '   				<option value="2">{{ text_procent }}</option>';
+    html += '  				</select></div>';
+    html += '			<label class="col-sm-2 control-label"  for="tax_class">{{ entry_tax_class }}</label>';
+    html += ' 			<div class="col-sm-2">';
+    html += '				<select class="form-control" id="tax_class" name="shipping_s_shipping[' + row + '][tax_class_id]">';
+    html += '	  				<option value="0">{{ text_none }}</option>';
+		{% for tax_class in tax_classes %}
+    html += '	 				 <option value="{{ tax_class.tax_class_id }}">{{ tax_class.title }}</option>';
+		{% endfor %}
+	html += '   		</select></div>';
+	html += '			<label class="col-sm-2 control-label"  for="geo_zone">{{ entry_geo_zone }}</label>';
+	html += ' 			<div class="col-sm-2">';
+    html += '				<select class="form-control" id="geo_zone" name="shipping_s_shipping[' + row + '][geo_zone_id]">';
+    html += '	 				<option value="0">{{ text_all_zones }}</option>';
+		{% for geo_zone in geo_zones %}
+    html += '					<option value="{{ geo_zone.geo_zone_id }}">{{ geo_zone.name }}</option>';
+		{% endfor %}
+    html += '     		</select></div>';
+    html += '    	</div>';
+	html += '		<div  class="form-group">';
+	html += '			<label class="col-sm-2 control-label"  for="price">{{ entry_price }}</label>';
+    html += '     		<div class="col-sm-2">';
+	html += ' 				<input class="form-control" type="text" name="shipping_s_shipping[' + row + '][cost]" id="price" value="" id="price"/>';
+    html += ' 			</div>';
+	html += '  			<label class="col-sm-2 control-label"  for="status">{{ entry_status }}</label>';
+    html += '     		<div class="col-sm-2">';
+	html += '	  			<select class="form-control" id="status" name="shipping_s_shipping[' + row + '][status]">';
+    html += '        			<option value="1" >{{ text_enabled }}</option>';
+    html += '  				    <option value="0">{{ text_disabled }}</option>';
+    html += '   			</select>';
+	html += '			</div>';
+	html += '   	</div>';
+	html += ' 		<div class="form-group">';
+	html += '			<label class="col-sm-2 control-label"  for="input-image' + row + '">{{ entry_image }}</label>';
+	html += '			<div class="col-sm-10">';
+	html += '  				<a href="" id="thumb-image' + row + '" data-toggle="image" class="img-thumbnail"><img src="{{ no_image }}" alt="" title="" data-placeholder="{{ placeholder }}" /></a>';
+    html += '      			<input type="hidden" name="shipping_s_shipping[' + row + '][image]" value="" id="input-image' + row + '" />';
+	html += '		 	</div>';
+	html += '	  	</div>';
+	html += '   	<div class="form-group">';
+	html += '   		<label class="col-sm-2 control-label" for="free">{{ entry_free }}</label>';
+	html += '   		<div class="col-sm-2">';
+    html += '     			<input class="form-control" type="text" id="free" name="shipping_s_shipping[' + row + '][free]" value="" />';
+	html += '	 		</div>';
+    html += '		</div>	';		 
+    html += '    </div>	';	
+	
+	$('.tab-content').append(html);
+	
+	$('#module-add').before('<li><a data-toggle="tab" href="#tab-module-' + row + '" id="module-' + row + '">Метод доставки&nbsp;' + row + '&nbsp;<img src="view/image/delete.png" alt="" onclick="$(\'.tab a:first\').trigger(\'click\'); $(\'#module-' + row + '\').remove(); $(\'#tab-module-' + row + '\').remove(); return false;" /></a></li>');
+		
+	$('a[data-toggle="tab"]').tab('show');
+	
+	$('#module-' + row	).trigger('click');
+	
+	row++;
+	
+}
+//--></script> 
+<script type="text/javascript"><!--
+ $('a[data-toggle="tab"]:first').tab('show');
+//--></script> 
+{{ footer }}

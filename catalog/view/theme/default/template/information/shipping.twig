@@ -1,0 +1,22 @@
+{{ header }}
+    <main class="main" id="content">
+        <section class="delivery">
+            <div class="container">
+                <div class="delivery__inner">
+                    <h1 class="delivery__title page-title">{{ heading_title }}</h1>
+                    <h2 class="delivery__name page-name">
+									{% if code == 'en' %}
+										Delivery and payment terms
+									{% elseif code == 'uk' %}
+										Умови доставки та оплати
+									{% elseif code == 'ru' %}
+										Условия доставки и оплаты
+									{% endif %}
+					</h2>
+                    <div class="delivery__content">
+						{{ description }}
+                    </div>
+                </div>
+            </div>
+        </section>
+{{ footer }}

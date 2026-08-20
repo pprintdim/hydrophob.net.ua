@@ -1,0 +1,61 @@
+<div class="fast-checkout">
+    <h1>Быстрый заказ</h1>
+
+    {% if products %}
+    <table>
+        <thead>
+            <tr>
+                <th>Товар</th>
+                <th>Кол-во</th>
+                <th>Цена</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in products %}
+            <tr>
+                <td>{{ product.name }}</td>
+                <td>{{ product.quantity }}</td>
+                <td>{{ product.total }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>Корзина пуста.</p>
+    {% endif %}
+
+    <form id="fast-checkout-form" method="post" action="{{ action }}">
+        <h3>Данные покупателя</h3>
+        <input type="text" name="firstname" placeholder="Имя" required>
+        <input type="text" name="telephone" placeholder="Телефон" required>
+        <input type="email" name="email" placeholder="Email">
+
+        <h3>Адрес доставки</h3>
+        <input type="text" name="address_1" placeholder="Улица, дом" required>
+        <input type="text" name="city" placeholder="Город" required>
+        <input type="text" name="postcode" placeholder="Индекс" required>
+
+        <h3>Доставка</h3>
+        <select name="shipping_method" required>
+            <option value="flat.flat">Курьер</option>
+            <option value="pickup.pickup">Самовывоз</option>
+        </select>
+
+        <h3>Оплата</h3>
+        <select name="payment_method" required>
+            <option value="cod">Наличными</option>
+            <option value="bank_transfer">Оплата картой</option>
+        </select>
+
+        <button type="submit">Оформить заказ</button>
+    </form>
+</div>
+
+<style>
+.fast-checkout { max-width: 600px; margin: 20px auto; font-family: Arial; }
+.fast-checkout table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+.fast-checkout table th, .fast-checkout table td { border: 1px solid #ccc; padding: 5px; text-align: left; }
+.fast-checkout input, .fast-checkout select { width: 100%; padding: 8px; margin: 5px 0; box-sizing: border-box; }
+.fast-checkout button { padding: 10px 20px; background: #007bff; color: #fff; border: none; cursor: pointer; }
+.fast-checkout button:hover { background: #0056b3; }
+</style>

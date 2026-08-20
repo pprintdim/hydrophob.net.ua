@@ -1,0 +1,73 @@
+{{ header }}
+<main class="main">
+        <section class="catalog" id="product-category">
+            <div class="container" id="content">
+                <div class="catalog__inner">
+                    <h1 class="catalog__title page-title"><p>{{ brs_catalog }}</p></h1>
+                    <h2 class="catalog__name page-name">{{ heading_title }}</h2>
+					<div class="catalog__filters">
+						<select name="categories" id="category-select">
+							<option value="" selected hidden>{{ text_category }}</option>
+							{% for category in category_options %}
+							<option value="{{ category.href }}">{{ category.name }}</option>
+							{% endfor %}
+						</select>
+						<select id="input-sort" class="form-control" onchange="location = this.value;">
+						{% for sorts in sorts %}
+						{% if sorts.value == '%s-%s'|format(sort, order) %}
+							<option value="{{ sorts.href }}" selected="selected">{{ sorts.text }}</option>
+							{% else %}
+							<option value="{{ sorts.href }}">{{ sorts.text }}</option>
+							{% endif %}
+							{% endfor %}
+						</select>
+					</div>
+                   {% if products %} 
+				   <div class="catalog__content" id="product-category">
+				   {% for product in products %}
+                        <div class="product__item">
+                            <a class="product__item-image" href="{{ product.href }}">
+                                <img src="{{ product.thumb }}" alt="{{ product.name }}" title="{{ product.name }}">
+                            </a>
+                            <div class="product__item-content">
+                                <a class="product__item-title" href="{{ product.href }}">
+                                    <h3>{{ product.name }}</h3>
+                                </a>
+                                <p class="product__item-price">{{ product.price }}</p>
+                                <button class="product__item-add btn-2" onclick="cart.add('{{ product.product_id }}', '{{ product.minimum }}');">
+                                    {{ button_cart }}
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 17 17" fill="none">
+                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M9.56706 2.90039H6.90039V6.90039L2.90039 6.90039V9.56706H6.90039V13.5671H9.56706V9.56706H13.5671V6.90039L9.56706 6.90039V2.90039Z" fill="white"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    {% endfor %}
+					</div>
+					<div class="row">
+						<div class="col-sm-6 text-left">{{ pagination }}</div>
+						<div class="col-sm-6 text-right">{{ results }}</div>
+					</div>
+					{% endif %}
+					{% if not categories and not products %}
+						<p>{{ text_empty }}</p>
+						<div class="buttons">
+							<div class="pull-right"><a href="{{ continue }}" class="btn btn-primary">{{ button_continue }}</a></div>
+						</div>
+					{% endif %}
+                </div>
+				{% if description %}
+					<div class="category-description">{{ description }}</div>
+				{% endif %}
+            </div>
+        </section>
+</main>
+<script>
+document.getElementById('category-select').addEventListener('change', function() {
+    var url = this.value;
+    if (url) {
+        window.location.href = url;
+    }
+});
+</script>
+{{ footer }} 

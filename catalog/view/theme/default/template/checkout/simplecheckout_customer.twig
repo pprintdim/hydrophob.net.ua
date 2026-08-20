@@ -1,0 +1,23 @@
+<h1 class="checkout__title">{{ heading_title }}</h1>
+<div class="simplecheckout-block checkout__block checkout__box" id="simplecheckout_customer" {{ hide ? 'data-hide="true"' : '' }} {{ display_error and has_error ? 'data-error="true"' : '' }}>
+  {% if display_header or display_login %}
+	<h2 class="checkout__block-name">
+		<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40" fill="none">
+			<path d="M3.33398 28.3337V33.3337H16.6673V30.1837H6.50065V28.3337C6.50065 27.267 11.7173 24.8337 16.6673 24.8337C18.2673 24.8503 19.8507 25.067 21.384 25.467L23.9173 22.9337C21.584 22.1503 19.1673 21.717 16.6673 21.667C12.2173 21.667 3.33398 23.8837 3.33398 28.3337ZM16.6673 6.66699C12.984 6.66699 10.0007 9.65033 10.0007 13.3337C10.0007 17.017 12.984 20.0003 16.6673 20.0003C20.3507 20.0003 23.334 17.017 23.334 13.3337C23.334 9.65033 20.3507 6.66699 16.6673 6.66699ZM16.6673 16.667C14.834 16.667 13.334 15.1837 13.334 13.3337C13.334 11.4837 14.834 10.0003 16.6673 10.0003C18.5007 10.0003 20.0007 11.5003 20.0007 13.3337C20.0007 15.167 18.5173 16.667 16.6673 16.667ZM36.1673 22.2503L34.5007 23.917L31.084 20.5837L32.7506 18.917C32.922 18.749 33.1524 18.655 33.3923 18.655C33.6323 18.655 33.8626 18.749 34.034 18.917L36.1673 21.0503C36.5173 21.4003 36.5173 21.9837 36.1673 22.3337M20.0007 31.567L30.1006 21.467L33.5173 24.8003L23.5173 34.917H20.0007V31.567Z" fill="white"/>
+		</svg>
+		{{ text_checkout_customer }}
+	</h2>
+{% if display_login %}<span class="checkout-heading-button"><a href="javascript:void(0)" data-onclick="openLoginBox">{{ text_checkout_customer_login }}</a></span>{% endif %}
+  {% endif %}
+  <div class="simplecheckout-block-content checkout__block" style="padding:0;">
+    {% if display_registered %}
+      <div class="alert alert-success">{{ text_account_created }}</div>
+    {% endif %}
+    {% if display_you_will_registered %}
+      <div class="you-will-be-registered">{{ text_you_will_be_registered }}</div>
+    {% endif %}
+    {% for row in rows %}
+      {{ row }}
+    {% endfor %}
+  </div>
+</div>

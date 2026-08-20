@@ -1,0 +1,67 @@
+<div class="simplecheckout-block" id="simplecheckout_payment" {{ hide ? 'data-hide="true"' : '' }} {{ display_error and has_error ? 'data-error="true"' : '' }}>
+    {% if display_header %}
+                                <h2 class="checkout__block-name">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40" fill="none">
+                                        <path d="M26.2507 24.1663C25.9191 24.1663 25.6012 24.298 25.3668 24.5325C25.1323 24.7669 25.0007 25.0848 25.0007 25.4163C25.0007 25.7479 25.1323 26.0658 25.3668 26.3002C25.6012 26.5346 25.9191 26.6663 26.2507 26.6663H30.4173C30.7488 26.6663 31.0668 26.5346 31.3012 26.3002C31.5356 26.0658 31.6673 25.7479 31.6673 25.4163C31.6673 25.0848 31.5356 24.7669 31.3012 24.5325C31.0668 24.298 30.7488 24.1663 30.4173 24.1663H26.2507ZM3.33398 13.7497C3.33398 12.3131 3.90467 10.9353 4.92049 9.91951C5.93631 8.90369 7.31406 8.33301 8.75065 8.33301H31.2507C31.962 8.33301 32.6663 8.47311 33.3235 8.74533C33.9807 9.01754 34.5778 9.41653 35.0808 9.91951C35.5838 10.4225 35.9828 11.0196 36.255 11.6768C36.5272 12.334 36.6673 13.0383 36.6673 13.7497V26.2497C36.6673 26.961 36.5272 27.6654 36.255 28.3225C35.9828 28.9797 35.5838 29.5769 35.0808 30.0798C34.5778 30.5828 33.9807 30.9818 33.3235 31.254C32.6663 31.5262 31.962 31.6663 31.2507 31.6663H8.75065C7.31406 31.6663 5.93631 31.0957 4.92049 30.0798C3.90467 29.064 3.33398 27.6863 3.33398 26.2497V13.7497ZM34.1673 15.833V13.7497C34.1673 12.9761 33.86 12.2343 33.313 11.6873C32.7661 11.1403 32.0242 10.833 31.2507 10.833H8.75065C7.9771 10.833 7.23524 11.1403 6.68826 11.6873C6.14128 12.2343 5.83398 12.9761 5.83398 13.7497V15.833H34.1673ZM5.83398 18.333V26.2497C5.83398 27.8597 7.14065 29.1663 8.75065 29.1663H31.2507C32.0242 29.1663 32.7661 28.8591 33.313 28.3121C33.86 27.7651 34.1673 27.0232 34.1673 26.2497V18.333H5.83398Z" fill="white"/>
+                                    </svg>
+                                    {{ text_checkout_payment_method }}
+                                </h2>
+    {% endif %}
+    <div class="alert alert-danger simplecheckout-warning-block" {{ display_error and has_error_payment ? '' : 'style="display:none"' }}>{{ error_payment }}</div>
+    <div class="simplecheckout-block-content" style="padding:0 1% 0 0;">
+        {% if payment_methods is not empty %}
+            {% if display_type == 2  %}
+                {% set current_method = false %}
+                <select data-onchange="reloadAll" name="payment_method" class="form-control">
+                    <option value="" disabled="disabled" {% if code is empty %}selected="selected"{% endif %}>{{ text_select }}</option>
+                    {% for payment_method in payment_methods %}
+                        <option value="{{ payment_method['code'] }}" {{ payment_method['dummy'] is not empty ? 'disabled="disabled"' : '' }} {{ payment_method['dummy'] is not empty ? 'data-dummy="true"' : '' }} {% if payment_method['code'] == code %}selected="selected"{% endif %}>{{ payment_method['title'] }}</option>
+                        {% if payment_method['code'] == code %}
+                            {% set current_method = payment_method %}
+                        {% endif %}
+                    {% endfor %}
+                </select>
+                {% if current_method %}
+                    {% if current_method['description'] is not empty %}
+                        <div class="simplecheckout-methods-description">{{ current_method['description'] }}</div>
+                    {% endif %}
+                    {% if rows is not empty %}
+                        {% for row in rows %}
+                          {{ row }}
+                        {% endfor %}
+                    {% endif %}
+                {% endif %}
+            {% else %}
+                {% for payment_method in payment_methods %}
+                    <div class="radio">
+                        <label for="{{ payment_method['code'] }}">
+                            <input type="radio" data-onchange="reloadAll" name="payment_method" value="{{ payment_method['code'] }}" {{ payment_method['dummy'] is not empty ? 'disabled="disabled"' : '' }} {{ payment_method['dummy'] is not empty ? 'data-dummy="true"' : '' }} id="{{ payment_method['code'] }}" {% if payment_method['code'] == code %}checked="checked"{% endif %} />
+                            {{ payment_method['title'] }}
+                            {% if payment_method['terms'] is not empty %}
+                                {{ payment_method['terms'] }}
+                            {% endif %}
+                        </label>
+                    </div>
+                    {% if payment_method['description'] is not empty and (display_for_selected is empty or (display_for_selected is not empty and payment_method['code'] == code)) %}
+                        <div class="form-group">
+                            <label for="{{ payment_method['code'] }}">{{ payment_method['description'] }}</label>
+                        </div>
+                    {% endif %}
+                    {% if payment_method['code'] == code and rows is not empty %}
+                        {% for row in rows %}
+                          {{ row }}
+                        {% endfor %}
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+            <input type="hidden" name="payment_method_current" value="{{ code }}" />
+            <input type="hidden" name="payment_method_checked" value="{{ checked_code }}" />
+        {% endif %}
+        {% if payment_methods is empty and address_empty and display_address_empty %}
+            <div class="simplecheckout-warning-text">{{ text_payment_address }}</div>
+        {% endif %}
+        {% if payment_methods is empty and not address_empty %}
+            <div class="simplecheckout-warning-text">{{ error_no_payment }}</div>
+        {% endif %}
+    </div>
+</div>

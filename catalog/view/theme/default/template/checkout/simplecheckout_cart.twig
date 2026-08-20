@@ -1,0 +1,118 @@
+
+
+<div class="simplecheckout-block " id="simplecheckout_cart" {{ hide ? 'data-hide="true"' : '' }} {{ has_error ? 'data-error="true"' : '' }}>
+{% if display_header %}
+                        <div class=" busket__top" style="position:relative;border:0;">
+                            <h3 class="busket__title">{{ text_cart }}</h3>
+                            <p class="busket__amount"><a href="javascript:void(0)" data-onclick="clearCart" class="text-danger" data-confirm-text="{{ text_clear_cart_question }}">{{ text_clear_cart }}</a></p>
+                        </div>
+{% endif %}
+{% if attention %}
+    <div class="alert alert-danger simplecheckout-warning-block">{{ attention }}</div>
+{% endif %}
+{% if error_warning %}
+    <div class="alert alert-danger simplecheckout-warning-block">{{ error_warning }}</div>
+{% endif %}
+    <div class="table-responsive">
+        <table class="simplecheckout-cart" style="border:0 !important;">
+            <tbody>
+                    <tr><td style="padding:0;">
+						<div class="busket__block" style="margin:15px 0;">
+                {% for product in products %}
+
+						<div class="table table-striped">
+					<div class="busket__item" style="margin-bottom:15px;padding:6px;" data-cart-id="{{ product.cart_id }}">
+
+                            {% if product['thumb'] %}
+                                <a href="{{ product['href'] }}"><img src="{{ product['thumb'] }}" alt="{{ product['name'] }}" title="{{ product['name'] }}" /></a>
+                            {% endif %}
+						<div class="busket__item-content">
+									<div class="busket__item-top">
+										<a class="busket__item-title" href="{{ product.href }}"><h3>{{ product.name }}</h3></a>
+										<div class="busket__item-info">
+											<p class="busket__item-about">{{ product.main_category }}</p>
+											<div class="busket__item-volume">
+											{% for option in product.option %}
+												{{ option.name }}: <b>{{ option.value }}</b>
+											{% endfor %}
+											</div>
+										</div>
+									</div>
+
+                        <div class="quantity busket__item-bottom" style="display:flex !important;">
+                            <div class="busket__item-count">
+                           
+                                    <button class="btn btn-primary busket__item-minus" data-onclick="decreaseProductQuantity" data-toggle="tooltip" type="submit"></button>
+                            
+<span class="busket__item-qty">{{ product.quantity }}</span>
+<input type="hidden"
+       class="busket__item-qty-hidden"
+       name="quantity[{{ product.cart_id is not empty ? product.cart_id : product.key }}]"
+       value="{{ product.quantity }}"
+       data-onchange="changeProductQuantity" />
+                              
+                                    <button class="btn btn-primary busket__item-plus" data-onclick="increaseProductQuantity" data-toggle="tooltip" type="submit"></button>
+                               
+                            </div>
+							<p class="busket__item-price">{{ product.total }}</p>
+                        </div>
+
+                   </div>
+				   <button class="busket__item-delete" onclick="cart.remove('{{ product.cart_id }}');" title="{{ button_remove }}"></button>
+				   
+				   </div>
+                {% endfor %}
+				</div></div>
+				</td></tr>
+
+							
+            </tbody>
+        </table>
+    </div>
+
+{% for total in totals %}
+    <div class="simplecheckout-cart-total" id="total_{{ total['code'] }}">
+        <span><b>{{ total['title'] }}:</b></span>
+        <span class="simplecheckout-cart-total-value">{{ total['text'] }}</span>
+    </div>
+{% endfor %}
+
+
+<input type="hidden" name="remove" value="" id="simplecheckout_remove">
+<div style="display:none;" id="simplecheckout_cart_total">{{ cart_total }}</div>
+
+{% if not display_model %}
+    <style>
+    .simplecheckout-cart col.model,
+    .simplecheckout-cart th.model,
+    .simplecheckout-cart td.model {
+        display: none;
+    }
+    </style>
+{% endif %}
+</div>
+                <div class="buttons" id="buttons">
+
+                        {% if display_agreement_checkbox %}
+                            <span id="agreement_checkbox">
+                                {% for agreement_id, text_agreement in text_agreements %}
+                                    <div class="checkbox"><label><input type="checkbox" name="agreements[]" value="{{ agreement_id }}" {{ agreement_id in agreements ? 'checked="checked"' : '' }} />{{ text_agreement }}</label></div>
+                                {% endfor %}
+                            </span>
+                        {% endif %}                
+                        {% if steps_count > 1 %}
+                        <a class="button btn-primary button_oc btn" data-onclick="nextStep" id="simplecheckout_button_next"><span>{{ button_next }}</span></a>
+                        {% endif %}
+						
+							<a class="busket__bottom-btn btn-2" {{ block_order ? 'disabled' : ''}} data-onclick="createOrder" id="simplecheckout_button_confirm">{{ button_order }}</a>
+
+
+                    <div class="simplecheckout-button-left">
+                        {% if display_back_button %}
+                        <a class="button btn-primary button_oc btn" data-onclick="backHistory" id="simplecheckout_button_back"><span>{{ button_back }}</span></a>
+                        {% endif %}
+                        {% if steps_count > 1 %}
+                        <a class="button btn-primary button_oc btn" data-onclick="previousStep" id="simplecheckout_button_prev"><span>{{ button_prev }}</span></a>
+                        {% endif %}
+                    </div>
+                </div>   

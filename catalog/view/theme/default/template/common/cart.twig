@@ -1,0 +1,72 @@
+<button class="header__busket" data-loading-text=""></button>
+<section id="cart"  class="busket">
+	<div class="busket__top">
+		<p class="busket__title">{{ text_shopping_cart }}</p>
+	</div>
+  <ul class="busket__inner">
+     {% if products|length > 0 or vouchers|length > 0 %}
+	            <li>
+                    <p class="busket__amount">{{ text_items }}</p>
+                </li>
+				<li>
+					<div class="busket__block">
+						<div class="table table-striped ">
+						{% for product in products %}
+							<div class="busket__item" data-cart-id="{{ product.cart_id }}">
+								<a class="busket__item-image" href="{{ product.href }}">
+								{% if product.thumb %}
+									<img src="{{ product.thumb }}" alt="{{ product.name }}" title="{{ product.name }}" />
+								{% endif %}
+								</a>
+								<div class="busket__item-content">
+									<div class="busket__item-top">
+										<a class="busket__item-title" href="{{ product.href }}"><h3>{{ product.name }}</h3></a>
+										<div class="busket__item-info">
+											<p class="busket__item-about">{{ product.main_category }}</p>
+											<div class="busket__item-volume">
+											{% for option in product.option %}
+												{{ option.name }}: <b>{{ option.value }}</b>
+											{% endfor %}
+											</div>
+										</div>
+									</div>
+									<div class="busket__item-bottom">
+										<div class="busket__item-count">
+											<button class="busket__item-minus"></button>
+											<span>{{ product.quantity }}</span>
+											<button class="busket__item-plus"></button>
+										</div>
+										<p class="busket__item-price">{{ product.total }}</p>
+									</div>
+								</div>
+								<button class="busket__item-delete" onclick="cart.remove('{{ product.cart_id }}');" title="{{ button_remove }}"></button>
+							</div>
+						{% endfor %}
+						</div>
+					</div>
+				</li>
+				<li>
+					<div class="busket__bottom">
+						<div class="busket__bottom-content">
+							<div class="busket__bottom">
+							{% for total in totals %}
+								<div class="busket__bottom-item" id="total_{{ loop.index }}">
+									<p class="busket__bottom-descr busket__bottom-total-title">{{ total.title }}</p>
+									<p class="busket__bottom-descr busket__bottom-total" id="total_value_{{ loop.index }}">{{ total.text }}</p>
+								</div>
+							{% endfor %}
+							</div>
+						</div>
+						<div class="busket__bottom-confirm">
+							<a class="busket__bottom-btn btn-2" href="{{ checkout }}">{{ text_checkout }}</a>
+						</div>
+					</div>
+				</li>
+		{% else %}
+				<li>
+					<p class="busket__empty">{{ text_empty }}</p>
+				</li>
+		{% endif %}
+	</ul>
+</section>
+

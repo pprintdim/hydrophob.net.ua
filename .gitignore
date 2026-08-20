@@ -1,0 +1,21 @@
+# Конфіги оточення (локальний і серверний відрізняються)
+config.php
+hp_panel/config.php
+
+# Контент і важке — живе на сервері
+image/
+html/
+
+# Рантайм
+storage/cache/*
+storage/session/*
+storage/logs/*
+storage/modification/*
+storage/download/*
+storage/upload/*
+!storage/*/index.html
+
+# Локальне
+backups/
+deploy.sh
+.DS_Store
