@@ -19,8 +19,8 @@
 <link href="https://hydrophob.com.ua/catalog/view/theme/default/stylesheet/stylesheet.css?v=20260821" rel="stylesheet">
 <script src="https://hydrophob.com.ua/catalog/view/javascript/common.js" type="text/javascript"></script>
 <script src="https://hydrophob.com.ua/catalog/view/theme/default/js/checkout.js?v=20260821" type="text/javascript"></script>
-<link rel="icon" type="image/svg+xml" href="favicon.svg">
-<link rel="stylesheet" href="data/search-ui.css">
+<link href="https://hydrophob.com.ua/image/catalog/cart.png" rel="icon" />
+<link rel="stylesheet" href="data/delivery-extra.css">
 </head>
 <body class="body">
 	<div id="alert-container">
@@ -60,10 +60,19 @@
                         </ul>
                     </nav>
                     <div class="header__block">
-<div class="header__icons">
-<a href="account.html" class="header__account" title="Особистий кабінет"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></a>
-<a href="wishlist.html" class="header__account header__wishlist" title="Вибране"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 5.6a5.2 5.2 0 0 0-7.4 0l-1.4 1.4-1.4-1.4a5.2 5.2 0 1 0-7.4 7.4l8.8 8.8 8.8-8.8a5.2 5.2 0 0 0 0-7.4z"/></svg></a>
-						
+						<div class="header__icons">
+							<a href="https://hydrophob.com.ua/index.php?route=account/account" class="header__account" title="Особистий кабінет">
+								<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+									<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+									<circle cx="12" cy="7" r="4"/>
+								</svg>
+							</a>
+							<a href="https://hydrophob.com.ua/index.php?route=account/wishlist" class="header__account header__wishlist" title="Вибране">
+								<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+									<path d="M20.8 5.6a5.2 5.2 0 0 0-7.4 0l-1.4 1.4-1.4-1.4a5.2 5.2 0 1 0-7.4 7.4l8.8 8.8 8.8-8.8a5.2 5.2 0 0 0 0-7.4z"/>
+								</svg>
+							</a>
+							
                         <div class="header__search" id="search">
                             <dic class="header__search-form">
                                 <input class="header__search-input" type="text" name="search" value="" placeholder="Пошук" required>
@@ -71,7 +80,7 @@
                             </dic>
                             <button class="header__search-open"></button>
                         </div>
-						<button class="header__busket" data-loading-text=""></button>
+							<button class="header__busket" data-loading-text=""></button>
 <section id="cart"  class="busket">
 	<div class="busket__top">
 		<p class="busket__title">Кошик</p>
@@ -82,9 +91,9 @@
 				</li>
 			</ul>
 </section>
-</div>
 
 
+						</div>
 						<div class="header__lang">
     <div class="header__lang-selected">
                                     UA
@@ -142,45 +151,68 @@ document.querySelectorAll('.header__lang-content .language-select').forEach(func
 																			Умови доставки та оплати
 														</h2>
                     <div class="delivery__content">
-						                        <div class="delivery__block">
-                            <h3 class="delivery__block-title">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40" fill="none">
-                                    <path d="M3.33398 6.66699H30.0007C30.8847 6.66699 31.7326 7.01818 32.3577 7.6433C32.9828 8.26842 33.334 9.11627 33.334 10.0003V30.0003C33.334 30.8844 32.9828 31.7322 32.3577 32.3573C31.7326 32.9825 30.8847 33.3337 30.0007 33.3337H10.0007C9.1166 33.3337 8.26875 32.9825 7.64363 32.3573C7.01851 31.7322 6.66732 30.8844 6.66732 30.0003V20.0003M20.0007 15.0003V6.66699M13.334 13.3337H5.00065" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path>
-                                </svg>
-                                Доставка
-                            </h3>
-                            <p class="delivery__block-descr">
-                                Термін доставки: 1-3 робочі дні.
-                                <br>Вартість доставки однієї одиниці товару залежить від ваги та габаритів та розраховується згідно з тарифами оператора. У разі купівлі кількох товарів вартість доставки об'єднуються.
-                                <br>При виборі оплати готівкою ви додатково оплачуєте за переведення коштів.
-                            </p>
-                            <h3 class="delivery__block-deliver">Спосіб доставки</h3>
-                            <div class="delivery__block-icons">
-                              <img src="/catalog/view/theme/default/img/payments/4.png" alt="">
-                            </div>
-                        </div>
+						<div class="dlv">
+    <p class="dlv__lead">Відправляємо замовлення по всій Україні у день оплати або наступного робочого дня. Термін доставки — 1–3 робочі дні. Вартість розраховується за тарифами перевізника; кілька товарів обʼєднуємо в одну посилку.</p>
 
-                        <div class="delivery__block">
-                            <h3 class="delivery__block-title">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40" fill="none">
-                                    <path d="M26.2507 24.1663C25.9191 24.1663 25.6012 24.298 25.3668 24.5325C25.1323 24.7669 25.0007 25.0848 25.0007 25.4163C25.0007 25.7479 25.1323 26.0658 25.3668 26.3002C25.6012 26.5346 25.9191 26.6663 26.2507 26.6663H30.4173C30.7488 26.6663 31.0668 26.5346 31.3012 26.3002C31.5356 26.0658 31.6673 25.7479 31.6673 25.4163C31.6673 25.0848 31.5356 24.7669 31.3012 24.5325C31.0668 24.298 30.7488 24.1663 30.4173 24.1663H26.2507ZM3.33398 13.7497C3.33398 12.3131 3.90467 10.9353 4.92049 9.91951C5.93631 8.90369 7.31406 8.33301 8.75065 8.33301H31.2507C31.962 8.33301 32.6663 8.47311 33.3235 8.74533C33.9807 9.01754 34.5778 9.41653 35.0808 9.91951C35.5838 10.4225 35.9828 11.0196 36.255 11.6768C36.5272 12.334 36.6673 13.0383 36.6673 13.7497V26.2497C36.6673 26.961 36.5272 27.6654 36.255 28.3225C35.9828 28.9797 35.5838 29.5769 35.0808 30.0798C34.5778 30.5828 33.9807 30.9818 33.3235 31.254C32.6663 31.5262 31.962 31.6663 31.2507 31.6663H8.75065C7.31406 31.6663 5.93631 31.0957 4.92049 30.0798C3.90467 29.064 3.33398 27.6863 3.33398 26.2497V13.7497ZM34.1673 15.833V13.7497C34.1673 12.9761 33.86 12.2343 33.313 11.6873C32.7661 11.1403 32.0242 10.833 31.2507 10.833H8.75065C7.9771 10.833 7.23524 11.1403 6.68826 11.6873C6.14128 12.2343 5.83398 12.9761 5.83398 13.7497V15.833H34.1673ZM5.83398 18.333V26.2497C5.83398 27.8597 7.14065 29.1663 8.75065 29.1663H31.2507C32.0242 29.1663 32.7661 28.8591 33.313 28.3121C33.86 27.7651 34.1673 27.0232 34.1673 26.2497V18.333H5.83398Z" fill="white"></path>
-                                </svg>
-                                Оплата 
-                            </h3>
-                            <p class="delivery__block-name">Післяплата</p>
-                            <p class="delivery__block-descr">Ви завжди зможете оплатити за товар на "Нова Пошта" накладним платежем!</p>
-                            <p class="delivery__block-name">Оплата на рахунок</p>
-                            <p class="delivery__block-descr">Ви можете здійснити оплату на наш IBAN</p>
-                            <p class="delivery__block-descr">Установа банку: <br>АТ КБ "ПРИВАТБАНК"</p>
-                            <p class="delivery__block-descr">МФО банку: <br>305299</p>
-                            <p class="delivery__block-descr">IBAN: <br>UA213052990000026002016705486</p>
-                            <p class="delivery__block-descr">Рахунок отримувача: <br>UA213052990000026002016705486</p>
-                            <p class="delivery__block-descr">Валюта рахунку: <br>UAH</p>
-                            <p class="delivery__block-descr">РНОКПП отримувача: <br>3251306276</p>
-                            <p class="delivery__block-descr">Призначення платежу: <br>Поповнення рахунку</p>
-                            <p class="delivery__block-descr">Після оплати, обов'язково зв'яжіться з нашим менеджером по продажах!</p>
-                            <p class="delivery__block-descr">Тел.: +38 073 108 12 12</p>
-                        </div>
+    <h3 class="dlv__heading">Способи доставки</h3>
+    <div class="dlv__grid">
+        <div class="dlv__card">
+            <img class="dlv__card-logo" src="https://hydrophob.com.ua/catalog/view/theme/default/img/delivery/np.webp" alt="Нова Пошта" loading="lazy">
+            <p class="dlv__card-name">Нова Пошта</p>
+            <p class="dlv__card-text">У відділення, поштомат або курʼєром до дверей. 1–2 робочі дні. Можлива оплата при отриманні (накладний платіж).</p>
+        </div>
+        <div class="dlv__card">
+            <img class="dlv__card-logo" src="https://hydrophob.com.ua/catalog/view/theme/default/img/delivery/ukrposhta.webp" alt="Укрпошта" loading="lazy">
+            <p class="dlv__card-name">Укрпошта</p>
+            <p class="dlv__card-text">У відділення по всій Україні. 2–3 робочі дні. Найвигідніший тариф для невеликих посилок.</p>
+        </div>
+        <div class="dlv__card">
+            <img class="dlv__card-logo" src="https://hydrophob.com.ua/catalog/view/theme/default/img/delivery/meest.webp" alt="Meest" loading="lazy">
+            <p class="dlv__card-name">Meest</p>
+            <p class="dlv__card-text">Відділення та поштомати Meest. 2–3 робочі дні.</p>
+        </div>
+        <div class="dlv__card">
+            <img class="dlv__card-logo dlv__card-logo--icon" src="https://hydrophob.com.ua/catalog/view/theme/default/img/delivery/pickup.svg" alt="Самовивіз" loading="lazy">
+            <p class="dlv__card-name">Самовивіз</p>
+            <p class="dlv__card-text">Безкоштовно, за попередньою домовленістю з менеджером. Тел.: <a href="tel:+380731081212">+38 073 108 12 12</a></p>
+        </div>
+        <div class="dlv__card">
+            <img class="dlv__card-logo dlv__card-logo--icon" src="https://hydrophob.com.ua/catalog/view/theme/default/img/delivery/courier.svg" alt="Курʼєрська доставка" loading="lazy">
+            <p class="dlv__card-name">Курʼєрська доставка</p>
+            <p class="dlv__card-text">Адресна доставка курʼєром перевізника до дверей у вашому місті.</p>
+        </div>
+        <div class="dlv__card">
+            <img class="dlv__card-logo dlv__card-logo--icon" src="https://hydrophob.com.ua/catalog/view/theme/default/img/delivery/other.svg" alt="Інші перевізники" loading="lazy">
+            <p class="dlv__card-name">Інші перевізники</p>
+            <p class="dlv__card-text">Відправимо зручним для вас перевізником — узгодьте з менеджером.</p>
+        </div>
+    </div>
+
+    <h3 class="dlv__heading">Оплата</h3>
+    <div class="dlv__grid dlv__grid--pay">
+        <div class="dlv__card">
+            <p class="dlv__card-name">Післяплата</p>
+            <p class="dlv__card-text">Оплата при отриманні на «Нова Пошта» накладним платежем. Перевізник додатково бере комісію за переказ коштів.</p>
+        </div>
+        <div class="dlv__card">
+            <p class="dlv__card-name">Оплата на рахунок (IBAN)</p>
+            <p class="dlv__card-text">Передоплата на рахунок ФОП. Після оплати обовʼязково звʼяжіться з менеджером.</p>
+        </div>
+    </div>
+
+    <div class="dlv__req">
+        <p class="dlv__req-title">Реквізити для оплати</p>
+        <dl class="dlv__req-list">
+            <div><dt>Установа банку</dt><dd>АТ КБ «ПРИВАТБАНК»</dd></div>
+            <div><dt>МФО банку</dt><dd>305299</dd></div>
+            <div><dt>IBAN</dt><dd>UA213052990000026002016705486</dd></div>
+            <div><dt>РНОКПП отримувача</dt><dd>3251306276</dd></div>
+            <div><dt>Валюта</dt><dd>UAH</dd></div>
+            <div><dt>Призначення платежу</dt><dd>Поповнення рахунку</dd></div>
+        </dl>
+        <p class="dlv__req-note">Питання щодо доставки та оплати: <a href="tel:+380731081212">+38 073 108 12 12</a></p>
+    </div>
+</div>
                     </div>
                 </div>
             </div>
@@ -275,5 +307,5 @@ document.querySelectorAll('.header__lang-content .language-select').forEach(func
         </div>
     </footer>
 <script src="https://hydrophob.com.ua/catalog/view/theme/default/js/script.js?v=20260821" type="text/javascript"></script>
-<script src="data/search-ui.js"></script>
+<script src="data/crosslinks.js"></script>
 </body></html>

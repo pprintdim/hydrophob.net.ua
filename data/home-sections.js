@@ -17,7 +17,7 @@
     }
 
     var mainEl = document.querySelector('main');
-    var isHome = mainEl && document.querySelector('.variants');
+    var isHome = mainEl && document.querySelector('.hero');
 
     /* --- collapse опису (.desc) на головній --- */
     var desc = document.querySelector('.desc');

@@ -125,6 +125,32 @@
     background: #A7C70E;
     color: #161616;
 }
+/* кнопки-перелінковки між сторінками */
+.xl-nav{
+    padding: 48px 0 64px;
+}
+.xl-nav__row{
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+.xl-nav__btn{
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 24px;
+    background: #161616;
+    color: #FFF;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    transition: background .3s ease, color .3s ease;
+}
+.xl-nav__btn:hover{
+    background: #A7C70E;
+    color: #161616;
+}
 /* сторінка search.html */
 .search-page{
     padding: 48px 0 72px;
