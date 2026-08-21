@@ -20,6 +20,13 @@
             btn.classList.toggle('is-open', open);
             btn.querySelector('span').textContent = open ? 'Згорнути' : 'Показати більше';
         });
+        /* кнопка стосується лише вкладки з описом — на інших вкладках її ховаємо */
+        var tabs = document.querySelectorAll('.product__selects-btn');
+        tabs.forEach(function (tab, ti) {
+            tab.addEventListener('click', function () {
+                btn.style.display = ti === 0 ? '' : 'none';
+            });
+        });
     }
 
     /* --- секції --- */
@@ -36,16 +43,32 @@
     function fmt(n) {
         return Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' грн';
     }
+    var badgesMap = {};
+    function badgeHtml(id) {
+        var list = badgesMap[String(id)] || [];
+        if (!list.length) return '';
+        return '<div class="product__item-badges">' + list.map(function (b) {
+            var label = b === 'sale' ? 'Акція' : (b === 'new' ? 'Новинка' : 'Топ');
+            return '<span class="product__item-badge product__item-badge--' + b + '">' + label + '</span>';
+        }).join('') + '</div>';
+    }
     function card(p) {
         var name = (p.translations['uk-ua'] || {}).name || '';
         var href = 'product-' + p.product_id + '.html';
         return '<div class="product__item hm-slide">' +
             '<div class="product__item-media">' +
             '<a class="product__item-image" href="' + href + '"><img src="' + cacheImg(p.image, 450) + '" alt="' + name.replace(/"/g, '&quot;') + '" loading="lazy" onerror="this.src=\'' + PROD + 'image/placeholder.png\'"></a>' +
+            badgeHtml(p.product_id) +
+            '<button type="button" class="product__item-wish" title="Додати до обраного" aria-label="Додати до обраного">' +
+            '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 5.6a5.2 5.2 0 0 0-7.4 0l-1.4 1.4-1.4-1.4a5.2 5.2 0 1 0-7.4 7.4l8.8 8.8 8.8-8.8a5.2 5.2 0 0 0 0-7.4z"/></svg>' +
+            '</button>' +
             '</div>' +
             '<div class="product__item-content">' +
             '<a class="product__item-title" href="' + href + '"><h3>' + name + '</h3></a>' +
             '<p class="product__item-price">' + fmt(p.price) + '</p>' +
+            '<button class="product__item-add btn-2" type="button">В кошик' +
+            '<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 17 17" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M9.56706 2.90039H6.90039V6.90039L2.90039 6.90039V9.56706H6.90039V13.5671H9.56706V9.56706H13.5671V6.90039L9.56706 6.90039V2.90039Z" fill="white"/></svg>' +
+            '</button>' +
             '</div></div>';
     }
     function sliderSection(id, title, cardsHtml) {
@@ -69,6 +92,53 @@
 
         var current = byId[currentId];
         var html = '';
+        badgesMap = home.badges || {};
+
+        /* стікери-бейджі поверх фото поточного товару */
+        var myBadges = badgesMap[String(currentId)] || [];
+        var sliderBox = document.querySelector('.product__slider-content');
+        if (sliderBox && myBadges.length) {
+            var bl = document.createElement('div');
+            bl.className = 'product__item-badges pui-badges';
+            bl.innerHTML = myBadges.map(function (b) {
+                var label = b === 'sale' ? 'Акція' : (b === 'new' ? 'Новинка' : 'Топ');
+                return '<span class="product__item-badge product__item-badge--' + b + '">' + label + '</span>';
+            }).join('');
+            sliderBox.appendChild(bl);
+        }
+
+        /* рядок покупки: зліва лічильник кількості → кнопка «Додати в кошик» → справа «В вибране» */
+        var cartBtn = document.getElementById('button-cart');
+        var qty = document.querySelector('.product__count');
+        if (cartBtn && !document.querySelector('.pui-buyrow')) {
+            var row = document.createElement('div');
+            row.className = 'pui-buyrow';
+            cartBtn.parentNode.insertBefore(row, cartBtn);
+            if (qty) row.appendChild(qty);
+            row.appendChild(cartBtn);
+            var wish = document.createElement('button');
+            wish.type = 'button';
+            wish.className = 'pui-wish';
+            wish.title = 'Додати до обраного';
+            wish.setAttribute('aria-label', 'Додати до обраного');
+            wish.innerHTML = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 5.6a5.2 5.2 0 0 0-7.4 0l-1.4 1.4-1.4-1.4a5.2 5.2 0 1 0-7.4 7.4l8.8 8.8 8.8-8.8a5.2 5.2 0 0 0 0-7.4z"/></svg>';
+            row.appendChild(wish);
+            wish.addEventListener('click', function () { wish.classList.toggle('is-active'); });
+        }
+
+        /* теги продукту під зображеннями (ліва колонка) */
+        var left = document.querySelector('.product__left');
+        if (left && current) {
+            var tags = ((current.translations['uk-ua'] || {}).tag || '').split(',').map(function (t) { return t.trim(); }).filter(Boolean);
+            if (tags.length) {
+                var tagBox = document.createElement('div');
+                tagBox.className = 'pui-tags';
+                tagBox.innerHTML = '<p class="pui-tags__title">Теги:</p>' + tags.map(function (t) {
+                    return '<a class="pui-tag" href="search.html?q=' + encodeURIComponent(t) + '">' + t + '</a>';
+                }).join('');
+                left.appendChild(tagBox);
+            }
+        }
 
         /* З цим товаром також купують: інші товари тієї ж категорії */
         if (current) {

@@ -1,0 +1,144 @@
+/* account-ui.css — доповнення для статичних сторінок особистого кабінету (html.hydrophob.com.ua).
+   Базові класи account__*, product__item*, btn-2 вже є в прод stylesheet.css —
+   тут лише те, чого там немає: вхід за одноразовим кодом і статус-бейджі замовлень.
+   Палітра: #161616 / #121212 (чорний), #A7C70E (зелений акцент), білий. Без синього. */
+
+/* ===== Вхід за одноразовим кодом ===== */
+.account__otp{
+    margin-top: 24px;
+}
+.account__otp-desc{
+    margin-top: 8px;
+    max-width: 640px;
+    opacity: .7;
+    line-height: 1.5;
+}
+.account__otp-steps{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    margin: 24px 0;
+}
+.account__otp-step-badge{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    opacity: .35;
+    transition: opacity .3s ease, color .3s ease;
+}
+.account__otp-step-badge.is-active{
+    opacity: 1;
+    color: #A7C70E;
+}
+.account__otp-step-num{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: 1px solid currentColor;
+    font-size: 12px;
+    flex-shrink: 0;
+}
+.account__otp-panel{
+    display: none;
+}
+.account__otp-panel.is-active{
+    display: block;
+}
+.account__otp-hint{
+    margin-bottom: 16px;
+    font-size: 14px;
+    opacity: .7;
+}
+.account__otp-hint b{
+    color: #161616;
+    opacity: 1;
+}
+.account__otp-code-input{
+    max-width: 240px;
+    font-size: 26px;
+    font-weight: 700;
+    text-align: center;
+    letter-spacing: 10px;
+}
+.account__otp-resend{
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #161616;
+    text-decoration: underline;
+    cursor: pointer;
+    transition: color .3s ease;
+}
+.account__otp-resend:disabled{
+    opacity: .4;
+    cursor: default;
+    text-decoration: none;
+}
+.account__otp-resend:not(:disabled):hover{
+    color: #A7C70E;
+}
+.account__otp-done{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 20px;
+    border: 1px solid #A7C70E;
+    font-weight: 600;
+}
+.account__otp-done svg{
+    flex-shrink: 0;
+    color: #A7C70E;
+}
+.account__otp-divider{
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 32px 0;
+    text-transform: uppercase;
+    font-size: 12px;
+    font-weight: 700;
+    opacity: .5;
+}
+.account__otp-divider::before,
+.account__otp-divider::after{
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #161616;
+    opacity: .15;
+}
+
+/* ===== Статуси замовлень ===== */
+.account__status--success{
+    background: #A7C70E;
+    border-color: #A7C70E;
+    color: #161616;
+}
+.account__status--pending{
+    background: #FFF;
+    border-color: #161616;
+    color: #161616;
+}
+.account__status--cancelled{
+    background: #161616;
+    border-color: #161616;
+    color: #FFF;
+}
+
+@media (max-width: 640px){
+    .account__otp-steps{
+        gap: 14px;
+    }
+    .account__otp-code-input{
+        max-width: 100%;
+    }
+}

@@ -125,9 +125,46 @@
 .hm-lightbox__close:hover{
     color: #A7C70E;
 }
-/* FAQ — по центру, в палітрі сайту */
+.hm-lightbox__nav{
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 52px;
+    height: 52px;
+    background: #161616;
+    color: #FFF;
+    z-index: 2;
+    transition: background .3s ease, color .3s ease;
+}
+.hm-lightbox__nav:hover{
+    background: #A7C70E;
+    color: #161616;
+}
+.hm-lightbox__nav--prev{ left: 24px; }
+.hm-lightbox__nav--next{ right: 24px; }
+.hm-lightbox__counter{
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #FFF;
+    font-size: 14px;
+    letter-spacing: 1px;
+}
+@media (max-width: 767px) {
+    .hm-lightbox__nav{
+        width: 42px;
+        height: 42px;
+    }
+    .hm-lightbox__nav--prev{ left: 8px; }
+    .hm-lightbox__nav--next{ right: 8px; }
+}
+/* FAQ — заголовок зліва, блок по центру */
 .hm-faq-sec .hm-sec__title{
-    text-align: center;
+    text-align: left;
 }
 .hm-faq{
     display: flex;
@@ -174,6 +211,60 @@
 .hm-faq__item.is-open{
     border-left: 3px solid #A7C70E;
 }
+/* SEO-опис: окрема секція з нормальною типографікою */
+.seo-desc{
+    padding: 64px 0 0;
+}
+.seo-desc .desc{
+    max-width: 960px;
+}
+.seo-desc .desc h1{
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1.3;
+    text-transform: uppercase;
+    color: #121212;
+    margin-bottom: 24px;
+}
+.seo-desc .desc h3{
+    font-size: 19px;
+    font-weight: 700;
+    color: #121212;
+    margin: 32px 0 12px;
+}
+.seo-desc .desc p{
+    font-size: 15px;
+    line-height: 1.75;
+    color: #202222;
+    margin-bottom: 14px;
+}
+.seo-desc .desc p b{
+    color: #121212;
+}
+.seo-desc .desc ul{
+    list-style: none;
+    padding: 0;
+    margin: 0 0 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.seo-desc .desc ul li{
+    position: relative;
+    padding-left: 24px;
+    font-size: 15px;
+    line-height: 1.6;
+    color: #202222;
+}
+.seo-desc .desc ul li::before{
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 8px;
+    width: 10px;
+    height: 10px;
+    background: #A7C70E;
+}
 /* collapse SEO-опису на головній — компактний, текстова кнопка */
 .desc.is-collapsible{
     position: relative;
@@ -218,6 +309,90 @@
 }
 .desc-toggle.is-open svg{
     transform: rotate(180deg);
+}
+/* сторінка товару: рядок покупки (кількість + кошик + вибране), теги, стікери на фото */
+.pui-buyrow{
+    display: flex;
+    align-items: stretch;
+    gap: 12px;
+    margin-top: 20px;
+}
+.pui-buyrow .product__count{
+    margin: 0;
+    max-width: 132px;
+    border: 2px solid #161616;
+    justify-content: space-between;
+    flex-shrink: 0;
+}
+.pui-buyrow .product__count input{
+    width: 40px;
+    text-align: center;
+    border: none;
+    font-size: 16px;
+    font-weight: 700;
+}
+.pui-buyrow .product__add{
+    margin: 0;
+    flex: 1;
+}
+.pui-wish{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: auto;
+    background: none;
+    border: 2px solid #161616;
+    color: #161616;
+    flex-shrink: 0;
+    transition: all .3s ease;
+}
+.pui-wish:hover{
+    border-color: #A7C70E;
+    color: #A7C70E;
+}
+.pui-wish.is-active{
+    background: #A7C70E;
+    border-color: #A7C70E;
+    color: #161616;
+}
+.pui-wish.is-active svg{
+    fill: currentColor;
+}
+.pui-badges{
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    z-index: 2;
+    display: flex;
+    gap: 8px;
+}
+.product__slider-content{
+    position: relative;
+}
+.pui-tags{
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 16px;
+}
+.pui-tags__title{
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #161616;
+    margin-right: 4px;
+}
+.pui-tag{
+    padding: 6px 12px;
+    background: #F1F1F1;
+    color: #161616;
+    font-size: 13px;
+    transition: background .3s ease, color .3s ease;
+}
+.pui-tag:hover{
+    background: #A7C70E;
 }
 /* collapse опису на сторінці товару */
 .product__result-content.pui-collapsible{

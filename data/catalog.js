@@ -21,14 +21,22 @@
         return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' грн';
     }
 
+    var badgesMap = {};
     function cardHtml(p) {
         var name = (p.translations['uk-ua'] || {}).name || '';
         var href = 'product-' + p.product_id + '.html';
+        var badges = badgesMap[String(p.product_id)] || [];
+        var badgesHtml = badges.length
+            ? '<div class="product__item-badges">' + badges.map(function (b) {
+                var label = b === 'sale' ? 'Акція' : (b === 'new' ? 'Новинка' : 'Топ');
+                return '<span class="product__item-badge product__item-badge--' + b + '">' + label + '</span>';
+            }).join('') + '</div>'
+            : '';
         return '<div class="product__item">' +
             '<div class="product__item-media">' +
             '<a class="product__item-image" href="' + href + '">' +
             '<img src="' + cacheImg(p.image, 450) + '" alt="' + name.replace(/"/g, '&quot;') + '" loading="lazy" onerror="this.src=\'' + PROD + 'image/placeholder.png\'">' +
-            '</a>' +
+            '</a>' + badgesHtml +
             '<button type="button" class="product__item-wish" title="Додати до обраного" aria-label="Додати до обраного">' +
             '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 5.6a5.2 5.2 0 0 0-7.4 0l-1.4 1.4-1.4-1.4a5.2 5.2 0 1 0-7.4 7.4l8.8 8.8 8.8-8.8a5.2 5.2 0 0 0 0-7.4z"/></svg>' +
             '</button>' +
@@ -74,9 +82,13 @@
         }
     }
 
-    fetch('data/products.json')
-        .then(function (r) { return r.json(); })
-        .then(function (all) {
+    Promise.all([
+        fetch('data/products.json').then(function (r) { return r.json(); }),
+        fetch('data/home.json').then(function (r) { return r.json(); }).catch(function () { return {}; })
+    ])
+        .then(function (res) {
+            var all = res[0];
+            badgesMap = (res[1] || {}).badges || {};
             var products = isNaN(catId)
                 ? all
                 : all.filter(function (p) { return p.categories.indexOf(catId) !== -1; });

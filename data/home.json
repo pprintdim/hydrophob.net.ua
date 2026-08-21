@@ -9,14 +9,19 @@
     ],
     "recommended": [74, 59, 67, 85, 105, 112, 135, 62],
     "popular": [75, 58, 83, 112, 70, 106],
+    "badges": {
+        "75": ["sale"], "58": ["sale", "top"], "70": ["sale"], "83": ["sale"], "77": ["sale"], "60": ["sale"],
+        "74": ["new"], "112": ["top"], "106": ["new"], "135": ["new"], "59": ["top"], "139": ["new"]
+    },
     "gallery": [
-        {"type": "video", "src": "https://hydrophob.com.ua/catalog/view/theme/default/vid/HYDROFOB.mp4", "poster": "https://hydrophob.com.ua/catalog/view/theme/default/img/hero.jpg"},
+        {"type": "video", "src": "media/porsche.mp4", "poster": "media/porsche-poster.jpg"},
         {"type": "image", "src": "https://hydrophob.com.ua/image/catalog/nanokeramika/sprei/KOV09864%20%D0%BA%D0%BE%D0%BF%D1%96%D1%8F.jpg"},
-        {"type": "image", "src": "https://hydrophob.com.ua/image/catalog/nanokeramika/Quick-drying/008.jpg"},
+        {"type": "video", "src": "media/instruction.mp4", "poster": "media/instruction-poster.jpg"},
         {"type": "image", "src": "https://hydrophob.com.ua/image/catalog/nanokeramika/zaschitnoe-vysokoprochnoe-keramicheskoe/001.jpg"},
+        {"type": "video", "src": "media/moto.mp4", "poster": "media/moto-poster.jpg"},
         {"type": "image", "src": "https://hydrophob.com.ua/image/catalog/nanokeramika/leather-interior/015.jpg"},
-        {"type": "image", "src": "https://hydrophob.com.ua/image/catalog/nanokeramika/nabor/DSC06992.JPG"},
-        {"type": "image", "src": "https://hydrophob.com.ua/image/catalog/nanokeramika/9%D0%9Dkeramika/006.jpg"}
+        {"type": "video", "src": "media/twerk.mp4", "poster": "media/twerk-poster.jpg"},
+        {"type": "video", "src": "media/talk.mp4", "poster": "media/talk-poster.jpg"}
     ],
     "faq": [
         {
