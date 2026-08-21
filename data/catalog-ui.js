@@ -1,5 +1,6 @@
 /* Редизайн каталогу знімка:
-   - фільтри (категорія/сортування/ціна/пошук) переїжджають у висувну панель (drawer) по кліку на іконку;
+   - тулбар: кнопка «Фільтри» + сортування + перемикач сітки 4/2;
+   - drawer (виїжджає справа): фільтри акордеонами, початково згорнуті;
    - сайдбар праворуч: список категорій + популярні товари з data/*.json. */
 (function () {
     var PROD = 'https://hydrophob.com.ua/';
@@ -9,7 +10,14 @@
 
     document.body.classList.add('cui');
 
-    /* --- drawer із фільтрами --- */
+    /* --- розбираємо старий блок фільтрів --- */
+    var sortSelect = filters.querySelector('#input-sort');
+    var catSelect = filters.querySelector('#category-select');
+    var priceForm = filters.querySelector('.catalog__price');
+    var searchForm = filters.querySelector('.catalog__search');
+    filters.remove();
+
+    /* --- drawer --- */
     var overlay = document.createElement('div');
     overlay.className = 'cui-overlay';
     document.body.appendChild(overlay);
@@ -22,16 +30,75 @@
         '</button></div>' +
         '<div class="cui-drawer__body"></div>';
     document.body.appendChild(drawer);
+    var drawerBody = drawer.querySelector('.cui-drawer__body');
 
-    // переносимо весь блок фільтрів у drawer
-    drawer.querySelector('.cui-drawer__body').appendChild(filters);
+    function accordion(title, node) {
+        if (!node) return;
+        var group = document.createElement('div');
+        group.className = 'cui-group';
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'cui-group__btn';
+        btn.innerHTML = '<span>' + title + '</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';
+        var content = document.createElement('div');
+        content.className = 'cui-group__body';
+        content.hidden = true; /* початково згорнуто */
+        content.appendChild(node);
+        btn.addEventListener('click', function () {
+            var open = group.classList.toggle('is-open');
+            content.hidden = !open;
+        });
+        group.appendChild(btn);
+        group.appendChild(content);
+        drawerBody.appendChild(group);
+    }
 
-    // кнопка-іконка фільтрів над сіткою
+    accordion('Категорія', catSelect);
+    accordion('Ціна', priceForm);
+    accordion('Пошук', searchForm);
+
+    /* --- тулбар: фільтри + сортування + перемикач сітки --- */
+    var toolbar = document.createElement('div');
+    toolbar.className = 'cui-toolbar';
+
     var trigger = document.createElement('button');
     trigger.type = 'button';
     trigger.className = 'cui-filter-btn';
     trigger.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5h10M11 9h7M11 13h4M3 17l3 3 3-3M6 18V4"/></svg> Фільтри';
-    body.parentNode.insertBefore(trigger, body);
+    toolbar.appendChild(trigger);
+
+    if (sortSelect) {
+        sortSelect.classList.add('cui-sort');
+        toolbar.appendChild(sortSelect);
+    }
+
+    var gridBox = document.createElement('div');
+    gridBox.className = 'cui-grid-toggle';
+    gridBox.innerHTML =
+        '<button type="button" class="cui-grid-btn" data-cols="4" aria-label="По чотири" title="По чотири">' +
+        '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></button>' +
+        '<button type="button" class="cui-grid-btn" data-cols="2" aria-label="По два" title="По два">' +
+        '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="18"/><rect x="13" y="3" width="8" height="18"/></svg></button>';
+    toolbar.appendChild(gridBox);
+
+    body.parentNode.insertBefore(toolbar, body);
+
+    /* сітка 4/2 */
+    var grid = document.querySelector('.catalog__content') || document.getElementById('json-catalog');
+    function setCols(n) {
+        if (!grid) return;
+        grid.classList.toggle('cui-cols-2', n === 2);
+        gridBox.querySelectorAll('.cui-grid-btn').forEach(function (b) {
+            b.classList.toggle('is-active', parseInt(b.getAttribute('data-cols'), 10) === n);
+        });
+        try { localStorage.setItem('hydro_grid', n); } catch (e) {}
+    }
+    gridBox.querySelectorAll('.cui-grid-btn').forEach(function (b) {
+        b.addEventListener('click', function () { setCols(parseInt(b.getAttribute('data-cols'), 10)); });
+    });
+    var saved = 4;
+    try { saved = parseInt(localStorage.getItem('hydro_grid'), 10) || 4; } catch (e) {}
+    setCols(saved === 2 ? 2 : 4);
 
     function open() { document.body.classList.add('cui-drawer-open'); }
     function close() { document.body.classList.remove('cui-drawer-open'); }
@@ -50,7 +117,6 @@
     }
     aside.classList.add('cui-aside');
 
-    // стара мобільна кнопка розкриття aside більше не потрібна
     var oldToggle = document.querySelector('.catalog__aside-toggle');
     if (oldToggle) oldToggle.remove();
 

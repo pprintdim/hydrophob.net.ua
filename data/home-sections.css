@@ -166,6 +166,28 @@
 .desc-toggle.is-open svg{
     transform: rotate(180deg);
 }
+/* collapse опису на сторінці товару */
+.product__result-content.pui-collapsible{
+    position: relative;
+    max-height: 380px;
+    overflow: hidden;
+}
+.product__result-content.pui-collapsible::after{
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 70px;
+    background: linear-gradient(to bottom, rgba(255,255,255,0), #FFF);
+    pointer-events: none;
+}
+.product__result-content.pui-collapsible.is-open{
+    max-height: none;
+}
+.product__result-content.pui-collapsible.is-open::after{
+    display: none;
+}
 @media (max-width: 999px) {
     .hm-slider .hm-slide{
         flex-basis: calc((100% - 48px) / 3);

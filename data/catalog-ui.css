@@ -1,9 +1,15 @@
-/* Каталог знімка: висувні фільтри + сайдбар праворуч (категорії/популярні) */
+/* Каталог знімка: тулбар (фільтри/сортування/сітка) + drawer + сайдбар праворуч */
+.cui-toolbar{
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 24px;
+    flex-wrap: wrap;
+}
 .cui-filter-btn{
     display: inline-flex;
     align-items: center;
     gap: 10px;
-    margin-top: 24px;
     padding: 12px 20px;
     background: #161616;
     color: #FFF;
@@ -14,6 +20,98 @@
 .cui-filter-btn:hover{
     background: #A7C70E;
     color: #161616;
+}
+.cui-sort{
+    max-width: 260px;
+    padding: 10px 14px;
+    border: 1px solid #161616;
+    font-size: 14px;
+}
+.cui-grid-toggle{
+    display: flex;
+    gap: 8px;
+    margin-left: auto;
+}
+.cui-grid-btn{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    background: none;
+    border: 1px solid #161616;
+    color: #161616;
+    transition: all .3s ease;
+}
+.cui-grid-btn:hover{
+    border-color: #A7C70E;
+    color: #A7C70E;
+}
+.cui-grid-btn.is-active{
+    background: #161616;
+    color: #A7C70E;
+    border-color: #161616;
+}
+/* сітка по 2 */
+.catalog__content.cui-cols-2{
+    grid-template-columns: repeat(2, 1fr) !important;
+}
+/* групи-акордеони в drawer (початково згорнуті) */
+.cui-group{
+    border-bottom: 1px solid #E5E5E5;
+}
+.cui-group__btn{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+    padding: 16px 0;
+    background: none;
+    color: #161616;
+    font-size: 15px;
+    font-weight: 700;
+    text-transform: uppercase;
+    text-align: left;
+}
+.cui-group__btn svg{
+    color: #A7C70E;
+    transition: transform .3s ease;
+}
+.cui-group.is-open .cui-group__btn svg{
+    transform: rotate(180deg);
+}
+.cui-group__body{
+    padding: 0 0 16px;
+}
+.cui-group__body select,
+.cui-group__body .catalog__price,
+.cui-group__body .catalog__search{
+    width: 100%;
+    max-width: 100%;
+}
+/* пагінація по центру + текст результатів */
+.catalog__main .row,
+#json-pagination{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+.catalog__main .row .col-sm-6{
+    width: auto;
+    float: none;
+    text-align: center !important;
+}
+.catalog__main ul.pagination{
+    justify-content: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+.cui-results{
+    font-size: 13px;
+    color: #6b6b6b;
+    text-align: center;
 }
 /* drawer */
 .cui-overlay{

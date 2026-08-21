@@ -52,14 +52,17 @@
 
         var pag = document.getElementById('json-pagination');
         if (pag) {
-            if (pages <= 1) { pag.innerHTML = ''; return; }
+            var from = products.length ? (page - 1) * PER_PAGE + 1 : 0;
+            var to = Math.min(page * PER_PAGE, products.length);
+            var results = '<p class="cui-results">Показано з ' + from + ' по ' + to + ' із ' + products.length + ' (сторінок: ' + pages + ')</p>';
+            if (pages <= 1) { pag.innerHTML = results; return; }
             var html = '<ul class="pagination">';
             for (var i = 1; i <= pages; i++) {
                 html += i === page
                     ? '<li class="active"><a>' + i + '</a></li>'
                     : '<li><a href="#" data-page="' + i + '">' + i + '</a></li>';
             }
-            html += '</ul>';
+            html += '</ul>' + results;
             pag.innerHTML = html;
             pag.querySelectorAll('a[data-page]').forEach(function (a) {
                 a.addEventListener('click', function (e) {
