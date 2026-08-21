@@ -211,6 +211,22 @@
 .hm-faq__item.is-open{
     border-left: 3px solid #A7C70E;
 }
+/* Футер: блок документів */
+.footer__legal{
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+}
+.footer__legal a{
+    font-size: 13px;
+    color: rgba(255,255,255,.65);
+    transition: color .3s ease;
+}
+.footer__legal a:hover{
+    color: #A7C70E;
+}
 /* Hero-відеослайдер */
 .hero--slider .hero__slide{
     display: none;
@@ -228,6 +244,15 @@
 }
 .hero--slider .hero__descr{
     max-width: 560px;
+}
+.hero__note{
+    display: block;
+    margin: 14px 0 22px;
+    font-size: 15px;
+    color: rgba(255,255,255,.75);
+    border-left: 3px solid #A7C70E;
+    padding-left: 12px;
+    max-width: 480px;
 }
 .hero__sound{
     position: absolute;

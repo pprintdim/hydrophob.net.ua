@@ -1,35 +1,35 @@
 /* Кнопки-перелінковки між сторінками знімка — блок перед футером залежно від типу сторінки. */
 (function () {
-    var path = location.pathname.split('/').pop() || 'index.html';
+    var path = location.pathname.split('/').pop() || 'index.php';
     var links;
 
-    if (/^category-/.test(path)) {
+    if (/^catalog\.php/.test(path)) {
         links = [
-            { href: 'info-6.html', text: 'Доставка та оплата' },
-            { href: 'info-4.html', text: 'Про нас' },
-            { href: 'contact.html', text: 'Контакти' }
+            { href: 'delivery.php', text: 'Доставка та оплата' },
+            { href: 'about.php', text: 'Про нас' },
+            { href: 'contact.php', text: 'Контакти' }
         ];
-    } else if (/^product-/.test(path)) {
+    } else if (/^product\.php/.test(path)) {
         links = [
-            { href: 'category-33.html', text: 'До каталогу' },
-            { href: 'info-6.html', text: 'Доставка та оплата' },
-            { href: 'contact.html', text: 'Контакти' }
+            { href: 'catalog.php', text: 'До каталогу' },
+            { href: 'delivery.php', text: 'Доставка та оплата' },
+            { href: 'contact.php', text: 'Контакти' }
         ];
-    } else if (/^info-|^search/.test(path)) {
+    } else if (/^(about|privacy|terms|returns|delivery|search)\.php/.test(path)) {
         links = [
-            { href: 'category-33.html', text: 'Перейти в каталог' },
-            { href: 'index.html', text: 'На головну' },
-            { href: 'contact.html', text: 'Контакти' }
+            { href: 'catalog.php', text: 'Перейти в каталог' },
+            { href: 'index.php', text: 'На головну' },
+            { href: 'contact.php', text: 'Контакти' }
         ];
-    } else if (/^contact/.test(path)) {
+    } else if (/^contact\.php/.test(path)) {
         links = [
-            { href: 'category-33.html', text: 'Перейти в каталог' },
-            { href: 'info-6.html', text: 'Доставка та оплата' }
+            { href: 'catalog.php', text: 'Перейти в каталог' },
+            { href: 'delivery.php', text: 'Доставка та оплата' }
         ];
     } else if (/^(account|login|register|edit|address|order|wishlist)/.test(path)) {
         links = [
-            { href: 'category-33.html', text: 'До каталогу' },
-            { href: 'index.html', text: 'На головну' }
+            { href: 'catalog.php', text: 'До каталогу' },
+            { href: 'index.php', text: 'На головну' }
         ];
     } else {
         return; /* головна — там своя навігація секціями */

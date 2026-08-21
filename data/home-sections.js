@@ -6,7 +6,7 @@
     var VIEWED_KEY = 'hydro_viewed';
 
     /* --- трекер переглянутих: на сторінці товару пишемо id --- */
-    var pm = location.pathname.match(/product-(\d+)\.html/);
+    var pm = (location.pathname + location.search).match(/product\.php\?.*\bid=(\d+)/);
     if (pm) {
         try {
             var seen = JSON.parse(localStorage.getItem(VIEWED_KEY) || '[]');
@@ -50,7 +50,7 @@
     var badgesMap = {};
     function card(p, oldPrice) {
         var name = (p.translations['uk-ua'] || {}).name || '';
-        var href = 'product-' + p.product_id + '.html';
+        var href = 'product.php?id=' + p.product_id;
         var price = oldPrice
             ? '<span class="product__item-price-new">' + fmt(p.price) + '</span> <span class="product__item-price-old">' + fmt(oldPrice) + '</span>'
             : fmt(p.price);

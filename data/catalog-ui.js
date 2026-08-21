@@ -138,21 +138,21 @@
         var byId = {};
         products.forEach(function (p) { byId[p.product_id] = p; });
 
-        var current = (location.pathname.match(/category-(\d+)\.html/) || [])[1];
+        var current = new URLSearchParams(location.search).get('id');
 
         var catList = cats
             .filter(function (c) { return String(c.category_id) !== '33'; })
             .map(function (c) {
                 var name = (c.translations['uk-ua'] || {}).name || '';
                 var active = String(c.category_id) === current ? ' is-active' : '';
-                return '<a class="catalog__filter-item' + active + '" href="category-' + c.category_id + '.html">' + name + '</a>';
+                return '<a class="catalog__filter-item' + active + '" href="catalog.php?id=' + c.category_id + '">' + name + '</a>';
             }).join('');
 
         var popular = (home.popular || []).map(function (id) {
             var p = byId[id];
             if (!p) return '';
             var name = (p.translations['uk-ua'] || {}).name || '';
-            return '<a class="cui-pop" href="product-' + p.product_id + '.html">' +
+            return '<a class="cui-pop" href="product.php?id=' + p.product_id + '">' +
                 '<img class="cui-pop__img" src="' + cacheImg(p.image, 200) + '" alt="' + name.replace(/"/g, '&quot;') + '" loading="lazy" onerror="this.src=\'' + PROD + 'image/placeholder.png\'">' +
                 '<span class="cui-pop__meta"><span class="cui-pop__name">' + name + '</span>' +
                 '<span class="cui-pop__price">' + fmt(p.price) + '</span></span>' +
@@ -161,7 +161,7 @@
 
         aside.innerHTML =
             '<div class="catalog__filter"><p class="catalog__filter-title">Категорії</p>' +
-            '<div class="catalog__filter-list"><a class="catalog__filter-item' + (current === '33' ? ' is-active' : '') + '" href="category-33.html">Всі товари</a>' + catList + '</div></div>' +
+            '<div class="catalog__filter-list"><a class="catalog__filter-item' + (current === '33' || !current ? ' is-active' : '') + '" href="catalog.php">Всі товари</a>' + catList + '</div></div>' +
             (popular ? '<div class="catalog__filter"><p class="catalog__filter-title">Популярні товари</p>' +
                 '<div class="cui-pop-list">' + popular + '</div></div>' : '');
     }).catch(function () {});

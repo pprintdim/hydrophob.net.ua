@@ -1,3 +1,15 @@
+/* Єдиний стиль іконок перевізників */
+.dlv__card-icon{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    border: 2px solid #A7C70E;
+    border-radius: 50%;
+    color: #A7C70E;
+    flex-shrink: 0;
+}
 /* Додаткові секції сторінки доставки */
 .dx-steps{
     padding: 56px 0 0;

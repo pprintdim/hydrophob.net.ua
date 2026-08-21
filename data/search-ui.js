@@ -37,7 +37,7 @@
         ov.innerHTML = '<div class="su-box">' +
             '<button type="button" class="su-close" aria-label="Закрити">' +
             '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 6 12 12M18 6 6 18"/></svg></button>' +
-            '<form class="su-form" action="search.html" method="get">' +
+            '<form class="su-form" action="search.php" method="get">' +
             '<input class="su-input" type="text" name="q" placeholder="Пошук по каталогу..." autocomplete="off">' +
             '<button type="submit" class="su-submit" aria-label="Шукати">' +
             '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></button>' +
@@ -76,14 +76,14 @@
                     if (!norm(q)) { results.innerHTML = ''; allLink.hidden = true; return; }
                     results.innerHTML = found.slice(0, 6).map(function (p) {
                         var name = (p.translations['uk-ua'] || {}).name || '';
-                        return '<a class="su-item" href="product-' + p.product_id + '.html">' +
+                        return '<a class="su-item" href="product.php?id=' + p.product_id + '">' +
                             '<img src="' + cacheImg(p.image, 200) + '" alt="" loading="lazy">' +
                             '<span class="su-item__name">' + name + '</span>' +
                             '<span class="su-item__price">' + fmt(p.price) + '</span></a>';
                     }).join('') || '<p class="su-empty">Нічого не знайдено</p>';
                     allLink.hidden = found.length <= 6;
                     allLink.textContent = 'Всі результати (' + found.length + ')';
-                    allLink.href = 'search.html?q=' + encodeURIComponent(q);
+                    allLink.href = 'search.php?q=' + encodeURIComponent(q);
                 });
             }, 200);
         });
@@ -103,7 +103,7 @@
             if (title) title.textContent = q ? 'Знайдено: ' + found.length + ' за запитом «' + q + '»' : 'Введіть пошуковий запит';
             page.innerHTML = found.map(function (p) {
                 var name = (p.translations['uk-ua'] || {}).name || '';
-                var href = 'product-' + p.product_id + '.html';
+                var href = 'product.php?id=' + p.product_id;
                 return '<div class="product__item">' +
                     '<div class="product__item-media"><a class="product__item-image" href="' + href + '">' +
                     '<img src="' + cacheImg(p.image, 450) + '" alt="' + name.replace(/"/g, '&quot;') + '" loading="lazy"></a></div>' +

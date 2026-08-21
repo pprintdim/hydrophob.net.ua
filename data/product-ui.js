@@ -1,7 +1,7 @@
 /* Сторінка товару знімка: collapse опису + секції «З цим купують» / FAQ / «Переглянуті» (стилі hm-*). */
 (function () {
     var PROD = 'https://hydrophob.com.ua/';
-    var pm = location.pathname.match(/product-(\d+)\.html/);
+    var pm = (location.pathname + location.search).match(/product\.php\?.*\bid=(\d+)/);
     if (!pm) return;
     var currentId = parseInt(pm[1], 10);
 
@@ -54,7 +54,7 @@
     }
     function card(p) {
         var name = (p.translations['uk-ua'] || {}).name || '';
-        var href = 'product-' + p.product_id + '.html';
+        var href = 'product.php?id=' + p.product_id;
         return '<div class="product__item hm-slide">' +
             '<div class="product__item-media">' +
             '<a class="product__item-image" href="' + href + '"><img src="' + cacheImg(p.image, 450) + '" alt="' + name.replace(/"/g, '&quot;') + '" loading="lazy" onerror="this.src=\'' + PROD + 'image/placeholder.png\'"></a>' +
@@ -134,7 +134,7 @@
                 var tagBox = document.createElement('div');
                 tagBox.className = 'pui-tags';
                 tagBox.innerHTML = '<p class="pui-tags__title">Теги:</p>' + tags.map(function (t) {
-                    return '<a class="pui-tag" href="search.html?q=' + encodeURIComponent(t) + '">' + t + '</a>';
+                    return '<a class="pui-tag" href="search.php?q=' + encodeURIComponent(t) + '">' + t + '</a>';
                 }).join('');
                 left.appendChild(tagBox);
             }
