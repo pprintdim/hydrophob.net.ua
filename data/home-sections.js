@@ -97,14 +97,21 @@
         }).join('');
         html += sliderSection('recommended', 'Рекомендовані товари', recCards);
 
-        /* Галерея-плашки */
+        /* Галерея-плашки (фото/відео, відкриття в попапі) */
         if (home.gallery && home.gallery.length) {
             html += '<section class="hm-sec" id="gallery"><div class="container">' +
                 '<h2 class="hm-sec__title page-name">Hydrophob у дії</h2>' +
                 '<div class="hm-gallery">' +
                 home.gallery.map(function (g, i) {
+                    var item = typeof g === 'string' ? { type: 'image', src: g } : g;
                     var wide = (i % 4 === 0) ? ' hm-gallery__item--wide' : '';
-                    return '<div class="hm-gallery__item' + wide + '"><img src="' + g + '" alt="Hydrophob" loading="lazy"></div>';
+                    var thumb = item.type === 'video' ? (item.poster || '') : item.src;
+                    var play = item.type === 'video'
+                        ? '<span class="hm-gallery__play" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>'
+                        : '';
+                    return '<button type="button" class="hm-gallery__item' + wide + '" data-lightbox-type="' + item.type + '" data-lightbox-src="' + item.src + '"' + (item.poster ? ' data-lightbox-poster="' + item.poster + '"' : '') + '>' +
+                        '<img src="' + thumb + '" alt="Hydrophob" loading="lazy">' + play +
+                        '</button>';
                 }).join('') +
                 '</div></div></section>';
         }
@@ -154,6 +161,40 @@
                 var item = btn.parentNode;
                 var open = item.classList.toggle('is-open');
                 btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+            });
+        });
+
+        /* лайтбокс галереї (фото + відео) */
+        var lb = document.createElement('div');
+        lb.className = 'hm-lightbox';
+        lb.innerHTML = '<button type="button" class="hm-lightbox__close" aria-label="Закрити">' +
+            '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 6 12 12M18 6 6 18"/></svg>' +
+            '</button><div class="hm-lightbox__body"></div>';
+        document.body.appendChild(lb);
+        var lbBody = lb.querySelector('.hm-lightbox__body');
+
+        function closeLb() {
+            lb.classList.remove('is-open');
+            lbBody.innerHTML = '';
+            document.body.style.overflow = '';
+        }
+        lb.addEventListener('click', function (e) {
+            if (e.target === lb || e.target.closest('.hm-lightbox__close')) closeLb();
+        });
+        document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeLb(); });
+
+        mount.querySelectorAll('[data-lightbox-src]').forEach(function (el) {
+            el.addEventListener('click', function () {
+                var type = el.getAttribute('data-lightbox-type');
+                var src = el.getAttribute('data-lightbox-src');
+                if (type === 'video') {
+                    var poster = el.getAttribute('data-lightbox-poster') || '';
+                    lbBody.innerHTML = '<video src="' + src + '"' + (poster ? ' poster="' + poster + '"' : '') + ' controls autoplay playsinline></video>';
+                } else {
+                    lbBody.innerHTML = '<img src="' + src + '" alt="Hydrophob">';
+                }
+                lb.classList.add('is-open');
+                document.body.style.overflow = 'hidden';
             });
         });
     }).catch(function (e) {
