@@ -8,6 +8,15 @@
         {"product_id": 60, "old_price": 1900}
     ],
     "recommended": [74, 59, 67, 85, 105, 112, 135, 62],
+    "popular": [75, 58, 83, 112, 70, 106],
+    "gallery": [
+        "https://hydrophob.com.ua/image/catalog/nanokeramika/sprei/KOV09864%20%D0%BA%D0%BE%D0%BF%D1%96%D1%8F.jpg",
+        "https://hydrophob.com.ua/image/catalog/nanokeramika/Quick-drying/008.jpg",
+        "https://hydrophob.com.ua/image/catalog/nanokeramika/zaschitnoe-vysokoprochnoe-keramicheskoe/001.jpg",
+        "https://hydrophob.com.ua/image/catalog/nanokeramika/leather-interior/015.jpg",
+        "https://hydrophob.com.ua/image/catalog/nanokeramika/nabor/DSC06992.JPG",
+        "https://hydrophob.com.ua/image/catalog/nanokeramika/9%D0%9Dkeramika/006.jpg"
+    ],
     "faq": [
         {
             "q": "Що таке нанокераміка HYDROPHOB і як вона працює?",

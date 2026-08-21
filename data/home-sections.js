@@ -24,12 +24,14 @@
         desc.classList.add('is-collapsible');
         var btn = document.createElement('button');
         btn.type = 'button';
-        btn.className = 'desc-toggle btn-2';
-        btn.textContent = 'Показати більше';
+        btn.className = 'desc-toggle';
+        var arrow = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';
+        btn.innerHTML = '<span>Показати більше</span>' + arrow;
         desc.parentNode.insertBefore(btn, desc.nextSibling);
         btn.addEventListener('click', function () {
             var open = desc.classList.toggle('is-open');
-            btn.textContent = open ? 'Згорнути' : 'Показати більше';
+            btn.classList.toggle('is-open', open);
+            btn.querySelector('span').textContent = open ? 'Згорнути' : 'Показати більше';
             if (!open) desc.scrollIntoView({ behavior: 'smooth', block: 'start' });
         });
     }
@@ -94,6 +96,18 @@
             return p ? card(p) : '';
         }).join('');
         html += sliderSection('recommended', 'Рекомендовані товари', recCards);
+
+        /* Галерея-плашки */
+        if (home.gallery && home.gallery.length) {
+            html += '<section class="hm-sec" id="gallery"><div class="container">' +
+                '<h2 class="hm-sec__title page-name">Hydrophob у дії</h2>' +
+                '<div class="hm-gallery">' +
+                home.gallery.map(function (g, i) {
+                    var wide = (i % 4 === 0) ? ' hm-gallery__item--wide' : '';
+                    return '<div class="hm-gallery__item' + wide + '"><img src="' + g + '" alt="Hydrophob" loading="lazy"></div>';
+                }).join('') +
+                '</div></div></section>';
+        }
 
         /* FAQ */
         if (home.faq && home.faq.length) {
