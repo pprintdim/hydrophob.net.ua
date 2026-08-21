@@ -141,26 +141,70 @@ document.querySelectorAll('.header__lang-content .language-select').forEach(func
         </div>
     </header>
     <main class="main">
-        <section class="hero">
-            <div class="hero__video">
-                <video autoplay playsinline muted loop>
-                    <source src="https://hydrophob.com.ua/catalog/view/theme/default/vid/HYDROFOB.mp4" type="video/mp4">
-                </video>
-            </div>
-            <div class="container">
-                <div class="hero__inner">
-                    <h1 class="hero__title">Hydrophob</h1>
-                    <p class="hero__descr">
-													Захисне Nano покриття
-											</p>
-                    <a class="hero__btn btn" href="category-33.html"><p>Каталог</p>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="25" viewBox="0 0 24 25" fill="none">
-                            <path fill-rule="evenodd" clip-rule="evenodd" d="M7 18.5L13 12.5L7 6.5L9 4.5L17 12.5L9 20.5L7 18.5Z" fill="white"/>
-                        </svg>
-                    </a>
-                </div>
-            </div>
-        </section>
+        <section class="hero hero--slider" data-hero-slider>
+<div class="hero__slide is-active">
+    <div class="hero__video"><video src="media/porsche.mp4" poster="media/porsche-poster.jpg" autoplay muted playsinline preload="auto" data-hero-video></video></div>
+    <div class="container"><div class="hero__inner">
+        <h1 class="hero__title">Hydrophob</h1>
+        <p class="hero__descr">Захисне Nano покриття для вашого авто</p>
+        <a class="hero__btn btn" href="category-33.html"><p>Каталог</p>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="25" viewBox="0 0 24 25" fill="none">
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M7 18.5L13 12.5L7 6.5L9 4.5L17 12.5L9 20.5L7 18.5Z" fill="white"></path>
+    </svg></a>
+    </div></div>
+    <button type="button" class="hero__sound" data-hero-sound aria-label="Увімкнути звук">
+    <svg class="hero__sound-off" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4zM22 9l-6 6M16 9l6 6"/></svg>
+    <svg class="hero__sound-on" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" hidden><path d="M11 5 6 9H2v6h4l5 4zM15.54 8.46a5 5 0 0 1 0 7.07M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+</button>
+</div>
+<div class="hero__slide">
+    <div class="hero__video" data-video="media/moto.mp4"><img src="media/moto-poster.jpg" alt="" loading="lazy"></div>
+    <div class="container"><div class="hero__inner">
+        <h2 class="hero__title">Захист техніки</h2>
+        <p class="hero__descr">Гідрофобний захист для мото і будь-яких поверхонь</p>
+        <a class="hero__btn btn" href="category-33.html"><p>Каталог</p>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="25" viewBox="0 0 24 25" fill="none">
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M7 18.5L13 12.5L7 6.5L9 4.5L17 12.5L9 20.5L7 18.5Z" fill="white"></path>
+    </svg></a>
+    </div></div>
+    <button type="button" class="hero__sound" data-hero-sound aria-label="Увімкнути звук">
+    <svg class="hero__sound-off" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4zM22 9l-6 6M16 9l6 6"/></svg>
+    <svg class="hero__sound-on" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" hidden><path d="M11 5 6 9H2v6h4l5 4zM15.54 8.46a5 5 0 0 1 0 7.07M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+</button>
+</div>
+<div class="hero__slide">
+    <div class="hero__video" data-video="media/instruction.mp4"><img src="media/instruction-poster.jpg" alt="" loading="lazy"></div>
+    <div class="container"><div class="hero__inner">
+        <h2 class="hero__title">Просте нанесення</h2>
+        <p class="hero__descr">Наносиш — розтираєш мікрофіброю — готово</p>
+        <a class="hero__btn btn" href="category-33.html"><p>Каталог</p>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="25" viewBox="0 0 24 25" fill="none">
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M7 18.5L13 12.5L7 6.5L9 4.5L17 12.5L9 20.5L7 18.5Z" fill="white"></path>
+    </svg></a>
+    </div></div>
+    <button type="button" class="hero__sound" data-hero-sound aria-label="Увімкнути звук">
+    <svg class="hero__sound-off" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4zM22 9l-6 6M16 9l6 6"/></svg>
+    <svg class="hero__sound-on" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" hidden><path d="M11 5 6 9H2v6h4l5 4zM15.54 8.46a5 5 0 0 1 0 7.07M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+</button>
+</div>
+<div class="hero__slide">
+    <div class="hero__video" data-video="media/twerk.mp4"><img src="media/twerk-poster.jpg" alt="" loading="lazy"></div>
+    <div class="container"><div class="hero__inner">
+        <h2 class="hero__title">Ефект, який видно</h2>
+        <p class="hero__descr">Вода збирається в краплі та скочується з поверхні</p>
+        <a class="hero__btn btn" href="category-33.html"><p>Каталог</p>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="25" viewBox="0 0 24 25" fill="none">
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M7 18.5L13 12.5L7 6.5L9 4.5L17 12.5L9 20.5L7 18.5Z" fill="white"></path>
+    </svg></a>
+    </div></div>
+    <button type="button" class="hero__sound" data-hero-sound aria-label="Увімкнути звук">
+    <svg class="hero__sound-off" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4zM22 9l-6 6M16 9l6 6"/></svg>
+    <svg class="hero__sound-on" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" hidden><path d="M11 5 6 9H2v6h4l5 4zM15.54 8.46a5 5 0 0 1 0 7.07M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+</button>
+</div>
+<div class="hero__dots"><button type="button" class="hero__dot is-active" data-hero-dot="0" aria-label="Слайд 1"></button><button type="button" class="hero__dot" data-hero-dot="1" aria-label="Слайд 2"></button><button type="button" class="hero__dot" data-hero-dot="2" aria-label="Слайд 3"></button><button type="button" class="hero__dot" data-hero-dot="3" aria-label="Слайд 4"></button></div>
+<div class="hero__loader" data-hero-loader hidden><span></span></div>
+</section>
         
     <section class="seo-desc"><div class="container">
 <div class="desc">
@@ -307,4 +351,5 @@ document.querySelectorAll('.header__lang-content .language-select').forEach(func
 <script src="data/home-sections.js"></script>
 <script src="data/search-ui.js"></script>
 <script src="data/crosslinks.js"></script>
+<script src="data/hero-slider.js"></script>
 </body></html>

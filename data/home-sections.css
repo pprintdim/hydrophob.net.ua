@@ -211,6 +211,91 @@
 .hm-faq__item.is-open{
     border-left: 3px solid #A7C70E;
 }
+/* Hero-відеослайдер */
+.hero--slider .hero__slide{
+    display: none;
+    position: relative;
+    z-index: 1;
+}
+.hero--slider .hero__slide.is-active{
+    display: block;
+}
+.hero--slider .hero__video img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+.hero--slider .hero__descr{
+    max-width: 560px;
+}
+.hero__sound{
+    position: absolute;
+    right: 32px;
+    bottom: 32px;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(22,22,22,.75);
+    color: #FFF;
+    transition: background .3s ease, color .3s ease;
+}
+.hero__sound:hover{
+    background: #A7C70E;
+    color: #161616;
+}
+.hero__dots{
+    position: absolute;
+    left: 50%;
+    bottom: 24px;
+    transform: translateX(-50%);
+    z-index: 3;
+    display: flex;
+    gap: 10px;
+}
+.hero__dot{
+    width: 34px;
+    height: 4px;
+    background: rgba(255,255,255,.35);
+    transition: background .3s ease;
+}
+.hero__dot.is-active{
+    background: #A7C70E;
+}
+.hero__loader{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 4;
+}
+.hero__loader span{
+    display: block;
+    width: 44px;
+    height: 44px;
+    border: 4px solid rgba(255,255,255,.25);
+    border-top-color: #A7C70E;
+    border-radius: 50%;
+    animation: heroSpin 0.8s linear infinite;
+}
+@keyframes heroSpin{
+    to{ transform: rotate(360deg); }
+}
+.hero--slider{
+    position: relative;
+}
+@media (max-width: 767px) {
+    .hero__sound{
+        right: 16px;
+        bottom: 60px;
+        width: 42px;
+        height: 42px;
+    }
+}
 /* Вітальна сторінка (перший візит) */
 .welcome{
     padding: 72px 0 96px;
