@@ -40,11 +40,7 @@ $pageLangRedirect = $pageLangRedirect ?? 'https://hydrophob.com.ua/index.php?rou
 <a href="wishlist.php" class="header__account header__wishlist" title="Вибране"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 5.6a5.2 5.2 0 0 0-7.4 0l-1.4 1.4-1.4-1.4a5.2 5.2 0 1 0-7.4 7.4l8.8 8.8 8.8-8.8a5.2 5.2 0 0 0 0-7.4z"/></svg></a>
 
                         <div class="header__search" id="search">
-                            <dic class="header__search-form">
-                                <input class="header__search-input" type="text" name="search" value="" placeholder="Пошук" required>
-                                <button class="header__search-btn" type="submit"></button>
-                            </dic>
-                            <button class="header__search-open"></button>
+                            <button class="header__search-open" aria-label="Пошук"></button>
                         </div>
 						<button class="header__busket" data-loading-text=""></button>
 <section id="cart"  class="busket">

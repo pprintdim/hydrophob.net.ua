@@ -37,17 +37,16 @@
         ov.innerHTML = '<div class="su-box">' +
             '<button type="button" class="su-close" aria-label="Закрити">' +
             '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 6 12 12M18 6 6 18"/></svg></button>' +
-            '<form class="su-form" action="search.php" method="get">' +
-            '<input class="su-input" type="text" name="q" placeholder="Пошук по каталогу..." autocomplete="off">' +
-            '<button type="submit" class="su-submit" aria-label="Шукати">' +
-            '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></button>' +
+            '<form class="header__search-form su-native" action="search.php" method="get">' +
+            '<input class="header__search-input su-input-native" type="text" name="q" placeholder="Пошук" autocomplete="off" required>' +
+            '<button class="header__search-btn" type="submit" aria-label="Шукати"></button>' +
             '</form>' +
             '<div class="su-results"></div>' +
             '<a class="su-all" href="#" hidden>Всі результати</a>' +
             '</div>';
         document.body.appendChild(ov);
 
-        var input = ov.querySelector('.su-input');
+        var input = ov.querySelector('.su-input-native');
         var results = ov.querySelector('.su-results');
         var allLink = ov.querySelector('.su-all');
 

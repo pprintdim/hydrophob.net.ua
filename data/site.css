@@ -14,3 +14,62 @@
 .footer__legal a:hover{
     color: #A7C70E;
 }
+/* Контакти: лід, месенджери, блок допомоги */
+.contacts__lead{
+    max-width: 640px;
+    font-size: 15px;
+    line-height: 1.7;
+    margin: 16px 0 28px;
+}
+.contacts__msgs{
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+.contacts__msg{
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 20px;
+    border: 2px solid #A7C70E;
+    color: #FFF;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    transition: all .3s ease;
+}
+.contacts__msg svg{
+    color: #A7C70E;
+    transition: color .3s ease;
+}
+.contacts__msg:hover{
+    background: #A7C70E;
+    color: #161616;
+}
+.contacts__msg:hover svg{
+    color: #161616;
+}
+.contacts__help{
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-top: 32px;
+    max-width: 560px;
+}
+.contacts__help-item{
+    padding: 16px 20px;
+    border-left: 3px solid #A7C70E;
+    background: rgba(255,255,255,.04);
+}
+.contacts__help-name{
+    font-size: 15px;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
+.contacts__help-text{
+    font-size: 14px;
+    line-height: 1.6;
+    opacity: .8;
+}

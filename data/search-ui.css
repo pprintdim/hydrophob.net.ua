@@ -38,6 +38,25 @@
     position: relative;
     display: flex;
 }
+/* оригінальна форма пошуку з шапки — по центру оверлея */
+.su-box .header__search-form{
+    position: relative;
+    display: flex;
+    width: 100%;
+}
+.su-box .header__search-input{
+    width: 100%;
+    padding: 16px 64px 16px 18px;
+    font-size: 17px;
+    background: #FFF;
+}
+.su-box .header__search-btn{
+    position: absolute;
+    top: 1px;
+    right: 0;
+    bottom: 1px;
+    width: 56px;
+}
 .su-input{
     width: 100%;
     padding: 18px 64px 18px 20px;
