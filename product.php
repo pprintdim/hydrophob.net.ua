@@ -48,9 +48,7 @@ $pageTitle = $metaTitle;
 $pageDescription = $metaDescription;
 $pageKeywords = hp_t($product, 'tag');
 $pageCanonical = 'product.php?id=' . $productId;
-$pageExtraHead = '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">' . "\n" .
-    '<link rel="stylesheet" href="data/home-sections.css">' . "\n" .
-    '<link rel="stylesheet" href="data/search-ui.css">';
+$pageExtraHead = '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">';
 $pageLangRedirect = 'https://hydrophob.com.ua/index.php?route=product/product&product_id=' . $productId;
 
 require __DIR__ . '/sections/document-start.php';
@@ -254,8 +252,4 @@ function addToCart() {
 <script src="https://hydrophob.com.ua/catalog/view/theme/default/js/product.js" type="text/javascript"></script>
 <?php
 require __DIR__ . '/sections/footer.php';
-$pageExtraFoot = '<script src="data/home-sections.js"></script>' . "\n" .
-    '<script src="data/product-ui.js"></script>' . "\n" .
-    '<script src="data/search-ui.js"></script>' . "\n" .
-    '<script src="data/crosslinks.js"></script>';
 require __DIR__ . '/sections/document-end.php';

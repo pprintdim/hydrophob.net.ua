@@ -2,7 +2,6 @@
 require_once __DIR__ . '/helper/general.php';
 
 $pageTitle = 'Доставка та оплата';
-$pageExtraHead = '<link rel="stylesheet" href="data/delivery-extra.css">';
 
 require __DIR__ . '/sections/document-start.php';
 require __DIR__ . '/sections/header.php';

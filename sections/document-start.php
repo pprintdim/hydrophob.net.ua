@@ -37,7 +37,9 @@ $pageBodyClass = $pageBodyClass ?? 'body';
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 <link href="https://hydrophob.com.ua/catalog/view/theme/default/stylesheet/stylesheet.css?v=20260821" rel="stylesheet">
-<link rel="stylesheet" href="data/site.css">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/pages.css">
+<link rel="stylesheet" href="css/media.css">
 <script src="https://hydrophob.com.ua/catalog/view/javascript/common.js" type="text/javascript"></script>
 <script src="https://hydrophob.com.ua/catalog/view/theme/default/js/checkout.js" type="text/javascript"></script>
 <?php if ($pageCanonical !== ''): ?>

@@ -1,0 +1,599 @@
+/* === catalog-ui.css === */
+/* Каталог знімка: тулбар (фільтри/сортування/сітка) + drawer + сайдбар праворуч */
+.cui-toolbar{
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 24px;
+    flex-wrap: wrap;
+}
+.cui-filter-btn{
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 20px;
+    background: #161616;
+    color: #FFF;
+    font-size: 14px;
+    text-transform: uppercase;
+    transition: background .3s ease, color .3s ease;
+}
+.cui-filter-btn:hover{
+    background: #A7C70E;
+    color: #161616;
+}
+.cui-sort{
+    max-width: 260px;
+    padding: 10px 14px;
+    border: 1px solid #161616;
+    font-size: 14px;
+}
+.cui-grid-toggle{
+    display: flex;
+    gap: 8px;
+    margin-left: auto;
+}
+.cui-grid-btn{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    background: none;
+    border: 1px solid #161616;
+    color: #161616;
+    transition: all .3s ease;
+}
+.cui-grid-btn:hover{
+    border-color: #A7C70E;
+    color: #A7C70E;
+}
+.cui-grid-btn.is-active{
+    background: #161616;
+    color: #A7C70E;
+    border-color: #161616;
+}
+/* сітка по 2 */
+.catalog__content.cui-cols-2{
+    grid-template-columns: repeat(2, 1fr) !important;
+}
+/* групи-акордеони в drawer (початково згорнуті) */
+.cui-group{
+    border-bottom: 1px solid #E5E5E5;
+}
+.cui-group__btn{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+    padding: 16px 0;
+    background: none;
+    color: #161616;
+    font-size: 15px;
+    font-weight: 700;
+    text-transform: uppercase;
+    text-align: left;
+}
+.cui-group__btn svg{
+    color: #A7C70E;
+    transition: transform .3s ease;
+}
+.cui-group.is-open .cui-group__btn svg{
+    transform: rotate(180deg);
+}
+.cui-group__body{
+    padding: 0 0 16px;
+}
+.cui-group__body select,
+.cui-group__body .catalog__price,
+.cui-group__body .catalog__search{
+    width: 100%;
+    max-width: 100%;
+}
+/* пагінація по центру + текст результатів */
+.catalog__main .row,
+#json-pagination{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+.catalog__main .row .col-sm-6{
+    width: auto;
+    float: none;
+    text-align: center !important;
+}
+.catalog__main ul.pagination{
+    justify-content: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+.cui-results{
+    font-size: 13px;
+    color: #6b6b6b;
+    text-align: center;
+}
+/* drawer */
+.cui-overlay{
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.5);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .3s ease;
+    z-index: 90;
+}
+.cui-drawer{
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 360px;
+    max-width: 92vw;
+    background: #FFF;
+    transform: translateX(100%);
+    transition: transform .3s ease;
+    z-index: 91;
+    display: flex;
+    flex-direction: column;
+}
+.cui-drawer-open .cui-overlay{
+    opacity: 1;
+    pointer-events: auto;
+}
+.cui-drawer-open .cui-drawer{
+    transform: translateX(0);
+}
+.cui-drawer__head{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    background: #161616;
+    color: #FFF;
+}
+.cui-drawer__head p{
+    font-size: 16px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+.cui-drawer__close{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: none;
+    color: #FFF;
+    transition: color .3s ease;
+}
+.cui-drawer__close:hover{
+    color: #A7C70E;
+}
+.cui-drawer__body{
+    padding: 24px;
+    overflow-y: auto;
+}
+/* фільтри всередині drawer — вертикально */
+.cui-drawer__body .catalog__filters{
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+    margin: 0;
+}
+.cui-drawer__body .catalog__filters select,
+.cui-drawer__body .catalog__price,
+.cui-drawer__body .catalog__search{
+    width: 100%;
+    max-width: 100%;
+}
+/* сайдбар праворуч */
+.cui-body{
+    grid-template-columns: 1fr 280px;
+}
+.cui-body .cui-aside{
+    order: 2;
+    display: flex;
+}
+.cui-body .catalog__main{
+    order: 1;
+}
+/* популярні товари в сайдбарі */
+.cui-pop-list{
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+.cui-pop{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.cui-pop__img{
+    flex-shrink: 0;
+    width: 56px;
+    height: 56px;
+    object-fit: cover;
+    background: #f4f4f4;
+}
+.cui-pop__meta{
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+.cui-pop__name{
+    font-size: 13px;
+    line-height: 1.35;
+    color: #202222;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    transition: color .3s ease;
+}
+.cui-pop:hover .cui-pop__name{
+    color: #A7C70E;
+}
+.cui-pop__price{
+    font-size: 14px;
+    font-weight: 700;
+    color: #161616;
+}
+
+/* === delivery-extra.css === */
+/* Єдиний стиль іконок перевізників */
+.dlv__card-icon{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    border: 2px solid #A7C70E;
+    border-radius: 50%;
+    color: #A7C70E;
+    flex-shrink: 0;
+}
+/* Додаткові секції сторінки доставки */
+.dx-steps{
+    padding: 56px 0 0;
+}
+.dx-steps__title,
+.dx-cta__title{
+    margin-bottom: 32px;
+}
+.dx-steps__grid{
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+}
+.dx-step{
+    position: relative;
+    padding: 28px 24px 24px;
+    border: 1px solid #E0E0E0;
+}
+.dx-step__num{
+    position: absolute;
+    top: -18px;
+    left: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: #A7C70E;
+    color: #161616;
+    font-size: 16px;
+    font-weight: 700;
+}
+.dx-step__name{
+    font-size: 16px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #121212;
+    margin-bottom: 8px;
+}
+.dx-step__text{
+    font-size: 14px;
+    line-height: 1.6;
+    color: #202222;
+}
+.dx-perks{
+    margin-top: 56px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    background: #161616;
+}
+.dx-perk{
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 24px;
+    border-right: 1px solid rgba(255,255,255,.08);
+}
+.dx-perk:last-child{
+    border-right: none;
+}
+.dx-perk svg{
+    flex-shrink: 0;
+    color: #A7C70E;
+}
+.dx-perk__text{
+    font-size: 14px;
+    line-height: 1.45;
+    color: #FFF;
+}
+.dx-cta{
+    margin: 56px 0 72px;
+    padding: 48px 32px;
+    background: #161616;
+    text-align: center;
+}
+.dx-cta__name{
+    font-size: 24px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #FFF;
+    margin-bottom: 8px;
+}
+.dx-cta__text{
+    font-size: 15px;
+    color: rgba(255,255,255,.8);
+    margin-bottom: 24px;
+}
+.dx-cta__row{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+.dx-cta__phone{
+    font-size: 22px;
+    font-weight: 700;
+    color: #A7C70E;
+}
+
+/* === legal.css === */
+/* Юридичні сторінки */
+.legal{
+    padding: 48px 0 72px;
+}
+.legal__grid{
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 48px;
+    margin-top: 24px;
+}
+.legal__aside{
+    align-self: start;
+    position: sticky;
+    top: 24px;
+}
+.legal__aside-title{
+    font-size: 15px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #121212;
+    padding-bottom: 12px;
+    margin-bottom: 12px;
+    border-bottom: 1px solid #121212;
+}
+.legal__menu{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.legal__menu-link{
+    font-size: 14px;
+    color: #202222;
+    transition: color .3s ease;
+}
+.legal__menu-link:hover,
+.legal__menu-link.is-active{
+    color: #A7C70E;
+}
+.legal__body{
+    max-width: 820px;
+}
+.legal__updated{
+    font-size: 13px;
+    color: #6b6b6b;
+    margin-bottom: 8px;
+}
+.legal__title{
+    font-size: 28px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #121212;
+    margin-bottom: 16px;
+}
+.legal__title::after{
+    content: '';
+    display: block;
+    width: 64px;
+    height: 4px;
+    background: #A7C70E;
+    margin-top: 14px;
+}
+.legal__lead{
+    font-size: 16px;
+    line-height: 1.7;
+    color: #202222;
+    margin-bottom: 24px;
+}
+.legal__subtitle{
+    font-size: 18px;
+    font-weight: 700;
+    color: #121212;
+    margin: 28px 0 10px;
+}
+.legal__p{
+    font-size: 15px;
+    line-height: 1.75;
+    color: #202222;
+    margin-bottom: 12px;
+}
+.legal__list{
+    list-style: none;
+    padding: 0;
+    margin: 0 0 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.legal__list li{
+    position: relative;
+    padding-left: 22px;
+    font-size: 15px;
+    line-height: 1.6;
+    color: #202222;
+}
+.legal__list li::before{
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 8px;
+    width: 9px;
+    height: 9px;
+    background: #A7C70E;
+}
+
+/* === account-ui.css === */
+/* account-ui.css — доповнення для статичних сторінок особистого кабінету (html.hydrophob.com.ua).
+   Базові класи account__*, product__item*, btn-2 вже є в прод stylesheet.css —
+   тут лише те, чого там немає: вхід за одноразовим кодом і статус-бейджі замовлень.
+   Палітра: #161616 / #121212 (чорний), #A7C70E (зелений акцент), білий. Без синього. */
+
+/* ===== Вхід за одноразовим кодом ===== */
+.account__otp{
+    margin-top: 24px;
+}
+.account__otp-desc{
+    margin-top: 8px;
+    max-width: 640px;
+    opacity: .7;
+    line-height: 1.5;
+}
+.account__otp-steps{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    margin: 24px 0;
+}
+.account__otp-step-badge{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    opacity: .35;
+    transition: opacity .3s ease, color .3s ease;
+}
+.account__otp-step-badge.is-active{
+    opacity: 1;
+    color: #A7C70E;
+}
+.account__otp-step-num{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: 1px solid currentColor;
+    font-size: 12px;
+    flex-shrink: 0;
+}
+.account__otp-panel{
+    display: none;
+}
+.account__otp-panel.is-active{
+    display: block;
+}
+.account__otp-hint{
+    margin-bottom: 16px;
+    font-size: 14px;
+    opacity: .7;
+}
+.account__otp-hint b{
+    color: #161616;
+    opacity: 1;
+}
+.account__otp-code-input{
+    max-width: 240px;
+    font-size: 26px;
+    font-weight: 700;
+    text-align: center;
+    letter-spacing: 10px;
+}
+.account__otp-resend{
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #161616;
+    text-decoration: underline;
+    cursor: pointer;
+    transition: color .3s ease;
+}
+.account__otp-resend:disabled{
+    opacity: .4;
+    cursor: default;
+    text-decoration: none;
+}
+.account__otp-resend:not(:disabled):hover{
+    color: #A7C70E;
+}
+.account__otp-done{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 20px;
+    border: 1px solid #A7C70E;
+    font-weight: 600;
+}
+.account__otp-done svg{
+    flex-shrink: 0;
+    color: #A7C70E;
+}
+.account__otp-divider{
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 32px 0;
+    text-transform: uppercase;
+    font-size: 12px;
+    font-weight: 700;
+    opacity: .5;
+}
+.account__otp-divider::before,
+.account__otp-divider::after{
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #161616;
+    opacity: .15;
+}
+
+/* ===== Статуси замовлень ===== */
+.account__status--success{
+    background: #A7C70E;
+    border-color: #A7C70E;
+    color: #161616;
+}
+.account__status--pending{
+    background: #FFF;
+    border-color: #161616;
+    color: #161616;
+}
+.account__status--cancelled{
+    background: #161616;
+    border-color: #161616;
+    color: #FFF;
+}

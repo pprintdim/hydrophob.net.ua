@@ -8,7 +8,6 @@ if (!$doc) {
 }
 $pageTitle = $doc['meta_title'];
 $pageDescription = $doc['meta_description'];
-$pageExtraHead = '<link rel="stylesheet" href="data/legal.css">';
 
 require __DIR__ . '/document-start.php';
 require __DIR__ . '/header.php';

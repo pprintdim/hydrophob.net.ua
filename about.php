@@ -2,7 +2,6 @@
 require_once __DIR__ . '/helper/general.php';
 
 $pageTitle = 'Про нас';
-$pageExtraHead = '<link rel="stylesheet" href="data/search-ui.css">';
 
 require __DIR__ . '/sections/document-start.php';
 require __DIR__ . '/sections/header.php';
@@ -35,5 +34,4 @@ require __DIR__ . '/sections/header.php';
 	</main>
 <?php
 require __DIR__ . '/sections/footer.php';
-$pageExtraFoot = '<script src="data/search-ui.js"></script>\n<script src="data/crosslinks.js"></script>';
 require __DIR__ . '/sections/document-end.php';

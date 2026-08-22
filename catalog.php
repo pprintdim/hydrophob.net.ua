@@ -47,7 +47,6 @@ $canonicalId = $categoryId ?? 33;
 $pageCanonical = 'catalog.php' . ($canonicalId !== null ? '?id=' . $canonicalId : '');
 
 $pageTitle = $categoryName;
-$pageExtraHead = '<link rel="stylesheet" href="data/catalog-ui.css">' . "\n" . '<link rel="stylesheet" href="data/search-ui.css">';
 $pageLangRedirect = 'https://hydrophob.com.ua/index.php?route=product/category' . ($category ? '&path=' . $categoryId : '');
 
 require __DIR__ . '/sections/document-start.php';
@@ -192,7 +191,4 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 <?php
 require __DIR__ . '/sections/footer.php';
-$pageExtraFoot = '<script src="data/catalog-ui.js"></script>' . "\n" .
-    '<script src="data/search-ui.js"></script>' . "\n" .
-    '<script src="data/crosslinks.js"></script>';
 require __DIR__ . '/sections/document-end.php';

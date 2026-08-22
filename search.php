@@ -25,5 +25,4 @@ require __DIR__ . '/sections/header.php';
 
 <?php
 require __DIR__ . '/sections/footer.php';
-$pageExtraFoot = '<script src="data/search-ui.js"></script>' . "\n" . '<script src="data/crosslinks.js"></script>';
 require __DIR__ . '/sections/document-end.php';
