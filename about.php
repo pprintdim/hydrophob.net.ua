@@ -21,7 +21,7 @@ require __DIR__ . '/sections/header.php';
                             </p>
                         </div>
                         <div class="about__image">
-                            <img src="https://hydrophob.com.ua/image/catalog/about.webp">
+                            <img src="https://hydrophob.net.ua/image/catalog/about.webp">
                         </div>
                     </div>
 

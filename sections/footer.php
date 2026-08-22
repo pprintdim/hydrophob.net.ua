@@ -3,7 +3,7 @@
             <div class="footer__inner">
                 <div class="footer__box">
                     <a class="header__logo footer__logo" href="index.php">
-                        <img src="https://hydrophob.com.ua/catalog/view/theme/default/img/logo.svg" alt="">
+                        <img src="https://hydrophob.net.ua/catalog/view/theme/default/img/logo.svg" alt="">
                     </a>
                     <div class="footer__block">
                         <p class="footer__descr"><?= hp_e(HP_ADDRESS) ?></p>

@@ -49,7 +49,7 @@ $pageDescription = $metaDescription;
 $pageKeywords = hp_t($product, 'tag');
 $pageCanonical = 'product.php?id=' . $productId;
 $pageExtraHead = '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">';
-$pageLangRedirect = 'https://hydrophob.com.ua/index.php?route=product/product&product_id=' . $productId;
+$pageLangRedirect = 'https://hydrophob.net.ua/index.php?route=product/product&product_id=' . $productId;
 
 require __DIR__ . '/sections/document-start.php';
 require __DIR__ . '/sections/header.php';
@@ -143,7 +143,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         optionInputs.forEach(el => fd.append(el.name, el.value));
 
-        fetch('https://hydrophob.com.ua/index.php?route=product/product/updatePrice&product_id=' + product_id, {
+        fetch('https://hydrophob.net.ua/index.php?route=product/product/updatePrice&product_id=' + product_id, {
             method: 'POST',
             body: fd,
             headers: { 'X-Requested-With': 'XMLHttpRequest' }
@@ -192,7 +192,7 @@ function addToCart() {
     });
 
     $.ajax({
-        url: 'https://hydrophob.com.ua/index.php?route=checkout/cart/add',
+        url: 'https://hydrophob.net.ua/index.php?route=checkout/cart/add',
         type: 'post',
         data: { product_id: product_id, quantity: quantity, option: options },
         dataType: 'json',
@@ -207,7 +207,7 @@ function addToCart() {
                     $('#cart > button').html('<span id="cart-total"><i class="fa fa-shopping-cart"></i> ' + json['total'] + '</span>');
                 }, 100);
                 $('html, body').animate({ scrollTop: 0 }, 'slow');
-                $('#cart > ul').load('https://hydrophob.com.ua/index.php?route=common/cart/info ul li');
+                $('#cart > ul').load('https://hydrophob.net.ua/index.php?route=common/cart/info ul li');
             }
         },
         error: function(xhr, ajaxOptions, thrownError) {
@@ -249,7 +249,7 @@ function addToCart() {
 
     </main>
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-<script src="https://hydrophob.com.ua/catalog/view/theme/default/js/product.js" type="text/javascript"></script>
+<script src="https://hydrophob.net.ua/catalog/view/theme/default/js/product.js" type="text/javascript"></script>
 <?php
 require __DIR__ . '/sections/footer.php';
 require __DIR__ . '/sections/document-end.php';

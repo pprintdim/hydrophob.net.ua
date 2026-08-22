@@ -31,17 +31,17 @@ $pageBodyClass = $pageBodyClass ?? 'body';
 <?php if ($pageKeywords !== ''): ?>
 <meta name="keywords" content="<?= hp_e($pageKeywords) ?>" />
 <?php endif; ?>
-<script src="https://hydrophob.com.ua/catalog/view/javascript/jquery/jquery-3.7.1.min.js" type="text/javascript"></script>
-<script src="https://hydrophob.com.ua/catalog/view/javascript/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+<script src="https://hydrophob.net.ua/catalog/view/javascript/jquery/jquery-3.7.1.min.js" type="text/javascript"></script>
+<script src="https://hydrophob.net.ua/catalog/view/javascript/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-<link href="https://hydrophob.com.ua/catalog/view/theme/default/stylesheet/stylesheet.css?v=20260821" rel="stylesheet">
+<link href="https://hydrophob.net.ua/catalog/view/theme/default/stylesheet/stylesheet.css?v=20260821" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 <link rel="stylesheet" href="css/pages.css">
 <link rel="stylesheet" href="css/media.css">
-<script src="https://hydrophob.com.ua/catalog/view/javascript/common.js" type="text/javascript"></script>
-<script src="https://hydrophob.com.ua/catalog/view/theme/default/js/checkout.js" type="text/javascript"></script>
+<script src="https://hydrophob.net.ua/catalog/view/javascript/common.js" type="text/javascript"></script>
+<script src="https://hydrophob.net.ua/catalog/view/theme/default/js/checkout.js" type="text/javascript"></script>
 <?php if ($pageCanonical !== ''): ?>
 <link href="<?= hp_e($pageCanonical) ?>" rel="canonical" />
 <?php endif; ?>

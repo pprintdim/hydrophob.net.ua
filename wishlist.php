@@ -23,7 +23,7 @@ require __DIR__ . '/sections/header.php';
                         <div class="account__wishlist">
                             <div class="product__item">
                                 <a class="product__item-image" href="product.php?id=75">
-                                    <img src="https://hydrophob.com.ua/image/cache/catalog/nanokeramika/sprei/KOV00316%20%D0%BA%D0%BE%D0%BF%D1%96%D1%8F%20(1)-450x450.jpg" alt="Керамічний гідрофобний детейл спрей-герметик 500 мл" title="Керамічний гідрофобний детейл спрей-герметик 500 мл">
+                                    <img src="https://hydrophob.net.ua/image/cache/catalog/nanokeramika/sprei/KOV00316%20%D0%BA%D0%BE%D0%BF%D1%96%D1%8F%20(1)-450x450.jpg" alt="Керамічний гідрофобний детейл спрей-герметик 500 мл" title="Керамічний гідрофобний детейл спрей-герметик 500 мл">
                                 </a>
                                 <div class="product__item-content">
                                     <a class="product__item-title" href="product.php?id=75">
@@ -43,7 +43,7 @@ require __DIR__ . '/sections/header.php';
                             </div>
                             <div class="product__item">
                                 <a class="product__item-image" href="product.php?id=67">
-                                    <img src="https://hydrophob.com.ua/image/cache/catalog/nanokeramika/Quick-drying/007-450x450.jpg" alt="Знежирювач. Швидковисихаючий активатор нанокераміки" title="Знежирювач. Швидковисихаючий активатор нанокераміки">
+                                    <img src="https://hydrophob.net.ua/image/cache/catalog/nanokeramika/Quick-drying/007-450x450.jpg" alt="Знежирювач. Швидковисихаючий активатор нанокераміки" title="Знежирювач. Швидковисихаючий активатор нанокераміки">
                                 </a>
                                 <div class="product__item-content">
                                     <a class="product__item-title" href="product.php?id=67">
@@ -63,7 +63,7 @@ require __DIR__ . '/sections/header.php';
                             </div>
                             <div class="product__item">
                                 <a class="product__item-image" href="product.php?id=58">
-                                    <img src="https://hydrophob.com.ua/image/cache/catalog/nanokeramika/zaschitnoe-vysokoprochnoe-keramicheskoe/014-450x450.jpg" alt="Захисне керамічне покриття високої тривалості 10Н" title="Захисне керамічне покриття високої тривалості 10Н">
+                                    <img src="https://hydrophob.net.ua/image/cache/catalog/nanokeramika/zaschitnoe-vysokoprochnoe-keramicheskoe/014-450x450.jpg" alt="Захисне керамічне покриття високої тривалості 10Н" title="Захисне керамічне покриття високої тривалості 10Н">
                                 </a>
                                 <div class="product__item-content">
                                     <a class="product__item-title" href="product.php?id=58">
@@ -83,7 +83,7 @@ require __DIR__ . '/sections/header.php';
                             </div>
                             <div class="product__item">
                                 <a class="product__item-image" href="product.php?id=68">
-                                    <img src="https://hydrophob.com.ua/image/cache/catalog/nanokeramika/Microfiber/015-450x450.jpg" alt="Мікрофібра для поліровки" title="Мікрофібра для поліровки">
+                                    <img src="https://hydrophob.net.ua/image/cache/catalog/nanokeramika/Microfiber/015-450x450.jpg" alt="Мікрофібра для поліровки" title="Мікрофібра для поліровки">
                                 </a>
                                 <div class="product__item-content">
                                     <a class="product__item-title" href="product.php?id=68">

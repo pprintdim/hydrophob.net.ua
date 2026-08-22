@@ -10,19 +10,19 @@
                     <div class="variants__block">
                         <a class="variants__item" href="catalog.php?id=59">
                             <div class="variants__item-image">
-                                <img src="https://hydrophob.com.ua/catalog/view/theme/default/img/catalog/1.jpg" alt="">
+                                <img src="https://hydrophob.net.ua/catalog/view/theme/default/img/catalog/1.jpg" alt="">
                             </div>
                             <h3 class="variants__item-title">Нанокераміка</h3>
                         </a>
                         <a class="variants__item" href="catalog.php?id=61">
                             <div class="variants__item-image">
-                                <img src="https://hydrophob.com.ua/catalog/view/theme/default/img/catalog/2.jpg" alt="">
+                                <img src="https://hydrophob.net.ua/catalog/view/theme/default/img/catalog/2.jpg" alt="">
                             </div>
                             <h3 class="variants__item-title">Захист авто</h3>
                         </a>
                         <a class="variants__item" href="catalog.php?id=60">
                             <div class="variants__item-image">
-                                <img src="https://hydrophob.com.ua/catalog/view/theme/default/img/catalog/3.jpg" alt="">
+                                <img src="https://hydrophob.net.ua/catalog/view/theme/default/img/catalog/3.jpg" alt="">
                             </div>
                             <h3 class="variants__item-title">Захист одягу</h3>
                         </a>

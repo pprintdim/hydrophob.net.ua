@@ -105,7 +105,7 @@
    + трекер переглянутих товарів (localStorage) на product-*.html
    + collapse довгого SEO-опису на головній */
 (function () {
-    var PROD = 'https://hydrophob.com.ua/';
+    var PROD = 'https://hydrophob.net.ua/';
     var VIEWED_KEY = 'hydro_viewed';
 
     /* --- трекер переглянутих: на сторінці товару пишемо id --- */
@@ -356,7 +356,7 @@
 
     var catId = parseInt(box.getAttribute('data-category'), 10);
     var PER_PAGE = 12;
-    var PROD = 'https://hydrophob.com.ua/';
+    var PROD = 'https://hydrophob.net.ua/';
 
     function cacheImg(path, size) {
         if (!path) return PROD + 'image/placeholder.png';
@@ -456,7 +456,7 @@
    - drawer (виїжджає справа): фільтри акордеонами, початково згорнуті;
    - сайдбар праворуч: список категорій + популярні товари з data/*.json. */
 (function () {
-    var PROD = 'https://hydrophob.com.ua/';
+    var PROD = 'https://hydrophob.net.ua/';
     var body = document.querySelector('.catalog__body');
     var filters = document.querySelector('.catalog__filters');
     if (!body || !filters) return;
@@ -623,7 +623,7 @@
 /* === product-ui.js === */
 /* Сторінка товару знімка: collapse опису + секції «З цим купують» / FAQ / «Переглянуті» (стилі hm-*). */
 (function () {
-    var PROD = 'https://hydrophob.com.ua/';
+    var PROD = 'https://hydrophob.net.ua/';
     var pm = (location.pathname + location.search).match(/product\.php\?.*\bid=(\d+)/);
     if (!pm) return;
     var currentId = parseInt(pm[1], 10);
@@ -824,7 +824,7 @@
 /* Пошук знімка: оверлей із затемненням по центру + живий пошук по data/products.json.
    На search.html — повні результати з query-параметра q. */
 (function () {
-    var PROD = 'https://hydrophob.com.ua/';
+    var PROD = 'https://hydrophob.net.ua/';
 
     function cacheImg(path, size) {
         if (!path) return PROD + 'image/placeholder.png';

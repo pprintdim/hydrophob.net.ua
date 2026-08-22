@@ -1,11 +1,11 @@
 <?php
-$pageLangRedirect = $pageLangRedirect ?? 'https://hydrophob.com.ua/index.php?route=common/home';
+$pageLangRedirect = $pageLangRedirect ?? 'https://hydrophob.net.ua/index.php?route=common/home';
 ?>
     <header class="header">
         <div class="container">
             <div class="header__inner">
                 <a class="header__logo" href="index.php">
-                    <img src="https://hydrophob.com.ua/catalog/view/theme/default/img/logo.svg" alt="">
+                    <img src="https://hydrophob.net.ua/catalog/view/theme/default/img/logo.svg" alt="">
                 </a>
                 <div class="header__content">
                     <nav class="header__menu">
@@ -68,7 +68,7 @@ $pageLangRedirect = $pageLangRedirect ?? 'https://hydrophob.com.ua/index.php?rou
                     RU
                 </a>
                         </div>
-    <form action="https://hydrophob.com.ua/index.php?route=common/language/language" method="post" id="form-language">
+    <form action="https://hydrophob.net.ua/index.php?route=common/language/language" method="post" id="form-language">
         <input type="hidden" name="code" value="" />
         <input type="hidden" name="redirect" value="<?= hp_e($pageLangRedirect) ?>" />
     </form>

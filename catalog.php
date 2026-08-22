@@ -47,7 +47,7 @@ $canonicalId = $categoryId ?? 33;
 $pageCanonical = 'catalog.php' . ($canonicalId !== null ? '?id=' . $canonicalId : '');
 
 $pageTitle = $categoryName;
-$pageLangRedirect = 'https://hydrophob.com.ua/index.php?route=product/category' . ($category ? '&path=' . $categoryId : '');
+$pageLangRedirect = 'https://hydrophob.net.ua/index.php?route=product/category' . ($category ? '&path=' . $categoryId : '');
 
 require __DIR__ . '/sections/document-start.php';
 require __DIR__ . '/sections/header.php';
@@ -61,8 +61,8 @@ require __DIR__ . '/sections/header.php';
                         <a href="index.php" class="catalog__crumbs-link"><i class="fa fa-home"></i></a><span class="catalog__crumbs-sep" aria-hidden="true">/</span><a href="<?= hp_e($pageCanonical) ?>" class="catalog__crumbs-link is-current"><?= hp_e($categoryName) ?></a>
                     </nav>
                     <script type="application/ld+json"><?= hp_breadcrumb_ld([
-                        ['name' => 'Головна', 'url' => 'https://hydrophob.com.ua/'],
-                        ['name' => $categoryName, 'url' => 'https://hydrophob.com.ua/' . $pageCanonical],
+                        ['name' => 'Головна', 'url' => 'https://hydrophob.net.ua/'],
+                        ['name' => $categoryName, 'url' => 'https://hydrophob.net.ua/' . $pageCanonical],
                     ]) ?></script>
 
                     <section class="catalog__hero">

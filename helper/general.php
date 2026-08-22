@@ -2,14 +2,14 @@
 declare(strict_types=1);
 
 /**
- * Спільні хелпери для sectional-PHP збірки hydrophob.com.ua.
+ * Спільні хелпери для sectional-PHP збірки hydrophob.net.ua.
  * Дані беруться з data/*.json (не редагувати), картинки і статичні
  * ассети теми лишаються на бойовому catalog/view/theme/default (CDN),
  * бо ця тека — лише верстка на сабдомені html.*.
  */
 
-const HP_CDN = 'https://hydrophob.com.ua/';
-const HP_THEME = 'https://hydrophob.com.ua/catalog/view/theme/default/';
+const HP_CDN = 'https://hydrophob.net.ua/';
+const HP_THEME = 'https://hydrophob.net.ua/catalog/view/theme/default/';
 const HP_PHONE_DISPLAY = '+380 (73) 108-12-12';
 const HP_PHONE_HREF = 'tel:+380 (73) 108-12-12';
 const HP_PHONE_VIBER = 'viber://chat?number=+%2B380731081212';

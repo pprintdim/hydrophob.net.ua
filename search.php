@@ -2,7 +2,7 @@
 require_once __DIR__ . '/helper/general.php';
 
 $pageTitle = 'Пошук';
-$pageLangRedirect = 'https://hydrophob.com.ua/index.php?route=product/search';
+$pageLangRedirect = 'https://hydrophob.net.ua/index.php?route=product/search';
 
 require __DIR__ . '/sections/document-start.php';
 require __DIR__ . '/sections/header.php';

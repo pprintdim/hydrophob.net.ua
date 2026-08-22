@@ -5,7 +5,7 @@ $pageTitle = 'Hydrophob';
 $pageDescription = 'Hydrophob';
 $pageKeywords = 'Hydrophob';
 $pageWelcomeRedirect = true;
-$pageLangRedirect = 'https://hydrophob.com.ua/index.php?route=common/home';
+$pageLangRedirect = 'https://hydrophob.net.ua/index.php?route=common/home';
 
 require __DIR__ . '/sections/document-start.php';
 require __DIR__ . '/sections/header.php';

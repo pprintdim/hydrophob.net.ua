@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-/* Юридичні документи hydrophob.com.ua (тексти адаптовано з hydrophob.net). */
+/* Юридичні документи hydrophob.net.ua (тексти адаптовано з hydrophob.net). */
 
 function hp_legal_docs(): array
 {
@@ -48,7 +48,7 @@ function hp_legal_docs(): array
             'title' => 'Умови користування',
             'crumb' => 'Умови користування',
             'updated' => 'Оновлено: 21.08.2026',
-            'lead' => 'Умови, на яких ви користуєтесь сайтом hydrophob.com.ua та оформлюєте замовлення продукції Hydrophob.',
+            'lead' => 'Умови, на яких ви користуєтесь сайтом hydrophob.net.ua та оформлюєте замовлення продукції Hydrophob.',
             'meta_title' => 'Умови користування сайтом — Hydrophob',
             'meta_description' => 'Правила користування сайтом Hydrophob: оформлення замовлень, ціни, права на контент та відповідальність сторін.',
             'blocks' => [
@@ -71,7 +71,7 @@ function hp_legal_docs(): array
             'title' => 'Обмін і повернення',
             'crumb' => 'Обмін і повернення',
             'updated' => 'Оновлено: 21.08.2026',
-            'lead' => 'Порядок обміну та повернення товару, придбаного на сайті hydrophob.com.ua.',
+            'lead' => 'Порядок обміну та повернення товару, придбаного на сайті hydrophob.net.ua.',
             'meta_title' => 'Обмін і повернення товару — Hydrophob',
             'meta_description' => 'Умови повернення та обміну продукції Hydrophob: строки, стан товару, повернення коштів і що робити при браку.',
             'blocks' => [
