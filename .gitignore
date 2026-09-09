@@ -4,7 +4,6 @@ hp_panel/config.php
 
 # Контент і важке — живе на сервері
 image/
-html/
 catalog/view/theme/default/vid/*.mp4
 
 # Рантайм
