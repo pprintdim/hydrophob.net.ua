@@ -392,6 +392,37 @@ class ControllerExtensionFeedGoogleSitemap extends Controller {
 		return implode('/', array_map('rawurlencode', explode('/', $path)));
 	}
 
+	// Кожен фільтр каталогу віддає окремий СЕО-URL /katalog/<слаг>.
+	// Категорію беремо ту, у якій фільтр реально дає товари, інакше в карту
+	// потрапили б порожні сторінки.
+	private function sectionFilterPages() {
+		$output = '';
+
+		$catalog = $this->db->query("SELECT `query` FROM " . DB_PREFIX . "seo_url WHERE keyword = 'katalog' AND `query` LIKE 'category_id=%' AND store_id = '" . (int)$this->config->get('config_store_id') . "' LIMIT 1");
+
+		if (!$catalog->num_rows) {
+			return $output;
+		}
+
+		$category_id = (int)substr($catalog->row['query'], strlen('category_id='));
+
+		$filters = $this->db->query("
+			SELECT DISTINCT f.filter_id
+			FROM " . DB_PREFIX . "filter f
+			INNER JOIN " . DB_PREFIX . "product_filter pf ON pf.filter_id = f.filter_id
+			INNER JOIN " . DB_PREFIX . "product p ON p.product_id = pf.product_id AND p.status = '1'
+			INNER JOIN " . DB_PREFIX . "seo_url s ON s.query = CONCAT('filter_id=', f.filter_id)
+			WHERE s.store_id = '" . (int)$this->config->get('config_store_id') . "'
+			ORDER BY f.filter_id
+		");
+
+		foreach ($filters->rows as $row) {
+			$output .= $this->entry($this->url->link('product/category', 'path=' . $category_id . '&filter=' . (int)$row['filter_id']), 'weekly', '0.6');
+		}
+
+		return $output;
+	}
+
 	private function sectionPages() {
 		$this->load->model('catalog/information');
 
@@ -407,6 +438,11 @@ class ControllerExtensionFeedGoogleSitemap extends Controller {
 		foreach ($this->model_catalog_information->getInformations() as $information) {
 			$output .= $this->entry($this->url->link('information/information', 'information_id=' . $information['information_id']), 'yearly', '0.3');
 		}
+
+		// Сторінки одиночних фільтрів каталогу — самостійні посадкові
+		// (власні title/description, self-canonical). Комбінації 2+ фільтрів
+		// закриті noindex, тож у карту не йдуть.
+		$output .= $this->sectionFilterPages();
 
 		return $output . "\n" . '</urlset>';
 	}
