@@ -511,6 +511,19 @@ class ControllerProductCategory extends Controller {
 
 			$this->document->addLink($this->url->link('product/category', $canonical_query), 'canonical');
 
+			// Сторінка одного фільтра — самостійна посадкова: тайтл і опис
+			// від назви фільтра, інакше всі вони мали б мету категорії.
+			if ($filter_count === 1) {
+				$filter_query = $this->db->query("SELECT name FROM " . DB_PREFIX . "filter_description WHERE filter_id = '" . (int)$filter_ids[0] . "' AND language_id = '" . (int)$this->config->get('config_language_id') . "'");
+
+				if ($filter_query->num_rows && $filter_query->row['name'] !== '') {
+					$filter_name = $filter_query->row['name'];
+
+					$this->document->setTitle(sprintf($this->language->get('meta_title_filter'), $filter_name));
+					$this->document->setDescription(sprintf($this->language->get('meta_description_filter'), $filter_name));
+				}
+			}
+
 			if ($filter_count > 1) {
 				$this->registry->set('seo_meta_robots', 'noindex, follow');
 
