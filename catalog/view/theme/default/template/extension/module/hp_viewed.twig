@@ -1,0 +1,125 @@
+{# секція лишається прихованою, доки скрипт не переконається, що є що показувати #}
+<section class="product__viewed hp-viewed" id="product-viewed" hidden>
+    <div class="container">
+        <div class="product__viewed-head">
+            <h2 class="product__viewed-title">{{ heading_title }}</h2>
+            <div class="product__viewed-btns">
+                <button class="product__viewed-prev" aria-label="{{ text_prev }}">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#161616" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                </button>
+                <button class="product__viewed-next" aria-label="{{ text_next }}">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#161616" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                </button>
+            </div>
+        </div>
+        <div class="product__viewed-slider swiper">
+            <div class="swiper-wrapper" id="product-viewed-wrapper"></div>
+        </div>
+    </div>
+</section>
+<script>
+/* Swiper підключаємо лише якщо його ще немає на сторінці — на картці товару
+   він уже є, і другий тег качав ті самі 60 КБ вдруге. */
+(function () {
+    if (document.querySelector('link[href*="swiper-bundle.min.css"]')) return;
+
+    var css = document.createElement('link');
+    css.rel = 'stylesheet';
+    css.href = 'catalog/view/theme/default/vendor/swiper-bundle.min.css';
+    document.head.appendChild(css);
+})();
+</script>
+<script>
+/* Список id веде картка товару (hydro_viewed у localStorage); тут лише
+   довантажуємо дані й малюємо слайдер. Немає товарів — секція не зʼявляється. */
+(function () {
+    var section = document.getElementById('product-viewed');
+    if (!section) return;
+
+    var current = {{ current_product_id }};
+    var limit = {{ limit }};
+    var viewed = [];
+
+    try { viewed = JSON.parse(localStorage.getItem('hydro_viewed') || '[]'); } catch (e) {}
+
+    // на сторінці товару поточний товар у списку не потрібен
+    var ids = viewed.filter(function (id) { return parseInt(id, 10) !== current; }).slice(0, limit);
+
+    if (!ids.length) {
+        section.remove();
+
+        return;
+    }
+
+    fetch('index.php?route=product/product/viewedInfo&ids=' + ids.join(','), {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(function (r) { return r.json(); })
+    .then(function (json) {
+        if (!json.products || !json.products.length) {
+            section.remove();
+
+            return;
+        }
+
+        var esc = function (s) {
+            return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+                return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+            });
+        };
+
+        document.getElementById('product-viewed-wrapper').innerHTML = json.products.map(function (p) {
+            return '<div class="swiper-slide">' +
+                '<div class="product__item">' +
+                    '<a class="product__item-image" href="' + esc(p.href) + '">' +
+                        '<img src="' + esc(p.thumb) + '" alt="' + esc(p.name) + '" title="' + esc(p.name) + '" loading="lazy">' +
+                    '</a>' +
+                    '<div class="product__item-content">' +
+                        '<a class="product__item-title" href="' + esc(p.href) + '"><h3>' + esc(p.name) + '</h3></a>' +
+                        '<p class="product__item-price">' + esc(p.price) + '</p>' +
+                        '<button class="product__item-add btn-2" onclick="cart.add(\'' + p.product_id + '\', \'' + p.minimum + '\');">' +
+                            esc(json.button_cart) +
+                            '<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 17 17" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M9.56706 2.90039H6.90039V6.90039L2.90039 6.90039V9.56706H6.90039V13.5671H9.56706V9.56706H13.5671V6.90039L9.56706 6.90039V2.90039Z" fill="white"/></svg>' +
+                        '</button>' +
+                    '</div>' +
+                '</div>' +
+            '</div>';
+        }).join('');
+
+        section.hidden = false;
+
+        var sliderEl = section.querySelector('.product__viewed-slider');
+        if (!sliderEl || sliderEl.swiper) return;
+
+        function build() {
+            if (!window.Swiper || sliderEl.swiper) return;
+
+            new Swiper(sliderEl, {
+                spaceBetween: 24,
+                slidesPerView: 1.15,   /* один крок з .hm-slider: картка 86% + край наступної */
+                navigation: { nextEl: '.product__viewed-next', prevEl: '.product__viewed-prev' },
+                breakpoints: { 768: { slidesPerView: 3 }, 1000: { slidesPerView: 4 } }
+            });
+        }
+
+        if (window.Swiper) {
+            build();
+
+            return;
+        }
+
+        // бібліотеки ще немає (сторінка без слайдерів) — довантажуємо один раз
+        var src = 'catalog/view/theme/default/vendor/swiper-bundle.min.js';
+        var tag = document.querySelector('script[src*="swiper-bundle.min.js"]');
+
+        if (!tag) {
+            tag = document.createElement('script');
+            tag.src = src;
+            document.body.appendChild(tag);
+        }
+
+        tag.addEventListener('load', build);
+    })
+    .catch(function () { section.remove(); });
+})();
+</script>

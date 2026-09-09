@@ -36,7 +36,7 @@ class ControllerMailOrder extends Controller {
 			
 			// If order status is not 0 then send update text email
 			if ($order_info['order_status_id'] && $order_status_id && $notify) {
-				$this->edit($order_info, $order_status_id, $comment);
+				$this->edit($order_info, $order_status_id, $comment, $notify);
 			}		
 		}
 	}
@@ -90,7 +90,7 @@ class ControllerMailOrder extends Controller {
 		$data['store_name'] = $order_info['store_name'];
 		$data['store_url'] = $order_info['store_url'];
 		$data['customer_id'] = $order_info['customer_id'];
-		$data['link'] = $order_info['store_url'] . 'index.php?route=account/order/info&order_id=' . $order_info['order_id'];
+		$data['link'] = $order_info['store_url'] . 'index.php?route=account/order#order-' . $order_info['order_id'];
 
 		if ($download_status) {
 			$data['download'] = $order_info['store_url'] . 'index.php?route=account/download';
@@ -275,7 +275,7 @@ class ControllerMailOrder extends Controller {
 		$mail->send();
 	}
 	
-	public function edit($order_info, $order_status_id, $comment) {
+	public function edit($order_info, $order_status_id, $comment, $notify = 0) {
 		$language = new Language($order_info['language_code']);
 		$language->load($order_info['language_code']);
 		$language->load('mail/order_edit');
@@ -299,7 +299,7 @@ class ControllerMailOrder extends Controller {
 		}
 
 		if ($order_info['customer_id']) {
-			$data['link'] = $order_info['store_url'] . 'index.php?route=account/order/info&order_id=' . $order_info['order_id'];
+			$data['link'] = $order_info['store_url'] . 'index.php?route=account/order#order-' . $order_info['order_id'];
 		} else {
 			$data['link'] = '';
 		}

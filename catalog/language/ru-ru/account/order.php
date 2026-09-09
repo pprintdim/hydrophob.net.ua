@@ -35,4 +35,4 @@ $_['column_comment']        = 'Комментарий';
 
 // Error
 $_['error_reorder']         = '%s в данный момент не доступен....';
-
+$_['button_catalog'] = 'В каталог';

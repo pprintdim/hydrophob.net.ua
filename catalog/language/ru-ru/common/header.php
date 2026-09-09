@@ -15,3 +15,6 @@ $_['text_checkout']      = 'Оформление заказа';
 $_['text_search']        = 'Поиск';
 $_['text_all']           = 'Смотреть Все';
 
+
+$_['text_menu_open']  = 'Меню';
+$_['text_menu_close'] = 'Закрыть меню';

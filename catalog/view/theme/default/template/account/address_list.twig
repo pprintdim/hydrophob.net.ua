@@ -1,49 +1,96 @@
 {{ header }}
-<div id="account-address" class="container">
-  <ul class="breadcrumb">
-    {% for breadcrumb in breadcrumbs %}
-    <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
-    {% endfor %}
-  </ul>
-  {% if success %}
-  <div class="alert alert-success alert-dismissible"><i class="fa fa-check-circle"></i> {{ success }}</div>
-  {% endif %}
-  {% if error_warning %}
-  <div class="alert alert-warning"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}</div>
-  {% endif %}
-  <div class="row">{{ column_left }}
-    {% if column_left and column_right %}
-    {% set class = 'col-sm-6' %}
-    {% elseif column_left or column_right %}
-    {% set class = 'col-sm-9' %}
-    {% else %}
-    {% set class = 'col-sm-12' %}
-    {% endif %}
-    <div id="content" class="{{ class }}">{{ content_top }}
-      <h2>{{ text_address_book }}</h2>
-      {% if addresses %}
-      <div class="table-responsive">
-        <table class="table table-bordered table-hover">
-          {% for result in addresses %}
-           <form  action="{{ result.delete }}" method="post" enctype="multipart/form-data" id="form-address-{{ result.address_id }}">
-          <tr>
-            <td class="text-left">{{ result.address }}</td>
-            <td class="text-right"><a href="{{ result.update }}" class="btn btn-info">{{ button_edit }}</a> &nbsp; 
-            <a href = "{{ result.delete }}" data-toggle="tooltip" title="{{ button_delete }}" class="btn btn-danger" onclick="return confirm('{{ text_confirm }}')">{{ button_delete }}</a></td>
-          </tr>
-          </form>
-          {% endfor %}
-        </table>
-      </div>
-      {% else %}
-      <p>{{ text_empty }}</p>
-      {% endif %}
-      
-      <div class="buttons clearfix">
-        <div class="pull-left"><a href="{{ back }}" class="btn btn-default">{{ button_back }}</a></div>
-        <div class="pull-right"><a href="{{ add }}" class="btn btn-primary">{{ button_new_address }}</a></div>
-      </div>
-      {{ content_bottom }}</div>
-    {{ column_right }}</div>
-</div>
+<main class="main">
+<section class="account" id="account-address">
+    <div class="container">
+        <nav class="account__crumbs">
+            {% for breadcrumb in breadcrumbs %}
+            <a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a>{% if not loop.last %}<span>/</span>{% endif %}
+            {% endfor %}
+        </nav>
+
+        {% if success %}
+        <div class="hp-toast hp-toast--ok" data-toast>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+            <span>{{ success }}</span>
+            <button type="button" class="hp-toast__close" data-toast-close aria-label="{{ text_close|default('Закрити') }}">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 6 12 12M18 6 6 18"/></svg>
+            </button>
+        </div>
+        {% endif %}
+        {% if error_warning %}
+        <div class="hp-toast hp-toast--error" data-toast>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v5M12 17h.01"/></svg>
+            <span>{{ error_warning }}</span>
+            <button type="button" class="hp-toast__close" data-toast-close aria-label="{{ text_close|default('Закрити') }}">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 6 12 12M18 6 6 18"/></svg>
+            </button>
+        </div>
+        {% endif %}
+
+        <div class="row">{{ column_left }}
+        {% if column_left %}{% set class = 'col-sm-9' %}{% else %}{% set class = 'col-sm-12' %}{% endif %}
+        <div id="content" class="{{ class }}">
+        <h1 class="account__title">{{ text_address_book }}</h1>
+
+        {% if addresses %}
+        <div class="account__addresses">
+            {% for address in addresses %}
+            <div class="account__address{% if address.default %} is-default{% endif %}" data-address="{{ address.address_id }}">
+                <label class="account__address-default" title="{{ text_default_address|default('Основна адреса') }}">
+                    <input type="radio" name="default_address" value="{{ address.address_id }}"{% if address.default %} checked{% endif %} data-set-default>
+                    <span>{{ text_default_address|default('Основна адреса') }}</span>
+                </label>
+                <p class="account__address-text">{{ address.address|raw }}</p>
+                <div class="account__address-actions">
+                    <a href="{{ address.update }}" class="account__address-btn" title="{{ button_edit }}">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 2 4 4-14 14H4v-4L18 2z"/></svg>
+                        {{ button_edit }}
+                    </a>
+                    <a href="{{ address.delete }}" class="account__address-btn account__address-btn--danger" title="{{ button_delete }}">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6h14z"/></svg>
+                        {{ button_delete }}
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="account__empty-note">{{ text_empty|default('У вас ще немає збережених адрес.') }}</p>
+        {% endif %}
+
+        <div class="account__actions account__actions--split">
+            <a href="{{ back }}" class="btn-2 btn-2--ghost">{{ button_back }}</a>
+            <a href="{{ add }}" class="btn-2">{{ button_new_address }}
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+            </a>
+        </div>
+        {{ content_bottom }}</div>
+        </div>
+    </div>
+</section>
+</main>
+
+<script>
+/* основна адреса ставиться ajax-ом прямо у списку */
+(function () {
+    document.querySelectorAll('[data-set-default]').forEach(function (radio) {
+        radio.addEventListener('change', function () {
+            var card = this.closest('[data-address]');
+
+            fetch('{{ set_default_action }}', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest' },
+                body: 'address_id=' + encodeURIComponent(this.value)
+            })
+            .then(function (r) { return r.json(); })
+            .then(function (json) {
+                if (json.error) { hpNotify(json.error, 'error'); return; }
+                document.querySelectorAll('[data-address]').forEach(function (c) { c.classList.remove('is-default'); });
+                if (card) card.classList.add('is-default');
+            })
+            .catch(function () {});
+        });
+    });
+})();
+</script>
 {{ footer }}

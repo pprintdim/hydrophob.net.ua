@@ -11,27 +11,13 @@
     <div class="header__lang-content">
         {% for language in languages %}
             {% if language.code != code %}
-                <a href="#" class="language-select" data-code="{{ language.code }}">
+                {# мова живе в адресі, тож це звичайне посилання: боти бачать
+                   зв'язок між версіями, а користувач лишається на тій самій сторінці #}
+                <a href="{{ language.href }}" class="language-select" hreflang="{{ language.code[:2] }}">
                     {{ lang_map[language.code] }}
                 </a>
             {% endif %}
         {% endfor %}
     </div>
-    <form action="{{ action }}" method="post" id="form-language">
-        <input type="hidden" name="code" value="" />
-        <input type="hidden" name="redirect" value="{{ redirect }}" />
-    </form>
 </div>
-
-<script>
-document.querySelectorAll('.header__lang-content .language-select').forEach(function(el) {
-    el.addEventListener('click', function(e) {
-        e.preventDefault();
-        var code = this.getAttribute('data-code');
-        var form = document.getElementById('form-language');
-        form.querySelector('input[name="code"]').value = code;
-        form.submit();
-    });
-});
-</script>
 {% endif %}

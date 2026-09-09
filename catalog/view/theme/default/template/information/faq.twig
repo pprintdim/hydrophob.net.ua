@@ -1,0 +1,42 @@
+{{ header }}
+<main class="main" id="content">
+    <section class="faq-page">
+        <div class="container">
+            {% if breadcrumbs %}
+            <nav class="catalog__crumbs catalog__crumbs--light" aria-label="Breadcrumbs">
+                {% for breadcrumb in breadcrumbs %}
+                <a href="{{ breadcrumb.href }}" class="catalog__crumbs-link{% if loop.last %} is-current{% endif %}">{{ breadcrumb.text }}</a>{% if not loop.last %}<span class="catalog__crumbs-sep" aria-hidden="true">/</span>{% endif %}
+                {% endfor %}
+            </nav>
+            <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{% for breadcrumb in breadcrumbs %}{"@type":"ListItem","position":{{ loop.index }},"name":{{ breadcrumb.text|json_encode }},"item":{{ breadcrumb.href|json_encode }}}{% if not loop.last %},{% endif %}{% endfor %}]}</script>
+            {% endif %}
+{% for block in schema_blocks %}
+<script type="application/ld+json">{{ block|json_encode(constant('JSON_UNESCAPED_UNICODE') b-or constant('JSON_UNESCAPED_SLASHES'))|raw }}</script>
+{% endfor %}
+
+            <h1 class="page-name">{{ heading_title }}</h1>
+
+            {% for group in groups %}
+            <div class="faq-group">
+                <h2 class="faq-group__title">{{ group.title }}</h2>
+                <div class="hm-faq">
+                    {% for item in group.items %}
+                    <div class="hm-faq__item{% if loop.first and loop.parent.loop.first %} is-open{% endif %}">
+                        <button type="button" class="hm-faq__btn" aria-expanded="{% if loop.first and loop.parent.loop.first %}true{% else %}false{% endif %}">
+                            <span>{{ item.question }}</span>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+                        </button>
+                        <div class="hm-faq__answer"><p>{{ item.answer }}</p></div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+
+            
+        </div>
+    </section>
+    {{ content_bottom }}
+</main>
+
+{{ footer }}

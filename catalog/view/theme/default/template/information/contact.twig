@@ -2,17 +2,21 @@
 	<main class="main" id="content">
         <section class="contacts">
             <div class="container">
+                {% if breadcrumbs %}
+                <nav class="catalog__crumbs catalog__crumbs--light" aria-label="Breadcrumbs">
+                    {% for breadcrumb in breadcrumbs %}
+                    <a href="{{ breadcrumb.href }}" class="catalog__crumbs-link{% if loop.last %} is-current{% endif %}">{{ breadcrumb.text }}</a>{% if not loop.last %}<span class="catalog__crumbs-sep" aria-hidden="true">/</span>{% endif %}
+                    {% endfor %}
+                </nav>
+                <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{% for breadcrumb in breadcrumbs %}{"@type":"ListItem","position":{{ loop.index }},"name":{{ breadcrumb.text|json_encode }},"item":{{ breadcrumb.href|json_encode }}}{% if not loop.last %},{% endif %}{% endfor %}]}</script>
+                {% endif %}
+{% for block in schema_blocks %}
+<script type="application/ld+json">{{ block|json_encode(constant('JSON_UNESCAPED_UNICODE') b-or constant('JSON_UNESCAPED_SLASHES'))|raw }}</script>
+{% endfor %}
                 <div class="contacts__inner">
                     <div class="contacts__content">
-                        <h1 class="contacts__title page-title">
-									{% if code == 'en' %}
-										Contact information
-									{% elseif code == 'uk' %}
-										Контактна інформація
-									{% elseif code == 'ru' %}
-										Контактная информация
-									{% endif %}
-						</h1>
+                        {# заголовок ішов від змінної code, якої контролер не передає — h1 виходив порожнім #}
+                        <h1 class="contacts__title page-title">{{ heading_title }}</h1>
               <!--          <h2 class="contacts__name page-name">
 									{% if code == 'en' %}
 										Contacts
@@ -22,6 +26,7 @@
 										Контакты
 									{% endif %}
 						</h2> -->
+                        <p class="contacts__lead">{{ text_contacts_lead }}</p>
                         <div class="contacts__block">
                             <div class="contacts__item">
                                 <span class="contacts__item-icon">                                    
@@ -58,18 +63,97 @@
 							{{ brs_open_time }}
 						</p>
 						 {% endif %}
+
+                        {% if telegram or viber %}
+                        <div class="contacts__msgs">
+                            {% if telegram %}
+                            <a class="contacts__msg" href="{{ telegram }}" target="_blank" rel="noopener">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+                                Telegram
+                            </a>
+                            {% endif %}
+                            {% if viber %}
+                            <a class="contacts__msg" href="{{ viber }}">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 1.5c-2.2 0-5.9.3-7.9 2.13C2.72 5.1 2.1 7.2 2.03 9.86c-.06 2.65-.14 7.62 4.68 8.98l.01 2.07s-.03.83.51 1c.66.2 1.05-.43 1.68-1.11l.94-1.06c3.29.27 5.81-.36 6.1-.45.67-.22 4.42-.7 5.03-5.68.63-5.13-.3-8.38-1.99-9.85l-.01-.01c-.51-.47-2.56-1.95-7.14-1.97 0 0-.34-.02-.85-.02zm.06 1.43c.44 0 .72.02.72.02 3.87.01 5.72 1.18 6.16 1.57 1.42 1.22 2.15 4.14 1.61 8.43-.51 4.16-3.56 4.42-4.12 4.6-.24.08-2.47.63-5.29.45 0 0-2.08 2.52-2.73 3.18-.11.1-.23.14-.31.13-.11-.03-.14-.16-.14-.36l.02-3.43c-4.07-1.12-3.83-5.36-3.79-7.58.05-2.21.47-4.02 1.72-5.26 1.67-1.51 4.68-1.73 6.15-1.75zM11.6 5.5a.5.5 0 0 0 0 1c1.6.02 2.9.55 3.9 1.55 1 1.03 1.5 2.4 1.5 4.1a.5.5 0 0 0 1 0c0-1.94-.58-3.55-1.77-4.78-1.2-1.2-2.75-1.84-4.6-1.87zM8.7 6.9c-.3-.06-.6.02-.83.2-.5.4-.95.9-1.25 1.5-.24.5-.2 1 .1 1.5.9 1.6 2 2.9 3.4 4 .7.5 1.4 1 2.2 1.3.6.3 1.2.2 1.7-.2.4-.3.8-.7 1.1-1.2.3-.4.2-.9-.2-1.2-.5-.4-1-.7-1.5-1-.4-.2-.8-.2-1.1.2l-.4.5c-.2.2-.4.3-.6.2-1-.5-1.8-1.2-2.3-2.2-.1-.2-.1-.4.1-.6l.5-.4c.3-.3.4-.6.2-1-.3-.5-.6-1-1-1.5-.1-.2-.2-.2-.4-.3zm3.2.5a.5.5 0 0 0-.08 1c.85.13 1.5.47 1.97.99.47.52.72 1.2.75 2.06a.5.5 0 0 0 1-.03c-.04-1.06-.36-1.98-1-2.7-.65-.72-1.5-1.14-2.55-1.31a.5.5 0 0 0-.09-.01zm.13 2.05a.5.5 0 0 0-.11.99c.36.07.6.2.75.37.15.18.24.44.27.81a.5.5 0 0 0 1-.08c-.04-.53-.19-1-.52-1.38-.33-.39-.79-.6-1.3-.7a.5.5 0 0 0-.09-.01z"/></svg>
+                                Viber
+                            </a>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+
+
 						 {% if comment %}
 							<br /><strong>{{ text_comment }}</strong><br />
 								{{ comment }}
 						{% endif %}
                     </div>
                     <div class="contacts__map">
-						{% if geocode %}
-							<iframe width="100%" height="450" style="border:0" loading="lazy" allowfullscreen src="https://www.google.com/maps?q={{ geocode|url_encode }}&hl={{ geocode_hl }}&t=m&z=15&output=embed"> </iframe>
+                        {% if contact_video %}
+                        <div class="contacts__media">
+                            <video src="{{ contact_video }}"{% if contact_poster %} poster="{{ contact_poster }}"{% endif %} autoplay muted loop playsinline></video>
+                            <button type="button" class="hero__sound" data-media-sound aria-label="{{ text_sound_on }}" aria-pressed="false">
+                                <svg class="hero__sound-off" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4zM22 9l-6 6M16 9l6 6"/></svg>
+                                <svg class="hero__sound-on" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" hidden><path d="M11 5 6 9H2v6h4l5 4zM15.54 8.46a5 5 0 0 1 0 7.07M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+                            </button>
+                        </div>
+                        {% endif %}
+						{% if map_lat and map_lng %}
+						<div class="contacts__map-canvas" id="contacts-map" data-lat="{{ map_lat }}" data-lng="{{ map_lng }}" data-title="{{ map_title }}" data-address="{{ address }}"></div>
 						{% endif %}
 					</div>
                 </div>
+                        {% if help_items %}
+                        <div class="contacts__help">
+                            {% for item in help_items %}
+                            <div class="contacts__help-item">
+                                <p class="contacts__help-name">{{ item.name }}</p>
+                                <p class="contacts__help-text">{{ item.text }}</p>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
             </div>
         </section>
+{{ content_bottom }}
 	</main>
+<script>
+/* карта контактів: OpenStreetMap за координатами з Налаштувань (config_geocode) */
+document.addEventListener('DOMContentLoaded', function () {
+    var el = document.getElementById('contacts-map');
+    if (!el || !window.hpLeaflet) return;
+
+    var lat = parseFloat(el.getAttribute('data-lat'));
+    var lng = parseFloat(el.getAttribute('data-lng'));
+    if (isNaN(lat) || isNaN(lng)) return;
+
+    // Leaflet тягнемо лише коли карта доїхала до екрана (хелпери у футері)
+    window.hpWhenVisible(el, function () { window.hpLeaflet(draw); });
+
+    function draw() {
+    var map = L.map(el, { scrollWheelZoom: false, attributionControl: false }).setView([lat, lng], 16);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
+
+    var gmaps = 'https://www.google.com/maps/search/?api=1&query=' + lat + ',' + lng;
+
+    // маркер у фірмовому зеленому — стандартний синій PNG Leaflet не в стилі
+    var pin = L.divIcon({
+        className: 'hp-map-pin',
+        html: '<svg width="34" height="44" viewBox="0 0 24 32" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 0C5.4 0 0 5.4 0 12c0 8.4 12 20 12 20s12-11.6 12-20c0-6.6-5.4-12-12-12z" fill="#A7C70E"/><circle cx="12" cy="12" r="4.4" fill="#ffffff"/></svg>',
+        iconSize: [34, 44],
+        iconAnchor: [17, 44]
+    });
+
+    var marker = L.marker([lat, lng], { icon: pin })
+        .addTo(map)
+        .on('click', function () { window.open(gmaps, '_blank', 'noopener'); });
+
+    // при наведенні показуємо адресу магазину
+    var address = (el.getAttribute('data-address') || el.getAttribute('data-title') || '').trim();
+
+    if (address) {
+        marker.bindTooltip(address, { direction: 'top', offset: [0, -38], className: 'hp-map-tip' });
+    }
+    }
+});
+</script>
 {{ footer }}

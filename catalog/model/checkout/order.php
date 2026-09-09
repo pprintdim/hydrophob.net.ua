@@ -18,8 +18,7 @@ class ModelCheckoutOrder extends Model {
 			}
 		}
 
-		// Gift Voucher
-		$this->load->model('extension/total/voucher');
+		// подарункові сертифікати вимкнені — модель voucher видалена з проєкту
 
 		// Vouchers
 		if (isset($data['vouchers'])) {
@@ -27,10 +26,6 @@ class ModelCheckoutOrder extends Model {
 				$this->db->query("INSERT INTO " . DB_PREFIX . "order_voucher SET order_id = '" . (int)$order_id . "', description = '" . $this->db->escape($voucher['description']) . "', code = '" . $this->db->escape($voucher['code']) . "', from_name = '" . $this->db->escape($voucher['from_name']) . "', from_email = '" . $this->db->escape($voucher['from_email']) . "', to_name = '" . $this->db->escape($voucher['to_name']) . "', to_email = '" . $this->db->escape($voucher['to_email']) . "', voucher_theme_id = '" . (int)$voucher['voucher_theme_id'] . "', message = '" . $this->db->escape($voucher['message']) . "', amount = '" . (float)$voucher['amount'] . "'");
 
 				$order_voucher_id = $this->db->getLastId();
-
-				$voucher_id = $this->model_extension_total_voucher->addVoucher($order_id, $voucher);
-
-				$this->db->query("UPDATE " . DB_PREFIX . "order_voucher SET voucher_id = '" . (int)$voucher_id . "' WHERE order_voucher_id = '" . (int)$order_voucher_id . "'");
 			}
 		}
 
@@ -66,10 +61,8 @@ class ModelCheckoutOrder extends Model {
 			}
 		}
 
-		// Gift Voucher
-		$this->load->model('extension/total/voucher');
+		// подарункові сертифікати вимкнені — модель voucher видалена з проєкту
 
-		$this->model_extension_total_voucher->disableVoucher($order_id);
 
 		// Vouchers
 		$this->db->query("DELETE FROM " . DB_PREFIX . "order_voucher WHERE order_id = '" . (int)$order_id . "'");
@@ -79,10 +72,6 @@ class ModelCheckoutOrder extends Model {
 				$this->db->query("INSERT INTO " . DB_PREFIX . "order_voucher SET order_id = '" . (int)$order_id . "', description = '" . $this->db->escape($voucher['description']) . "', code = '" . $this->db->escape($voucher['code']) . "', from_name = '" . $this->db->escape($voucher['from_name']) . "', from_email = '" . $this->db->escape($voucher['from_email']) . "', to_name = '" . $this->db->escape($voucher['to_name']) . "', to_email = '" . $this->db->escape($voucher['to_email']) . "', voucher_theme_id = '" . (int)$voucher['voucher_theme_id'] . "', message = '" . $this->db->escape($voucher['message']) . "', amount = '" . (float)$voucher['amount'] . "'");
 
 				$order_voucher_id = $this->db->getLastId();
-
-				$voucher_id = $this->model_extension_total_voucher->addVoucher($order_id, $voucher);
-
-				$this->db->query("UPDATE " . DB_PREFIX . "order_voucher SET voucher_id = '" . (int)$voucher_id . "' WHERE order_voucher_id = '" . (int)$order_voucher_id . "'");
 			}
 		}
 
@@ -109,10 +98,8 @@ class ModelCheckoutOrder extends Model {
 		$this->db->query("DELETE `or`, ort FROM `" . DB_PREFIX . "order_recurring` `or`, `" . DB_PREFIX . "order_recurring_transaction` `ort` WHERE order_id = '" . (int)$order_id . "' AND ort.order_recurring_id = `or`.order_recurring_id");
 		$this->db->query("DELETE FROM `" . DB_PREFIX . "customer_transaction` WHERE order_id = '" . (int)$order_id . "'");
 
-		// Gift Voucher
-		$this->load->model('extension/total/voucher');
+		// подарункові сертифікати вимкнені — модель voucher видалена з проєкту
 
-		$this->model_extension_total_voucher->disableVoucher($order_id);
 	}
 
 	public function getOrder($order_id) {
@@ -381,5 +368,63 @@ class ModelCheckoutOrder extends Model {
 
 			$this->cache->delete('product');
 		}
+	}
+
+	// Статус фактичної оплати (WayForPay та інші онлайн-платіжки): стокова
+	// order_status_id для цього не годиться — менеджер може міняти її вручну.
+	private function ensurePaymentStatusTable() {
+		$this->db->query("
+			CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "order_payment_status` (
+				`order_id` int(11) NOT NULL,
+				`payment_code` varchar(64) NOT NULL DEFAULT '',
+				`paid` tinyint(1) NOT NULL DEFAULT '0',
+				`provider` varchar(64) NOT NULL DEFAULT '',
+				`provider_status` varchar(128) NOT NULL DEFAULT '',
+				`provider_response` mediumtext,
+				`date_paid` datetime DEFAULT NULL,
+				`date_modified` datetime NOT NULL,
+				PRIMARY KEY (`order_id`),
+				KEY `paid` (`paid`),
+				KEY `payment_code` (`payment_code`)
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+		");
+	}
+
+	public function markPaymentPaid($order_id, $provider = '', $provider_status = '', $provider_response = '') {
+		$order_info = $this->getOrder($order_id);
+
+		if (!$order_info) {
+			return false;
+		}
+
+		$this->ensurePaymentStatusTable();
+
+		$this->db->query("
+			REPLACE INTO `" . DB_PREFIX . "order_payment_status` SET
+				order_id = '" . (int)$order_id . "',
+				payment_code = '" . $this->db->escape((string)$order_info['payment_code']) . "',
+				paid = '1',
+				provider = '" . $this->db->escape((string)$provider) . "',
+				provider_status = '" . $this->db->escape((string)$provider_status) . "',
+				provider_response = '" . $this->db->escape((string)$provider_response) . "',
+				date_paid = NOW(),
+				date_modified = NOW()
+		");
+
+		return true;
+	}
+
+	public function isPaymentPaid($order_id) {
+		$this->ensurePaymentStatusTable();
+
+		$query = $this->db->query("
+			SELECT paid
+			FROM `" . DB_PREFIX . "order_payment_status`
+			WHERE order_id = '" . (int)$order_id . "'
+			  AND paid = '1'
+			LIMIT 1
+		");
+
+		return (bool)$query->num_rows;
 	}
 }

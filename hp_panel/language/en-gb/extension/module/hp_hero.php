@@ -1,0 +1,24 @@
+<?php
+$_['heading_title']    = 'HP Hero Video Slider';
+$_['text_extension']   = 'Extensions';
+$_['text_success']     = 'Module settings saved!';
+$_['text_edit']        = 'Module settings';
+$_['entry_name']       = 'Module name';
+$_['entry_status']     = 'Status';
+$_['entry_slides']     = 'Slides';
+$_['help_slides']      = 'Each slide: a clip from the theme vid/ folder, a poster (tile), heading level, button link and per-language texts.';
+$_['entry_video']      = 'Video';
+$_['text_select_video'] = '— select a video —';
+$_['entry_h']          = 'Heading level';
+$_['text_h1']          = 'H1 (first slide only)';
+$_['text_h2']          = 'H2';
+$_['entry_btn_href']   = 'Button link (e.g. index.php?route=product/category&path=59)';
+$_['entry_title']      = 'Title';
+$_['entry_descr']      = 'Description';
+$_['entry_note']       = 'Note';
+$_['entry_btn_text']   = 'Button text';
+$_['text_move_up']     = 'Move up';
+$_['text_move_down']   = 'Move down';
+$_['error_permission'] = 'You do not have permission to modify this module!';
+$_['error_name']       = 'Module name must be between 3 and 64 characters!';
+$_['error_slide_title'] = 'Every slide needs a Ukrainian title!';

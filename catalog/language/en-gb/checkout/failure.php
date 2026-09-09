@@ -18,3 +18,8 @@ $_['text_message']  = '<p>There was a problem processing your payment and the or
 
 <p>If the problem persists please <a href="%s">contact us</a> with the details of the order you are trying to place.</p>
 ';
+$_['text_status_title'] = 'Payment failed';
+$_['text_status_lead'] = 'Something went wrong — you have not been charged.';
+$_['text_status_note'] = 'Try again or choose another payment method. Contact us if the problem persists.';
+$_['button_status_retry'] = 'Try again';
+$_['button_status_contact'] = 'Contact us';

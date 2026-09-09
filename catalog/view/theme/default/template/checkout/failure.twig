@@ -1,0 +1,25 @@
+{{ header }}
+<main class="main" id="content">
+  <section class="status">
+    <div class="container">
+      <div class="status__inner">
+        <span class="status__icon status__icon--fail" aria-hidden="true">
+          <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 6 12 12M18 6 6 18"/></svg>
+        </span>
+
+        <h1 class="status__title">{{ text_title }}</h1>
+        <p class="status__lead">{{ text_lead }}</p>
+        <p class="status__text">{{ text_note }}</p>
+
+        <div class="status__actions">
+          <a href="{{ retry }}" class="btn-2">{{ button_retry }}
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </a>
+          <a href="{{ contact }}" class="btn-2 btn-2--ghost">{{ button_contact }}</a>
+        </div>
+      </div>
+    </div>
+  </section>
+  {{ content_bottom }}
+</main>
+{{ footer }}

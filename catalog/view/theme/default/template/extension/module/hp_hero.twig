@@ -1,0 +1,163 @@
+<section class="hero hero--slider" data-hero-slider>
+{% for slide in slides %}
+<div class="hero__slide{% if loop.first %} is-active{% endif %}">
+    {% if loop.first %}
+    <div class="hero__video"><video src="{{ slide.video }}"{% if slide.poster %} poster="{{ slide.poster }}"{% endif %} autoplay muted playsinline preload="auto" data-hero-video></video></div>
+    {% else %}
+    <div class="hero__video" data-video="{{ slide.video }}">{% if slide.poster %}<img src="{{ slide.poster }}" alt="{{ slide.title }}" loading="lazy">{% endif %}</div>
+    {% endif %}
+    <div class="container"><div class="hero__inner">
+        <{{ slide.h }} class="hero__title">{{ slide.title }}</{{ slide.h }}>
+        <p class="hero__descr">{{ slide.descr }}</p>
+        <span class="hero__note">{{ slide.note }}</span>
+        {% if slide.btn_text %}
+        <a class="hero__btn btn" href="{{ slide.btn_href }}"><p>{{ slide.btn_text }}</p>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="25" viewBox="0 0 24 25" fill="none">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M7 18.5L13 12.5L7 6.5L9 4.5L17 12.5L9 20.5L7 18.5Z" fill="white"></path>
+            </svg></a>
+        {% endif %}
+    </div></div>
+    <button type="button" class="hero__sound" data-hero-sound data-label-mute="{{ text_sound_off }}" data-label-unmute="{{ text_sound_on }}" aria-label="{{ text_sound_on }}" aria-pressed="false">
+        <svg class="hero__sound-off" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4zM22 9l-6 6M16 9l6 6"/></svg>
+        <svg class="hero__sound-on" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" hidden><path d="M11 5 6 9H2v6h4l5 4zM15.54 8.46a5 5 0 0 1 0 7.07M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+    </button>
+</div>
+{% endfor %}
+<div class="hero__dots">{% for slide in slides %}<button type="button" class="hero__dot{% if loop.first %} is-active{% endif %}" data-hero-dot="{{ loop.index0 }}" aria-label="{{ text_slide|format(loop.index) }}"></button>{% endfor %}</div>
+<div class="hero__loader" data-hero-loader hidden><span></span></div>
+</section>
+<script>
+/* Hero-відеослайдер: автоплей, повне програвання кожного відео -> наступний слайд.
+   Ліниве завантаження: при відкритті сторінки вантажиться лише перше відео,
+   решта створюються при перемиканні (з лоадером). Кнопка звуку на кожному слайді. */
+(function () {
+    var root = document.querySelector('[data-hero-slider]');
+    if (!root) return;
+
+    var slides = [].slice.call(root.querySelectorAll('.hero__slide'));
+    var dots = [].slice.call(root.querySelectorAll('[data-hero-dot]'));
+    var loader = root.querySelector('[data-hero-loader]');
+    var current = 0;
+    var soundOn = false;
+
+    function videoOf(slide) {
+        return slide.querySelector('video');
+    }
+
+    function ensureVideo(slide, cb) {
+        var v = videoOf(slide);
+        if (v) { cb(v); return; }
+        var box = slide.querySelector('.hero__video');
+        var src = box.getAttribute('data-video');
+        if (!src) { cb(null); return; }
+        if (loader) loader.hidden = false;
+        v = document.createElement('video');
+        v.src = src;
+        v.muted = true;
+        v.playsInline = true;
+        v.setAttribute('playsinline', '');
+        v.preload = 'auto';
+        v.addEventListener('canplay', function onReady() {
+            v.removeEventListener('canplay', onReady);
+            if (loader) loader.hidden = true;
+            var img = box.querySelector('img');
+            if (img) img.remove();
+            cb(v);
+        });
+        v.addEventListener('error', function () {
+            if (loader) loader.hidden = true;
+            cb(null);
+        });
+        box.appendChild(v);
+        v.load();
+    }
+
+    function applySound(v, slide) {
+        var btn = slide.querySelector('[data-hero-sound]');
+        if (btn) {
+            /* SVG не має властивості .hidden (лише HTMLElement) — тільки атрибутом */
+            var iconOff = btn.querySelector('.hero__sound-off');
+            var iconOn = btn.querySelector('.hero__sound-on');
+            if (soundOn) { iconOff.setAttribute('hidden', ''); } else { iconOff.removeAttribute('hidden'); }
+            if (soundOn) { iconOn.removeAttribute('hidden'); } else { iconOn.setAttribute('hidden', ''); }
+            btn.setAttribute('aria-label', soundOn ? btn.getAttribute('data-label-mute') : btn.getAttribute('data-label-unmute'));
+            btn.setAttribute('aria-pressed', soundOn ? 'true' : 'false');
+        }
+        if (v) v.muted = !soundOn;
+    }
+
+    var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var typeTimers = new Map();
+
+    function animateSlideText(slide) {
+        if (reduceMotion) return;
+        var title = slide.querySelector('.hero__title');
+        var descr = slide.querySelector('.hero__descr');
+        if (title) {
+            title.classList.remove('is-rise');
+            void title.offsetWidth;
+            title.classList.add('is-rise');
+        }
+        if (descr) {
+            if (!descr.dataset.full) descr.dataset.full = descr.textContent;
+            var full = descr.dataset.full;
+            var prev = typeTimers.get(descr);
+            if (prev) clearTimeout(prev);
+            descr.textContent = '';
+            var i = 0;
+            (function step() {
+                i += 1;
+                descr.textContent = full.slice(0, i);
+                if (i < full.length) typeTimers.set(descr, setTimeout(step, 35));
+            })();
+        }
+    }
+
+    function show(i) {
+        current = (i + slides.length) % slides.length;
+        slides.forEach(function (s, si) {
+            var active = si === current;
+            s.classList.toggle('is-active', active);
+            var v = videoOf(s);
+            if (v && !active) { v.pause(); }
+        });
+        dots.forEach(function (d, di) {
+            d.classList.toggle('is-active', di === current);
+        });
+        var slide = slides[current];
+        animateSlideText(slide);
+        ensureVideo(slide, function (v) {
+            if (!v) return;
+            applySound(v, slide);
+            v.currentTime = 0;
+            var p = v.play();
+            if (p && p.catch) p.catch(function () {});
+            v.onended = function () { show(current + 1); };
+        });
+    }
+
+    /* перший слайд: відео вже в розмітці */
+    var first = videoOf(slides[0]);
+    if (first) {
+        first.onended = function () { show(1); };
+        applySound(first, slides[0]);
+    }
+    animateSlideText(slides[0]);
+
+    dots.forEach(function (d) {
+        d.addEventListener('click', function () {
+            show(parseInt(d.getAttribute('data-hero-dot'), 10));
+        });
+    });
+
+    root.querySelectorAll('[data-hero-sound]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            soundOn = !soundOn;
+            slides.forEach(function (s) { applySound(videoOf(s), s); });
+            /* після ввімкнення звуку перезапускаємо активне відео play (мобільні політики) */
+            var v = videoOf(slides[current]);
+            if (v) { var p = v.play(); if (p && p.catch) p.catch(function () {}); }
+        });
+    });
+})();
+</script>

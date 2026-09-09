@@ -1,0 +1,74 @@
+{% if not partial %}
+<div class="checkout__related" data-checkout-related>
+  <p class="busket__title">{{ heading_title }}</p>
+  <div class="checkout__related-grid" data-related-grid>
+{% endif %}
+    {% for product in products %}
+    <div class="product__item checkout__related-item">
+      <div class="product__item-media">
+        <a class="product__item-image" href="{{ product.href }}">
+          <img src="{{ product.thumb }}" alt="{{ product.name }}" title="{{ product.name }}" loading="lazy" width="450" height="450">
+        </a>
+      </div>
+      <div class="product__item-content">
+        <a class="product__item-title" href="{{ product.href }}"><h3>{{ product.name }}</h3></a>
+        <p class="product__item-price">
+          {% if product.special %}<span class="product__item-price-new">{{ product.special }}</span> <span class="product__item-price-old">{{ product.price }}</span>{% else %}{{ product.price }}{% endif %}
+        </p>
+        <button class="product__item-add btn-2 checkout__related-add" data-in-text="Додано" onclick="cart.add('{{ product.product_id }}', '{{ product.minimum }}');" title="{{ button_cart }}" aria-label="{{ button_cart }}">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="20" r="1"/><circle cx="18" cy="20" r="1"/><path d="M2 3h2l2.4 12.2a2 2 0 0 0 2 1.6h8.7a2 2 0 0 0 2-1.6L21 7H6"/></svg>
+          <span data-cart-label>{{ button_add_short|default('Додати') }}</span>
+        </button>
+      </div>
+    </div>
+    {% endfor %}
+{% if not partial %}
+  </div>
+  {% if has_more %}
+  <button type="button" class="checkout__related-more" data-related-more data-url="{{ more_url }}" data-offset="{{ next_offset }}">
+    {{ button_more }}
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+  </button>
+  {% endif %}
+</div>
+<script>
+/* «Завантажити ще»: тягне наступну порцію карток ajax-ом */
+(function () {
+    var box = document.querySelector('[data-checkout-related]');
+    if (!box) return;
+
+    var more = box.querySelector('[data-related-more]');
+    if (!more) return;
+
+    var grid = box.querySelector('[data-related-grid]');
+    var chunk = 6;
+
+    more.addEventListener('click', function () {
+        var url = more.getAttribute('data-url');
+        var offset = parseInt(more.getAttribute('data-offset'), 10) || 0;
+
+        more.disabled = true;
+
+        fetch(url + (url.indexOf('?') > -1 ? '&' : '?') + 'offset=' + offset, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+            .then(function (r) { return r.text(); })
+            .then(function (html) {
+                more.disabled = false;
+
+                var holder = document.createElement('div');
+                holder.innerHTML = html;
+
+                var items = holder.querySelectorAll('.checkout__related-item');
+
+                items.forEach(function (item) { grid.appendChild(item); });
+
+                if (items.length < chunk) {
+                    more.remove();   // порція неповна — далі нічого немає
+                } else {
+                    more.setAttribute('data-offset', offset + chunk);
+                }
+            })
+            .catch(function () { more.disabled = false; });
+    });
+})();
+</script>
+{% endif %}

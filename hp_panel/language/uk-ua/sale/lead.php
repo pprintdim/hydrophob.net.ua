@@ -1,0 +1,20 @@
+<?php
+$_['heading_title']     = 'Заявки з форм';
+$_['text_success']      = 'Заявку видалено!';
+$_['text_no_results']   = 'Заявок немає';
+$_['text_confirm']      = 'Ви впевнені?';
+$_['text_new']          = 'нова';
+$_['text_all_forms']    = 'Усі форми';
+$_['text_form_contact'] = 'Контакти';
+$_['text_form_quick']    = 'Швидке замовлення';
+$_['text_form_question'] = 'Питання (FAQ)';
+$_['text_pagination']   = 'Показано %d — %d із %d (сторінок: %d)';
+$_['column_form']       = 'Форма';
+$_['column_name']       = 'Імʼя';
+$_['column_contact']    = 'Контакти';
+$_['column_date_added'] = 'Дата';
+$_['column_action']     = 'Дія';
+$_['entry_email']       = 'Email';
+$_['entry_telephone']   = 'Телефон';
+$_['entry_city']        = 'Місто';
+$_['entry_message']     = 'Повідомлення';

@@ -1,0 +1,254 @@
+{{ header }}{{ column_left }}
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="pull-right">
+        <button type="submit" form="form-hp-gallery" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+        <a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a>
+      </div>
+      <h1>{{ heading_title }}</h1>
+      <ul class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}
+        <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div class="container-fluid">
+    {% if error_warning %}
+    <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
+    {% endif %}
+    <style>
+      .hp-lang-pane{padding-top:15px}
+      .hp-rep [data-repeater-row]{margin-bottom:8px}
+      .hp-rep-head{display:flex;align-items:center;gap:8px;padding:6px 10px;cursor:pointer}
+      .hp-rep-chev{transition:transform .2s}
+      [data-repeater-row].is-open .hp-rep-chev{transform:rotate(180deg)}
+      .hp-rep-preview{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
+      .hp-rep-body{display:none;padding:10px}
+      [data-repeater-row].is-open .hp-rep-body{display:block}
+      .hp-media-box{display:inline-block;position:relative;vertical-align:top;margin-right:10px}
+      .hp-media-box .img-thumbnail{width:84px;height:84px;padding:2px;display:block;overflow:hidden}
+      .hp-media-box img{width:100%;height:100%;object-fit:cover}
+      .hp-media-play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:28px;height:28px;border-radius:50%;background:rgba(0,0,0,.55);color:#fff;display:flex;align-items:center;justify-content:center;pointer-events:none}
+      .hp-media-play[hidden]{display:none}
+      .hp-row-flex{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-start;margin-bottom:6px}
+      .hp-field{flex:1;min-width:180px}
+      .hp-field .form-control{margin-bottom:6px}
+    </style>
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-pencil"></i> {{ text_edit }}</h3>
+      </div>
+      <div class="panel-body">
+        <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-hp-gallery" class="form-horizontal">
+          <div class="form-group required">
+            <label class="col-sm-2 control-label" for="input-name">{{ entry_name }}</label>
+            <div class="col-sm-10">
+              <input type="text" name="name" value="{{ name }}" placeholder="{{ entry_name }}" id="input-name" class="form-control" />
+              {% if error_name %}<div class="text-danger">{{ error_name }}</div>{% endif %}
+            </div>
+          </div>
+
+          <ul class="nav nav-tabs" id="language">
+            {% for language in languages %}
+            <li{% if loop.first %} class="active"{% endif %}><a href="#" data-lang="{{ language.language_id }}"><img src="language/{{ language.code }}/{{ language.code }}.png" title="{{ language.name }}" /> {{ language.name }}</a></li>
+            {% endfor %}
+          </ul>
+
+          <div class="hp-lang-pane">
+            {% for language in languages %}
+            <div class="js-lang js-lang-{{ language.language_id }}"{% if not loop.first %} hidden{% endif %}>
+              <div class="form-group">
+                <label class="col-sm-2 control-label">{{ entry_heading }}</label>
+                <div class="col-sm-10">
+                  <input type="text" name="gallery_description[{{ language.language_id }}][heading_title]" value="{{ gallery_description[language.language_id] ? gallery_description[language.language_id].heading_title }}" class="form-control" placeholder="{{ entry_heading }}" />
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+
+          <div class="form-group">
+            <label class="col-sm-2 control-label">{{ entry_items }}</label>
+            <div class="col-sm-10 hp-rep">
+              <div class="help-block">{{ help_items }}</div>
+              <div data-repeater data-prefix="items">
+                {% for item in items %}
+                <div class="panel panel-default" data-repeater-row>
+                  <div class="hp-rep-head" data-repeater-toggle>
+                    <i class="fa fa-chevron-down hp-rep-chev"></i>
+                    <span class="hp-rep-preview" data-repeater-preview>{{ loop.index }}</span>
+                    <button type="button" class="btn btn-default btn-xs" data-repeater-up title="{{ text_move_up }}"><i class="fa fa-arrow-up"></i></button>
+                    <button type="button" class="btn btn-default btn-xs" data-repeater-down title="{{ text_move_down }}"><i class="fa fa-arrow-down"></i></button>
+                    <button type="button" class="btn btn-danger btn-xs" data-repeater-remove title="{{ button_remove }}"><i class="fa fa-minus-circle"></i></button>
+                  </div>
+                  <div class="hp-rep-body">
+                    <div class="hp-row-flex">
+                      <div class="hp-media-box">
+                        <a href="" data-toggle="image" class="img-thumbnail"><img src="{{ item.thumb }}" alt="" data-placeholder="{{ placeholder }}" /></a>
+                        <input type="hidden" name="items[{{ loop.index0 }}][image]" value="{{ item.image }}" />
+                        <span class="hp-media-play" data-media-play{% if not item.video %} hidden{% endif %}><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span>
+                      </div>
+                      <div class="hp-field">
+                        <select name="items[{{ loop.index0 }}][video]" class="form-control" data-media-video title="{{ entry_video }}">
+                          <option value="">{{ text_photo_only }}</option>
+                          {% for file in video_files %}
+                          <option value="{{ file }}"{% if item.video == file %} selected="selected"{% endif %}>{{ file }}</option>
+                          {% endfor %}
+                        </select>
+                        <div class="help-block">{{ help_video }}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {% endfor %}
+              </div>
+              <button type="button" class="btn btn-primary" data-repeater-add><i class="fa fa-plus-circle"></i> {{ button_add }}</button>
+
+              <template data-repeater-template>
+                <div class="panel panel-default is-open" data-repeater-row>
+                  <div class="hp-rep-head" data-repeater-toggle>
+                    <i class="fa fa-chevron-down hp-rep-chev"></i>
+                    <span class="hp-rep-preview" data-repeater-preview></span>
+                    <button type="button" class="btn btn-default btn-xs" data-repeater-up title="{{ text_move_up }}"><i class="fa fa-arrow-up"></i></button>
+                    <button type="button" class="btn btn-default btn-xs" data-repeater-down title="{{ text_move_down }}"><i class="fa fa-arrow-down"></i></button>
+                    <button type="button" class="btn btn-danger btn-xs" data-repeater-remove title="{{ button_remove }}"><i class="fa fa-minus-circle"></i></button>
+                  </div>
+                  <div class="hp-rep-body">
+                    <div class="hp-row-flex">
+                      <div class="hp-media-box">
+                        <a href="" data-toggle="image" class="img-thumbnail"><img src="{{ placeholder }}" alt="" data-placeholder="{{ placeholder }}" /></a>
+                        <input type="hidden" name="items[__index__][image]" value="" />
+                        <span class="hp-media-play" data-media-play hidden><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span>
+                      </div>
+                      <div class="hp-field">
+                        <select name="items[__index__][video]" class="form-control" data-media-video title="{{ entry_video }}">
+                          <option value="">{{ text_photo_only }}</option>
+                          {% for file in video_files %}
+                          <option value="{{ file }}">{{ file }}</option>
+                          {% endfor %}
+                        </select>
+                        <div class="help-block">{{ help_video }}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </template>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-status">{{ entry_status }}</label>
+            <div class="col-sm-10">
+              <select name="status" id="input-status" class="form-control">
+                {% if status %}
+                <option value="1" selected="selected">{{ text_enabled }}</option>
+                <option value="0">{{ text_disabled }}</option>
+                {% else %}
+                <option value="1">{{ text_enabled }}</option>
+                <option value="0" selected="selected">{{ text_disabled }}</option>
+                {% endif %}
+              </select>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <script type="text/javascript"><!--
+// один глобальний перемикач мов на всю форму
+(function () {
+  var tabs = document.querySelectorAll('#language a[data-lang]');
+
+  function show(language_id) {
+    document.querySelectorAll('.js-lang').forEach(function (block) {
+      block.hidden = !block.classList.contains('js-lang-' + language_id);
+    });
+
+    tabs.forEach(function (tab) {
+      tab.parentNode.classList.toggle('active', tab.dataset.lang === language_id);
+    });
+  }
+
+  tabs.forEach(function (tab) {
+    tab.addEventListener('click', function (event) {
+      event.preventDefault();
+      show(tab.dataset.lang);
+    });
+  });
+
+  window.hpActiveLanguage = function () {
+    var active = document.querySelector('#language li.active a[data-lang]');
+
+    return active ? active.dataset.lang : null;
+  };
+})();
+
+// репітер: акордеон-картки (згорнуті); прев'ю = відео або ім'я файла зображення
+(function () {
+  var list = document.querySelector('[data-repeater]');
+  var template = document.querySelector('[data-repeater-template]');
+  if (!list || !template) return;
+
+  var prefix = list.dataset.prefix || 'items';
+
+  function syncPreview(row, index) {
+    var preview = row.querySelector('[data-repeater-preview]');
+    if (!preview) return;
+    var video = row.querySelector('[data-media-video]');
+    var image = row.querySelector('.hp-media-box input[type="hidden"]');
+    var label = '';
+    if (video && video.value) label = video.value;
+    else if (image && image.value) label = image.value.split('/').pop();
+    preview.textContent = (index + 1) + '. ' + label;
+    // значок ▶ на плитці — лише коли обрано кліп
+    var play = row.querySelector('[data-media-play]');
+    if (play) play.hidden = !(video && video.value);
+  }
+
+  function renumber() {
+    list.querySelectorAll('[data-repeater-row]').forEach(function (row, index) {
+      row.querySelectorAll('[name]').forEach(function (field) {
+        field.name = field.name.replace(new RegExp('^' + prefix + '\\[[^\\]]*\\]'), prefix + '[' + index + ']');
+      });
+      // менеджеру зображень потрібні id на <a> (thumb) і hidden input (target)
+      row.querySelectorAll('.hp-media-box').forEach(function (box, mi) {
+        var link = box.querySelector('a[data-toggle="image"]');
+        var input = box.querySelector('input[type="hidden"]');
+        if (link) link.id = prefix + '-thumb-' + index + '-' + mi;
+        if (input) input.id = prefix + '-input-' + index + '-' + mi;
+      });
+      syncPreview(row, index);
+    });
+  }
+
+  renumber();
+
+  list.addEventListener('change', function (event) {
+    if (event.target.hasAttribute('data-media-video')) renumber();
+  });
+
+  document.querySelector('[data-repeater-add]').addEventListener('click', function () {
+    list.insertAdjacentHTML('beforeend', template.innerHTML);
+    renumber();
+  });
+
+  list.addEventListener('click', function (event) {
+    var row = event.target.closest('[data-repeater-row]');
+    if (!row) return;
+
+    if (event.target.closest('[data-repeater-remove]')) row.remove();
+    else if (event.target.closest('[data-repeater-up]') && row.previousElementSibling) row.parentNode.insertBefore(row, row.previousElementSibling);
+    else if (event.target.closest('[data-repeater-down]') && row.nextElementSibling) row.parentNode.insertBefore(row.nextElementSibling, row);
+    else if (event.target.closest('[data-repeater-toggle]') && !event.target.closest('button') && !event.target.closest('a')) { row.classList.toggle('is-open'); return; }
+    else return;
+
+    renumber();
+  });
+})();
+//--></script>
+</div>
+{{ footer }}

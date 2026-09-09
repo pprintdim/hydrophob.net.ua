@@ -46,16 +46,20 @@ class Pagination {
 
 		$this->url = str_replace('%7Bpage%7D', '{page}', $this->url);
 
+		// формат верстки hydrophob: стрілки prev/next з SVG, вимкнені — li.is-disabled
+		$prev_svg = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>';
+		$next_svg = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>';
+
 		$output = '<ul class="pagination">';
 
 		if ($page > 1) {
-			$output .= '<li><a href="' . str_replace(array('&amp;page={page}', '?page={page}', '&page={page}'), '', $this->url) . '">' . $this->text_first . '</a></li>';
-			
 			if ($page - 1 === 1) {
-				$output .= '<li><a href="' . str_replace(array('&amp;page={page}', '?page={page}', '&page={page}'), '', $this->url) . '">' . $this->text_prev . '</a></li>';
+				$output .= '<li><a href="' . str_replace(array('&amp;page={page}', '?page={page}', '&page={page}'), '', $this->url) . '" class="prev" aria-label="&laquo;">' . $prev_svg . '</a></li>';
 			} else {
-				$output .= '<li><a href="' . str_replace('{page}', $page - 1, $this->url) . '">' . $this->text_prev . '</a></li>';
+				$output .= '<li><a href="' . str_replace('{page}', $page - 1, $this->url) . '" class="prev" aria-label="&laquo;">' . $prev_svg . '</a></li>';
 			}
+		} else {
+			$output .= '<li class="is-disabled"><a class="prev" aria-hidden="true">' . $prev_svg . '</a></li>';
 		}
 
 		if ($num_pages > 1) {
@@ -91,8 +95,9 @@ class Pagination {
 		}
 
 		if ($page < $num_pages) {
-			$output .= '<li><a href="' . str_replace('{page}', $page + 1, $this->url) . '">' . $this->text_next . '</a></li>';
-			$output .= '<li><a href="' . str_replace('{page}', $num_pages, $this->url) . '">' . $this->text_last . '</a></li>';
+			$output .= '<li><a href="' . str_replace('{page}', $page + 1, $this->url) . '" class="next" aria-label="&raquo;">' . $next_svg . '</a></li>';
+		} else {
+			$output .= '<li class="is-disabled"><a class="next" aria-hidden="true">' . $next_svg . '</a></li>';
 		}
 
 		$output .= '</ul>';

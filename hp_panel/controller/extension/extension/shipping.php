@@ -72,6 +72,12 @@ class ControllerExtensionExtensionShipping extends Controller {
 		$extensions = $this->model_setting_extension->getInstalled('shipping');
 		
 		foreach ($extensions as $key => $value) {
+			// 'delivery' — спільний двигун перевізників без власної адмін-картки:
+			// його не можна деінсталювати за відсутністю файла
+			if ($value == 'delivery') {
+				continue;
+			}
+
 			if (!is_file(DIR_APPLICATION . 'controller/extension/shipping/' . $value . '.php') && !is_file(DIR_APPLICATION . 'controller/shipping/' . $value . '.php')) {
 				$this->model_setting_extension->uninstall('shipping', $value);
 

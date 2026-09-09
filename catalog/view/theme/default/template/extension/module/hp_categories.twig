@@ -1,0 +1,16 @@
+<section class="variants">
+    <div class="container">
+        <div class="variants__inner">
+            <div class="variants__block">
+                {% for item in items %}
+                <a class="variants__item" href="{{ item.href }}">
+                    <div class="variants__item-image">
+                        <img src="{{ item.image }}" alt="{{ item.title }}">
+                    </div>
+                    <h3 class="variants__item-title">{{ item.title }}</h3>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>

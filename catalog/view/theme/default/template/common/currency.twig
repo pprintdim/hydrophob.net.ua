@@ -1,26 +1,42 @@
 {% if currencies|length > 1 %}
-<div class="pull-left">
-  <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-currency">
-    <div class="btn-group">
-      <button class="btn btn-link dropdown-toggle" data-toggle="dropdown">{% for currency in currencies %}
-      {% if currency.symbol_left and currency.code == code %} <strong>{{ currency.symbol_left }}</strong> {% elseif currency.symbol_right and currency.code == code %} <strong>{{ currency.symbol_right }}</strong> {% endif %}
-      {% endfor %} <span class="hidden-xs hidden-sm hidden-md">{{ text_currency }}</span>&nbsp;<i class="fa fa-caret-down"></i></button>
-      <ul class="dropdown-menu">
+{# перемикач валют — випадашка, як у мовного: обрана валюта + решта під нею #}
+<div class="header__lang header__currency">
+    <div class="header__lang-selected">
         {% for currency in currencies %}
-        {% if currency.symbol_left %}
-        <li>
-          <button class="currency-select btn btn-link btn-block" type="button" name="{{ currency.code }}">{{ currency.symbol_left }} {{ currency.title }}</button>
-        </li>
-        {% else %}
-        <li>
-          <button class="currency-select btn btn-link btn-block" type="button" name="{{ currency.code }}">{{ currency.symbol_right }} {{ currency.title }}</button>
-        </li>
-        {% endif %}
+            {% if currency.code == code %}
+                {{- currency.code == 'UAH' ? '₴' : (currency.symbol_left ~ currency.symbol_right)|trim -}}
+            {% endif %}
         {% endfor %}
-      </ul>
     </div>
-    <input type="hidden" name="code" value="" />
-    <input type="hidden" name="redirect" value="{{ redirect }}" />
-  </form>
+    <div class="header__lang-content">
+        {% for currency in currencies %}
+            {% if currency.code != code %}
+                <a href="#" class="currency-select" data-code="{{ currency.code }}" title="{{ currency.title }}">
+                    {{- currency.code == 'UAH' ? '₴' : (currency.symbol_left ~ currency.symbol_right)|trim -}}
+                </a>
+            {% endif %}
+        {% endfor %}
+    </div>
+    <form action="{{ action }}" method="post" data-currency-form>
+        <input type="hidden" name="code" value="">
+        <input type="hidden" name="redirect" value="{{ redirect }}">
+    </form>
 </div>
-{% endif %} 
+
+<script>
+/* Вибір валюти. Перемикач стоїть і в шапці, і в бургер-меню, тому форму
+   шукаємо в межах свого блоку — id тут дав би дубль на сторінці. */
+document.querySelectorAll('.currency-select').forEach(function (el) {
+    el.addEventListener('click', function (e) {
+        e.preventDefault();
+
+        var box = this.closest('.header__currency');
+        var form = box ? box.querySelector('[data-currency-form]') : null;
+        if (!form) return;
+
+        form.querySelector('input[name="code"]').value = this.getAttribute('data-code');
+        form.submit();
+    });
+});
+</script>
+{% endif %}

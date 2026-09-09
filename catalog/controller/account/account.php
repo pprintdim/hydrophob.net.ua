@@ -32,57 +32,24 @@ class ControllerAccountAccount extends Controller {
 		} 
 		
 		$data['edit'] = $this->url->link('account/edit', '', true);
-		$data['password'] = $this->url->link('account/password', '', true);
 		$data['address'] = $this->url->link('account/address', '', true);
-		
-		$data['credit_cards'] = array();
-		
-		$files = glob(DIR_APPLICATION . 'controller/extension/credit_card/*.php');
-		
-		foreach ($files as $file) {
-			$code = basename($file, '.php');
-			
-			if ($this->config->get('payment_' . $code . '_status') && $this->config->get('payment_' . $code . '_card')) {
-				$this->load->language('extension/credit_card/' . $code, 'extension');
-
-				$data['credit_cards'][] = array(
-					'name' => $this->language->get('extension')->get('heading_title'),
-					'href' => $this->url->link('extension/credit_card/' . $code, '', true)
-				);
-			}
-		}
-		
 		$data['wishlist'] = $this->url->link('account/wishlist');
-		$data['order'] = $this->url->link('account/order', '', true);
-		$data['download'] = $this->url->link('account/download', '', true);
+		$data['order'] = $this->url->link('account/order', '', true);		
 		
-		if ($this->config->get('total_reward_status')) {
-			$data['reward'] = $this->url->link('account/reward', '', true);
-		} else {
-			$data['reward'] = '';
-		}		
-		
-		$data['return'] = $this->url->link('account/return', '', true);
-		$data['transaction'] = $this->url->link('account/transaction', '', true);
-		$data['newsletter'] = $this->url->link('account/newsletter', '', true);
-		$data['recurring'] = $this->url->link('account/recurring', '', true);
 		
 		$this->load->model('account/customer');
 		
-		$affiliate_info = $this->model_account_customer->getAffiliate($this->customer->getId());
-		
-		if (!$affiliate_info) {	
-			$data['affiliate'] = $this->url->link('account/affiliate/add', '', true);
-		} else {
-			$data['affiliate'] = $this->url->link('account/affiliate/edit', '', true);
-		}
-		
-		if ($affiliate_info) {		
-			$data['tracking'] = $this->url->link('account/tracking', '', true);
-		} else {
-			$data['tracking'] = '';
-		}
-		
+$this->load->language('account/edit'); // entry_firstname/lastname/email/telephone
+
+		// форма редагування прямо в кабінеті (патерн hydrophob.net)
+		$customer_info = $this->model_account_customer->getCustomer($this->customer->getId());
+
+		$data['firstname'] = $customer_info['firstname'];
+		$data['lastname'] = $customer_info['lastname'];
+		$data['email'] = $customer_info['email'];
+		$data['telephone'] = $customer_info['telephone'];
+		$data['save_action'] = $this->url->link('account/account/save', '', true);
+
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['column_right'] = $this->load->controller('common/column_right');
 		$data['content_top'] = $this->load->controller('common/content_top');
@@ -91,6 +58,60 @@ class ControllerAccountAccount extends Controller {
 		$data['header'] = $this->load->controller('common/header');
 		
 		$this->response->setOutput($this->load->view('account/account', $data));
+	}
+
+	// ajax-збереження даних кабінету: імʼя, прізвище, телефон, підписка.
+	// E-mail сюди не входить — він міняється лише через код підтвердження.
+	public function save() {
+		$this->load->language('account/account');
+		$this->load->language('account/edit');
+
+		$json = array();
+
+		if (!$this->customer->isLogged()) {
+			$json['error']['warning'] = $this->language->get('error_login_required');
+			$json['redirect'] = $this->url->link('account/login', '', true);
+		}
+
+		if (!isset($this->request->server['REQUEST_METHOD']) || $this->request->server['REQUEST_METHOD'] != 'POST') {
+			$json['error']['warning'] = 'Bad request';
+		}
+
+		if (!$json) {
+			$firstname = isset($this->request->post['firstname']) ? trim($this->request->post['firstname']) : '';
+			$lastname  = isset($this->request->post['lastname']) ? trim($this->request->post['lastname']) : '';
+			$telephone = isset($this->request->post['telephone']) ? trim($this->request->post['telephone']) : '';
+
+			if ((utf8_strlen($firstname) < 1) || (utf8_strlen($firstname) > 32)) {
+				$json['error']['firstname'] = $this->language->get('error_firstname');
+			}
+
+			if (utf8_strlen($lastname) > 32) {
+				$json['error']['lastname'] = $this->language->get('error_lastname');
+			}
+
+			if ((utf8_strlen($telephone) < 3) || (utf8_strlen($telephone) > 32)) {
+				$json['error']['telephone'] = $this->language->get('error_telephone');
+			}
+		}
+
+		if (!$json) {
+			$this->load->model('account/customer');
+
+			$this->model_account_customer->editCustomer($this->customer->getId(), array(
+				'firstname' => $firstname,
+				'lastname'  => $lastname,
+				'email'     => $this->customer->getEmail(),
+				'telephone' => $telephone
+			));
+
+			$this->model_account_customer->editNewsletter(!empty($this->request->post['newsletter']) ? 1 : 0);
+
+			$json['success'] = true;
+		}
+
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($json));
 	}
 
 	public function country() {

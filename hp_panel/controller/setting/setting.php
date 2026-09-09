@@ -156,6 +156,11 @@ class ControllerSettingSetting extends Controller {
 			$data['success'] = '';
 		}
 
+		// Brevo (HTTP API для пошти)
+		$data['text_brevo'] = $this->language->get('text_brevo');
+		$data['help_brevo'] = $this->language->get('help_brevo');
+		$data['help_brevo_key'] = $this->language->get('help_brevo_key');
+
 		$data['action'] = $this->url->link('setting/setting', 'user_token=' . $this->session->data['user_token'], true);
 
 		$data['cancel'] = $this->url->link('setting/store', 'user_token=' . $this->session->data['user_token'], true);

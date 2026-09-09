@@ -35,3 +35,4 @@ $_['column_comment'] = 'Коментар';
 
 // Error
 $_['error_reorder'] = '%s в даний момент не доступний....';
+$_['button_catalog'] = 'До каталогу';

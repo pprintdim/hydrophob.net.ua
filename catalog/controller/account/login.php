@@ -83,6 +83,10 @@ class ControllerAccountLogin extends Controller {
 			}
 		}
 
+		foreach (array('otp_page_title', 'otp_page_lead', 'otp_step1', 'otp_step2', 'otp_step3', 'otp_get_code', 'otp_login_title', 'otp_register_title', 'otp_no_account', 'otp_register_link') as $otp_key) {
+			$data[$otp_key] = $this->language->get($otp_key);
+		}
+
 		$data['breadcrumbs'] = array();
 
 		$data['breadcrumbs'][] = array(
@@ -112,7 +116,6 @@ class ControllerAccountLogin extends Controller {
 
 		$data['action'] = $this->url->link('account/login', '', true);
 		$data['register'] = $this->url->link('account/register', '', true);
-		$data['forgotten'] = $this->url->link('account/forgotten', '', true);
 
 		// Added strpos check to pass McAfee PCI compliance test (http://forum.opencart.com/viewtopic.php?f=10&t=12043&p=151494#p151295)
 		if (isset($this->request->post['redirect']) && (strpos($this->request->post['redirect'], $this->config->get('config_url')) === 0 || strpos($this->request->post['redirect'], $this->config->get('config_ssl')) === 0)) {
@@ -124,6 +127,10 @@ class ControllerAccountLogin extends Controller {
 		} else {
 			$data['redirect'] = '';
 		}
+
+		// у чекаут повертаємо лише тоді, коли покупець ішов саме звідти;
+		// з кошика чи будь-якої іншої сторінки після входу — у кабінет
+		$data['redirect_checkout'] = $data['redirect'] && strpos($data['redirect'], 'checkout/checkout') !== false;
 
 		if (isset($this->session->data['success'])) {
 			$data['success'] = $this->session->data['success'];

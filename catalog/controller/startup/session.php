@@ -22,7 +22,30 @@ class ControllerStartupSession extends Controller {
 			
 			$this->session->start($session_id);
 			
-			setcookie($this->config->get('session_name'), $this->session->getId(), (ini_get('session.cookie_lifetime') ? time() + ini_get('session.cookie_lifetime') : 0), ini_get('session.cookie_path'), ini_get('session.cookie_domain'));	
+			// SameSite=None: платіжки (WayForPay) повертають покупця крос-сайтовим
+			// POST — з дефолтним Lax браузер не шле сесійну куку, покупця
+			// розлогінювало, а стара кука перезаписувалась порожньою сесією.
+			// Заголовок пишемо вручну: setcookie() тут дає непередбачуваний
+			// результат (див. нотатки проєкту).
+			$expires = '';
+
+			if (ini_get('session.cookie_lifetime')) {
+				$expires = '; expires=' . gmdate('D, d-M-Y H:i:s T', time() + (int)ini_get('session.cookie_lifetime'));
+			}
+
+			// детект по константі конфіга: настройки магазину на цьому етапі ще
+			// не завантажені, а $_SERVER['HTTPS'] за проксі ненадійний
+			$https = (defined('HTTPS_SERVER') && strpos(HTTPS_SERVER, 'https://') === 0)
+				|| (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off');
+
+			header_remove('Set-Cookie');
+			header(
+				'Set-Cookie: ' . $this->config->get('session_name') . '=' . $this->session->getId()
+				. $expires . '; path=/'
+				. ($https ? '; Secure; SameSite=None' : '; SameSite=Lax')
+				. '; HttpOnly',
+				false
+			);
 		}
 	}
 }

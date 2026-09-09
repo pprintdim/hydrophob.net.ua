@@ -205,3 +205,8 @@ $_['error_log_required']             = 'Error Log Filename required!';
 $_['error_log_invalid']              = 'Error Log Filename invalid!';
 $_['error_log_extension']            = 'Error Log Filename extension needs to be .log!';
 $_['error_encryption']               = 'Encryption Key must be between 32 and 1024 characters!';
+
+// Brevo (HTTP API для пошти)
+$_['text_brevo'] = 'Brevo (HTTP API)';
+$_['help_brevo'] = 'Send mail via the Brevo API — bypasses blocked SMTP ports on the server. The sender is taken from the store e-mail.';
+$_['help_brevo_key'] = 'For Brevo, paste the API key here (xkeysib-...).';

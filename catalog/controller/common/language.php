@@ -5,7 +5,8 @@ class ControllerCommonLanguage extends Controller {
 
 		$data['action'] = $this->url->link('common/language/language', '', $this->request->server['HTTPS']);
 
-		$data['code'] = $this->session->data['language'];
+		// поточну мову беремо з конфігу: її диктує адреса, а не сесія
+		$data['code'] = (string)$this->config->get('config_language');
 
 		$this->load->model('localisation/language');
 
@@ -13,11 +14,31 @@ class ControllerCommonLanguage extends Controller {
 
 		$results = $this->model_localisation_language->getLanguages();
 
+		// адреса тієї самої сторінки іншою мовою: мова тепер живе в URL
+		// (/ru/...), тож перемикач — звичайні посилання, а не POST-форма
+		if (isset($this->request->get['route'])) {
+			$switch_route = (string)$this->request->get['route'];
+			$switch_args = $this->request->get;
+			unset($switch_args['_route_'], $switch_args['route'], $switch_args['language']);
+		} else {
+			$switch_route = 'common/home';
+			$switch_args = array();
+		}
+
+		$default_language = (string)$this->config->get('config_language');
+
 		foreach ($results as $result) {
 			if ($result['status']) {
+				$args = $switch_args;
+
+				if ($result['code'] !== $default_language) {
+					$args['language'] = $result['code'];
+				}
+
 				$data['languages'][] = array(
 					'name' => $result['name'],
-					'code' => $result['code']
+					'code' => $result['code'],
+					'href' => $this->url->link($switch_route, http_build_query($args), true)
 				);
 			}
 		}

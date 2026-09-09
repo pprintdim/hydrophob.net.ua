@@ -19,3 +19,5 @@ $_['column_model'] = 'Модель';
 $_['column_stock'] = 'Наявність';
 $_['column_price'] = 'Ціна за одиницю товару';
 $_['column_action'] = 'Дія';
+$_['button_add_short'] = 'Додати';
+$_['text_added_short'] = 'Додано';

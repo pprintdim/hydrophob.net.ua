@@ -131,13 +131,7 @@ class ControllerCommonColumnLeft extends Controller {
 			// Extension
 			$marketplace = array();
 
-			if ($this->user->hasPermission('access', 'marketplace/marketplace')) {
-				$marketplace[] = array(
-					'name'	   => $this->language->get('text_marketplace'),
-					'href'     => $this->url->link('marketplace/marketplace', 'user_token=' . $this->session->data['user_token'], true),
-					'children' => array()
-				);
-			}
+			// Маркетплейс OpenCart прибрано: тягне зовнішній каталог, магазину не потрібен
 
 			if ($this->user->hasPermission('access', 'marketplace/installer')) {
 				$marketplace[] = array(
@@ -208,6 +202,15 @@ class ControllerCommonColumnLeft extends Controller {
 				);
 			}
 
+			// СЕО-мета: шаблони title/description по типах сторінок
+			if ($this->user->hasPermission('access', 'design/seo_meta')) {
+				$design[] = array(
+					'name'	   => $this->language->get('text_seo_meta'),
+					'href'     => $this->url->link('design/seo_meta', 'user_token=' . $this->session->data['user_token'], true),
+					'children' => array()
+				);
+			}
+
 			if ($this->user->hasPermission('access', 'design/banner')) {
 				$design[] = array(
 					'name'	   => $this->language->get('text_banner'),
@@ -241,6 +244,15 @@ class ControllerCommonColumnLeft extends Controller {
 				$sale[] = array(
 					'name'	   => $this->language->get('text_order'),
 					'href'     => $this->url->link('sale/order', 'user_token=' . $this->session->data['user_token'], true),
+					'children' => array()
+				);
+			}
+
+			// заявки з форм сайту (швидке замовлення, питання)
+			if ($this->user->hasPermission('access', 'sale/lead')) {
+				$sale[] = array(
+					'name'	   => $this->language->get('text_lead'),
+					'href'     => $this->url->link('sale/lead', 'user_token=' . $this->session->data['user_token'], true),
 					'children' => array()
 				);
 			}

@@ -60,21 +60,8 @@
                   <textarea name="config_meta_keyword" rows="5" placeholder="{{ entry_meta_keyword }}" id="input-meta-keyword" class="form-control">{{ config_meta_keyword }}</textarea>
                 </div>
               </div>
-              <div class="form-group">
-                <label class="col-sm-2 control-label" for="input-theme">{{ entry_theme }}</label>
-                <div class="col-sm-10">
-                  <select name="config_theme" id="input-theme" class="form-control">                    
-                    {% for theme in themes %}
-                    {% if theme.value == config_theme %}                    
-                    <option value="{{ theme.value }}" selected="selected">{{ theme.text }}</option>                    
-                    {% else %}                    
-                    <option value="{{ theme.value }}">{{ theme.text }}</option>                    
-                    {% endif %}
-                    {% endfor %}                  
-                  </select>
-                  <br/>
-                  <img src="" alt="" id="theme" class="img-thumbnail" /></div>
-              </div>
+              {# тема одна (default) — вибір прибрано, значення передається приховано #}
+              <input type="hidden" name="config_theme" id="input-theme" value="{{ config_theme|default('default') }}" />
               <div class="form-group">
                 <label class="col-sm-2 control-label" for="input-layout">{{ entry_layout }}</label>
                 <div class="col-sm-10">
@@ -978,14 +965,31 @@
                       <option value="smtp" selected="selected">{{ text_smtp }}</option>                      
                       {% else %}                      
                       <option value="smtp">{{ text_smtp }}</option>                      
-                      {% endif %}                    
+                      {% endif %}
+                      {% if config_mail_engine == 'brevo' %}
+                      <option value="brevo" selected="selected">{{ text_brevo }}</option>
+                      {% else %}
+                      <option value="brevo">{{ text_brevo }}</option>
+                      {% endif %}
                     </select>
+                    <div class="help-block" id="brevo-hint"{% if config_mail_engine != 'brevo' %} style="display:none"{% endif %}>{{ help_brevo }}</div>
                   </div>
                 </div>
                 <div class="form-group">
                   <label class="col-sm-2 control-label" for="input-mail-parameter"><span data-toggle="tooltip" title="{{ help_mail_parameter }}">{{ entry_mail_parameter }}</span></label>
                   <div class="col-sm-10">
-                    <input type="text" name="config_mail_parameter" value="{{ config_mail_parameter }}" placeholder="{{ entry_mail_parameter }}" id="input-mail-parameter" class="form-control" />
+                    <input type="text" name="config_mail_parameter" value="{{ config_mail_parameter }}" placeholder="{{ entry_mail_parameter }}" id="input-mail-parameter" class="form-control" autocomplete="off" />
+                    <div class="help-block" id="brevo-key-hint"{% if config_mail_engine != 'brevo' %} style="display:none"{% endif %}>{{ help_brevo_key }}</div>
+<script>
+$(function () {
+    function syncBrevo() {
+        var isBrevo = $('#input-mail-engine').val() === 'brevo';
+        $('#brevo-hint, #brevo-key-hint').toggle(isBrevo);
+    }
+    $('#input-mail-engine').on('change', syncBrevo);
+    syncBrevo();
+});
+</script>
                   </div>
                 </div>
                 <div class="form-group">
@@ -1243,28 +1247,7 @@
       </div>
     </div>
   </div>
-  <script type="text/javascript"><!--
-$('select[name=\'config_theme\']').on('change', function() {
-	$.ajax({
-		url: 'index.php?route=setting/setting/theme&user_token={{ user_token }}&theme=' + this.value,
-		dataType: 'html',
-		beforeSend: function() {
-			$('select[name=\'config_theme\']').prop('disabled', true);
-		},
-		complete: function() {
-			$('select[name=\'config_theme\']').prop('disabled', false);
-		},
-		success: function(html) {
-			$('#theme').attr('src', html);
-		},
-		error: function(xhr, ajaxOptions, thrownError) {
-			alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
-		}
-	});
-});
 
-$('select[name=\'config_theme\']').trigger('change');
-//--></script> 
   <script type="text/javascript"><!--
 $('select[name=\'config_country_id\']').on('change', function() {
 	$.ajax({

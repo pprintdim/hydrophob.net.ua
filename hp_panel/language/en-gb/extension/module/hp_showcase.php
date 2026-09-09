@@ -1,0 +1,21 @@
+<?php
+$_['heading_title']        = 'HP Product Slider';
+$_['text_extension']       = 'Extensions';
+$_['text_success']         = 'Module settings saved!';
+$_['text_edit']            = 'Module settings';
+$_['entry_name']           = 'Module name';
+$_['entry_status']         = 'Status';
+$_['entry_type']           = 'Selection type';
+$_['text_type_bestseller'] = 'Best sellers';
+$_['text_type_latest']     = 'Latest products';
+$_['text_type_special']    = 'Specials';
+$_['text_type_manual']     = 'Manually picked products';
+$_['entry_product']        = 'Products';
+$_['help_product']         = 'Start typing a product name (autocomplete). Applies to the "Manual" type only.';
+$_['entry_limit']          = 'Limit';
+$_['entry_anchor']         = 'Section anchor (id)';
+$_['help_anchor']          = 'Latin letters, no spaces: promo, recommended, viewed. Used as the section id.';
+$_['entry_heading']        = 'Section heading';
+$_['error_permission']     = 'You do not have permission to modify this module!';
+$_['error_name']           = 'Module name must be between 3 and 64 characters!';
+$_['error_heading']        = 'A Ukrainian heading is required!';

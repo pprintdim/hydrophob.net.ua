@@ -5,7 +5,9 @@ class ControllerInformationContact extends Controller {
 	public function index() {
 		$this->load->language('information/contact');
 
-		$this->document->setTitle($this->language->get('heading_title'));
+		// у <title> — розгорнутий варіант, у h1 шаблону — коротке «Контакти»
+		$this->document->setTitle($this->language->get('text_meta_title'));
+		$data['heading_title'] = $this->language->get('heading_title');
 
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
 			$mail = new Mail($this->config->get('config_mail_engine'));
@@ -72,6 +74,12 @@ class ControllerInformationContact extends Controller {
 		$data['store'] = $this->config->get('config_name');
 		$data['address'] = nl2br($this->config->get('config_address'));
 		$data['geocode'] = $this->config->get('config_geocode');
+
+		// координати для OpenStreetMap-карти (той самий формат, що у футері)
+		$geo = array_map('trim', explode(',', (string)$this->config->get('config_geocode')));
+		$data['map_lat'] = isset($geo[0]) && is_numeric($geo[0]) ? $geo[0] : '';
+		$data['map_lng'] = isset($geo[1]) && is_numeric($geo[1]) ? $geo[1] : '';
+		$data['map_title'] = $this->config->get('config_name');
 		$data['geocode_hl'] = $this->config->get('config_language');
 		$data['telephone'] = $this->config->get('config_telephone');
 		$data['fax'] = $this->config->get('config_fax');
@@ -132,6 +140,96 @@ class ControllerInformationContact extends Controller {
 		} else {
 			$data['captcha'] = '';
 		}
+
+		// Донатяжка верстки: лід, месенджери, плашки допомоги, відео над картою
+		$data['text_contacts_lead'] = $this->language->get('text_contacts_lead');
+		$data['text_sound_on'] = $this->language->get('text_sound_on');
+
+		$data['telegram'] = $this->language->get('contact_telegram');
+		$data['viber'] = $this->config->get('config_telephone')
+			? 'viber://chat?number=' . rawurlencode('+' . preg_replace('/[^0-9]/', '', $this->config->get('config_telephone')))
+			: '';
+
+		$data['help_items'] = array();
+		for ($i = 1; $i <= 3; $i++) {
+			$help_name = $this->language->get('help' . $i . '_name');
+			if ($help_name && $help_name != 'help' . $i . '_name') {
+				$data['help_items'][] = array(
+					'name' => $help_name,
+					'text' => $this->language->get('help' . $i . '_text')
+				);
+			}
+		}
+
+		// ── Структуровані дані: магазин з адресою, телефоном і графіком ──
+		$store = array(
+			'@context'  => 'https://schema.org',
+			'@type'     => 'Store',
+			'name'      => html_entity_decode($this->config->get('config_name'), ENT_QUOTES, 'UTF-8'),
+			'url'       => $this->url->link('common/home'),
+			'email'     => $this->config->get('config_email'),
+			'address'   => array(
+				'@type'          => 'PostalAddress',
+				'streetAddress'  => trim(preg_replace('/\s+/u', ' ', html_entity_decode((string)$this->config->get('config_address'), ENT_QUOTES, 'UTF-8'))),
+				'addressCountry' => 'UA'
+			),
+			'priceRange' => '$$',
+			'currenciesAccepted' => 'UAH',
+			'paymentAccepted'    => 'Cash, Credit Card'
+		);
+
+		if ($this->config->get('config_logo') && is_file(DIR_IMAGE . $this->config->get('config_logo'))) {
+			$store['image'] = ($this->config->get('config_ssl') ?: $this->config->get('config_url')) . 'image/' . $this->config->get('config_logo');
+		}
+
+		if (trim((string)$this->config->get('config_telephone')) !== '') {
+			$store['telephone'] = trim($this->config->get('config_telephone'));
+		}
+
+		// «49.999, 36.230» з налаштувань магазину → geo-координати
+		$geo_parts = array_map('trim', explode(',', (string)$this->config->get('config_geocode')));
+
+		if (count($geo_parts) == 2 && is_numeric($geo_parts[0]) && is_numeric($geo_parts[1])) {
+			$store['geo'] = array(
+				'@type'     => 'GeoCoordinates',
+				'latitude'  => (float)$geo_parts[0],
+				'longitude' => (float)$geo_parts[1]
+			);
+		}
+
+		$open = trim(preg_replace('/\s+/u', ' ', strip_tags(html_entity_decode((string)$this->config->get('config_open'), ENT_QUOTES, 'UTF-8'))));
+
+		if ($open !== '') {
+			// графік в налаштуваннях — вільний текст («Працюємо з 08:00 до 22:00,
+			// сб-нд вихідний»); у schema.org він має бути форматом «Mo-Fr 08:00-22:00»,
+			// тож витягуємо години, а сам текст лишаємо описом
+			$store['description'] = $open;
+
+			if (preg_match_all('/\b([0-2]?\d:[0-5]\d)\b/u', $open, $hours) && count($hours[1]) >= 2) {
+				// згадка вихідних у тексті означає, що робочі дні — лише будні
+				$weekend = preg_match('/(вихідн|выходн|сб|сб\.|субот)/ui', $open);
+
+				$store['openingHoursSpecification'] = array(array(
+					'@type'     => 'OpeningHoursSpecification',
+					'dayOfWeek' => $weekend
+						? array('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday')
+						: array('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'),
+					'opens'     => $hours[1][0],
+					'closes'    => $hours[1][1]
+				));
+			}
+		}
+
+		$data['schema_blocks'] = array($store, array(
+			'@context' => 'https://schema.org',
+			'@type'    => 'ContactPage',
+			'name'     => $this->language->get('heading_title'),
+			'url'      => $this->url->link('information/contact')
+		));
+
+		$data['contact_video'] = 'catalog/view/theme/default/vid/talk.mp4';
+		$data['contact_poster'] = is_file(DIR_IMAGE . 'catalog/video-posters/hero-talk-02168e.webp')
+			? 'image/catalog/video-posters/hero-talk-02168e.webp' : '';
 
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['column_right'] = $this->load->controller('common/column_right');

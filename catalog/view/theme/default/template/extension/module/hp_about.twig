@@ -1,0 +1,35 @@
+<section class="seo-desc"><div class="container">
+<div class="desc is-collapsible">
+{{ html }}
+</div>
+<button type="button" class="desc-toggle" data-desc-toggle data-more="{{ text_show_more }}" data-less="{{ text_show_less }}"><span>{{ text_show_more }}</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+</div></section>
+<script>
+/* collapse довгого SEO-опису: "Показати більше" / "Згорнути" */
+(function () {
+    var script = document.currentScript;
+    var section = script ? script.previousElementSibling : null;
+    if (!section) return;
+    var desc = section.querySelector('.desc');
+    var btn = section.querySelector('[data-desc-toggle]');
+    if (!desc || !btn) return;
+
+    // якщо текст і так вміщається — кнопка не потрібна
+    function syncToggle() {
+        if (desc.classList.contains('is-open')) return;
+        var fits = desc.scrollHeight <= desc.clientHeight + 4;
+        btn.hidden = fits;
+        desc.classList.toggle('is-collapsible', !fits);
+    }
+
+    syncToggle();
+    window.addEventListener('load', syncToggle);
+    window.addEventListener('resize', syncToggle);
+    btn.addEventListener('click', function () {
+        var open = desc.classList.toggle('is-open');
+        btn.classList.toggle('is-open', open);
+        btn.querySelector('span').textContent = open ? btn.getAttribute('data-less') : btn.getAttribute('data-more');
+        if (!open) desc.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+})();
+</script>

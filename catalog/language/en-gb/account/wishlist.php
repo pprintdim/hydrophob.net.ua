@@ -18,3 +18,5 @@ $_['column_model']  = 'Model';
 $_['column_stock']  = 'Stock';
 $_['column_price']  = 'Unit Price';
 $_['column_action'] = 'Action';
+$_['button_add_short'] = 'Add';
+$_['text_added_short'] = 'Added';

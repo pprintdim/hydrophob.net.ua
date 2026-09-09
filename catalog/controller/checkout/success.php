@@ -3,6 +3,38 @@ class ControllerCheckoutSuccess extends Controller {
 	public function index() {
 		$this->load->language('checkout/success');
 
+		$order_id = isset($this->session->data['order_id']) ? (int)$this->session->data['order_id'] : 0;
+
+		// GA4 purchase: замовлення вже створене, читаємо його ДО чистки сесії
+		$data['ga_purchase'] = array();
+
+		if ($order_id) {
+			$this->load->model('checkout/order');
+
+			$order_info = $this->model_checkout_order->getOrder($order_id);
+
+			if ($order_info) {
+				$items = array();
+
+				foreach ($this->model_checkout_order->getOrderProducts($order_id) as $product) {
+					$items[] = array(
+						'item_id'   => $product['product_id'],
+						'item_name' => $product['name'],
+						'price'     => round((float)$product['price'], 2),
+						'quantity'  => (int)$product['quantity']
+					);
+				}
+
+				$data['ga_purchase'] = array(
+					'transaction_id' => (string)$order_id,
+					'value'          => round((float)$order_info['total'], 2),
+					'currency'       => $order_info['currency_code'],
+					'shipping'       => 0,
+					'items'          => $items
+				);
+			}
+		}
+
 		if (isset($this->session->data['order_id'])) {
 			$this->cart->clear();
 
@@ -59,6 +91,19 @@ class ControllerCheckoutSuccess extends Controller {
 		$data['footer'] = $this->load->controller('common/footer');
 		$data['header'] = $this->load->controller('common/header');
 
-		$this->response->setOutput($this->load->view('common/success', $data));
+		$data['order_id'] = $order_id;
+		$data['logged'] = $this->customer->isLogged();
+		$data['home'] = $this->url->link('common/home');
+		$data['catalog'] = $this->url->link('product/category', 'path=33');
+		$data['orders'] = $this->url->link('account/order', '', true);
+
+		$data['text_title'] = $this->language->get('text_status_title');
+		$data['text_lead'] = $this->language->get('text_status_lead');
+		$data['text_note'] = $this->language->get('text_status_note');
+		$data['text_order'] = $this->language->get('text_status_order');
+		$data['button_home'] = $this->language->get('button_status_home');
+		$data['button_catalog'] = $this->language->get('button_status_catalog');
+
+		$this->response->setOutput($this->load->view('checkout/success', $data));
 	}
 }

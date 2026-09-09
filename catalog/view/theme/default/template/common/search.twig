@@ -1,8 +1,143 @@
-
                         <div class="header__search" id="search">
-                            <dic class="header__search-form">
-                                <input class="header__search-input" type="text" name="search" value="{{ search }}" placeholder="{{ text_search }}" required>
-                                <button class="header__search-btn" type="submit"></button>
-                            </dic>
-                            <button class="header__search-open"></button>
+                            <div class="header__search-wrap" id="smart-search">
+                                <form class="header__search-form" method="GET" action="{{ search_action }}" autocomplete="off">
+                                    <input class="header__search-input" type="search" name="search" value="{{ search }}" placeholder="{{ text_search }}" required>
+                                    <button class="header__search-btn" type="submit" aria-label="{{ text_search }}"></button>
+
+                                    <div class="smart-search__dropdown" id="smart-search-dropdown" hidden>
+                                        <div class="smart-search__cols">
+                                            <div class="smart-search__side">
+                                                <div class="smart-search__group" id="ss-categories" hidden>
+                                                    <div class="smart-search__group-title">{{ text_ss_categories }}</div>
+                                                    <ul class="smart-search__list"></ul>
+                                                </div>
+                                                <div class="smart-search__group" id="ss-brands" hidden>
+                                                    <div class="smart-search__group-title">{{ text_ss_brands }}</div>
+                                                    <ul class="smart-search__list"></ul>
+                                                </div>
+                                            </div>
+                                            <div class="smart-search__main">
+                                                <div class="smart-search__group" id="ss-products" hidden>
+                                                    <div class="smart-search__group-title">{{ text_ss_products }}</div>
+                                                    <div class="smart-search__products"></div>
+                                                </div>
+                                                <div class="smart-search__empty" id="ss-empty" hidden>{{ text_ss_empty }}</div>
+                                            </div>
+                                        </div>
+                                        <a href="#" class="smart-search__all" id="ss-show-all" hidden>{{ text_ss_all }}</a>
+                                    </div>
+                                </form>
+                            </div>
+                            <button class="header__search-open" aria-label="{{ text_search }}"></button>
                         </div>
+
+<script>
+/* Живий пошук: запит іде на common/ajax_search/search і малює категорії,
+   бренди та товари в дропдауні під полем. Запити дебаунсяться і скасовуються,
+   щоб відповідь на старий запит не перезаписала свіжу. */
+(function () {
+    var wrap = document.getElementById('smart-search');
+    if (!wrap) return;
+
+    var input    = wrap.querySelector('.header__search-input');
+    var dropdown = document.getElementById('smart-search-dropdown');
+    var ajaxUrl  = {{ ajax_search_url|json_encode|raw }};
+
+    var gCats    = document.getElementById('ss-categories');
+    var gBrands  = document.getElementById('ss-brands');
+    var gProds   = document.getElementById('ss-products');
+    var empty    = document.getElementById('ss-empty');
+    var showAll  = document.getElementById('ss-show-all');
+    var listCats = gCats.querySelector('.smart-search__list');
+    var listBr   = gBrands.querySelector('.smart-search__list');
+    var prodWrap = gProds.querySelector('.smart-search__products');
+
+    var timer = null, controller = null, lastQ = '';
+
+    function open()  { dropdown.hidden = false; wrap.classList.add('is-open'); }
+    function close() { dropdown.hidden = true;  wrap.classList.remove('is-open'); }
+
+    function esc(s) {
+        return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+            return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+        });
+    }
+
+    function renderChips(box, list, items) {
+        if (!items || !items.length) { box.hidden = true; list.innerHTML = ''; return; }
+        list.innerHTML = items.map(function (it) {
+            return '<li><a href="' + esc(it.href) + '">' + esc(it.name) + '</a></li>';
+        }).join('');
+        box.hidden = false;
+    }
+
+    function renderProducts(items) {
+        if (!items || !items.length) { gProds.hidden = true; prodWrap.innerHTML = ''; return; }
+        prodWrap.innerHTML = items.map(function (p) {
+            var price = p.special
+                ? '<span class="ss-price-new">' + esc(p.special) + '</span> <span class="ss-price-old">' + esc(p.price) + '</span>'
+                : '<span class="ss-price">' + esc(p.price) + '</span>';
+            var man = p.manufacturer ? '<span class="ss-prod__man">' + esc(p.manufacturer) + '</span>' : '';
+            return '<a class="ss-prod" href="' + esc(p.href) + '">' +
+                     '<span class="ss-prod__img"><img src="' + esc(p.image) + '" alt="' + esc(p.name) + '" loading="lazy"></span>' +
+                     '<span class="ss-prod__body">' + man +
+                       '<span class="ss-prod__name">' + esc(p.name) + '</span>' +
+                       '<span class="ss-prod__price">' + price + '</span>' +
+                     '</span>' +
+                   '</a>';
+        }).join('');
+        gProds.hidden = false;
+    }
+
+    function render(data) {
+        renderChips(gCats, listCats, data.categories);
+        renderChips(gBrands, listBr, data.brands);
+        renderProducts(data.products);
+
+        var has = (data.products && data.products.length) || (data.categories && data.categories.length) || (data.brands && data.brands.length);
+        empty.hidden = !!has;
+
+        if (data.total_products > (data.products ? data.products.length : 0) && data.search_url) {
+            showAll.href = data.search_url;
+            showAll.hidden = false;
+        } else {
+            showAll.hidden = true;
+        }
+        open();
+    }
+
+    function fetchResults(q) {
+        if (controller) controller.abort();
+        controller = ('AbortController' in window) ? new AbortController() : null;
+
+        fetch(ajaxUrl + '&q=' + encodeURIComponent(q), {
+            signal: controller ? controller.signal : undefined,
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+            .then(function (r) { return r.json(); })
+            .then(function (data) { if (input.value.trim() === q) render(data); })
+            .catch(function () {});
+    }
+
+    input.addEventListener('input', function () {
+        var q = input.value.trim();
+        clearTimeout(timer);
+        if (q.length < 2) { close(); lastQ = ''; return; }
+        if (q === lastQ) { open(); return; }
+        lastQ = q;
+        timer = setTimeout(function () { fetchResults(q); }, 280);
+    });
+
+    input.addEventListener('focus', function () {
+        if (input.value.trim().length >= 2 && prodWrap.innerHTML) open();
+    });
+
+    document.addEventListener('click', function (e) {
+        if (!wrap.contains(e.target)) close();
+    });
+
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') close();
+    });
+})();
+</script>

@@ -1,6 +1,6 @@
-# hydrophob.com.ua
+# hydrophob.net.ua
 
-OpenCart 3.0.4.1, прод — Hetzner 46.224.100.254 (CloudPanel, site user `hydrophobcom`).
+OpenCart 3.0.4.1, прод — Hetzner 46.224.100.254 (CloudPanel, site user `hydrophobnetua`).
 
 - Локалка: MAMP, http://localhost:8892/ (адмінка — /hp_panel/)
 - БД одна — серверна, через SSH-тунель `127.0.0.1:3307` (LaunchAgent `com.pprintdim.hetzner-mysql-tunnel`)

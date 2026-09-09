@@ -9,6 +9,12 @@ class ModelToolImage extends Model {
 				return DEV_IMAGE_FALLBACK . 'image/' . str_replace(' ', '%20', $image_new);
 			}
 
+			// Товар може посилатись на видалений файл — віддаємо плейсхолдер, щоб не
+			// лишати на сторінці порожні <img src="">.
+			if ($filename != 'placeholder.png' && is_file(DIR_IMAGE . 'placeholder.png')) {
+				return $this->resize('placeholder.png', $width, $height);
+			}
+
 			return;
 		}
 

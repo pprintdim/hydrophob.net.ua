@@ -1,0 +1,74 @@
+{% if schema %}<script type="application/ld+json">{{ schema|json_encode(constant('JSON_UNESCAPED_UNICODE') b-or constant('JSON_UNESCAPED_SLASHES'))|raw }}</script>{% endif %}
+{% if ga_list %}<script>if (typeof gtag === 'function') { gtag('event', 'view_item_list', {{ ga_list|json_encode(constant('JSON_UNESCAPED_UNICODE'))|raw }}); }</script>{% endif %}
+<section class="hm-sec"{% if anchor %} id="{{ anchor }}"{% endif %}><div class="container">
+    <h2 class="hm-sec__title page-name">{{ heading_title }}</h2>
+    <div class="hm-slider-wrap">
+        <button type="button" class="hm-arrow hm-arrow--prev" aria-label="{{ text_prev }}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+        <div class="hm-slider">
+            {% for product in products %}
+            <div class="product__item hm-slide">
+                <div class="product__item-media">
+                    <a class="product__item-image" href="{{ product.href }}">
+                        <img src="{{ product.thumb }}" alt="{{ product.name }}" title="{{ product.name }}" loading="lazy" width="450" height="450">
+                    </a>
+                    {% if product.special or product.badges %}
+                    <div class="product__item-badges">
+                        {% if product.special %}<span class="product__item-badge product__item-badge--sale">{{ text_badge_sale }}</span>{% endif %}
+                        {% for badge in product.badges %}
+                        {% if badge == 'new' %}<span class="product__item-badge product__item-badge--new">{{ text_badge_new }}</span>{% endif %}
+                        {% if badge == 'top' %}<span class="product__item-badge product__item-badge--top">{{ text_badge_top }}</span>{% endif %}
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    <button type="button" class="product__item-wish" data-wishlist="{{ product.product_id }}" title="{{ text_wishlist_add }}" aria-label="{{ text_wishlist_add }}" onclick="wishlist.add('{{ product.product_id }}');">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 5.6a5.2 5.2 0 0 0-7.4 0l-1.4 1.4-1.4-1.4a5.2 5.2 0 1 0-7.4 7.4l8.8 8.8 8.8-8.8a5.2 5.2 0 0 0 0-7.4z"/></svg>
+                    </button>
+                </div>
+                <div class="product__item-content">
+                    <a class="product__item-title" href="{{ product.href }}">
+                        <h3>{{ product.name }}</h3>
+                    </a>
+                    {% if product.rating %}
+                    <div class="product__item-rating" role="img" aria-label="{{ text_rating|format(product.rating) }}">
+                        {% for i in 1..5 %}
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="product__item-star{% if i <= product.rating %} is-active{% endif %}"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"/></svg>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    <p class="product__item-price">
+                        {% if product.special %}
+                        <span class="product__item-price-new">{{ product.special }}</span> <span class="product__item-price-old">{{ product.price }}</span>
+                        {% else %}
+                        {{ product.price }}
+                        {% endif %}
+                    </p>
+                    <button class="product__item-add btn-2" onclick="cart.add('{{ product.product_id }}', '{{ product.minimum }}');">
+                        {{ button_cart }}
+                        <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 17 17" fill="none">
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M9.56706 2.90039H6.90039V6.90039L2.90039 6.90039V9.56706H6.90039V13.5671H9.56706V9.56706H13.5671V6.90039L9.56706 6.90039V2.90039Z" fill="white"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <button type="button" class="hm-arrow hm-arrow--next" aria-label="{{ text_next }}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
+    </div>
+</div></section>
+<script>
+/* стрілки слайдера товарів (інстанс модуля) */
+(function () {
+    var script = document.currentScript;
+    var section = script ? script.previousElementSibling : null;
+    if (!section) return;
+    var wrap = section.querySelector('.hm-slider-wrap');
+    if (!wrap) return;
+    var slider = wrap.querySelector('.hm-slider');
+    var step = function () {
+        var el = slider.querySelector('.hm-slide');
+        return el ? el.getBoundingClientRect().width + 24 : 300;
+    };
+    wrap.querySelector('.hm-arrow--prev').addEventListener('click', function () { slider.scrollBy({ left: -step(), behavior: 'smooth' }); });
+    wrap.querySelector('.hm-arrow--next').addEventListener('click', function () { slider.scrollBy({ left: step(), behavior: 'smooth' }); });
+})();
+</script>

@@ -18,4 +18,5 @@ $_['column_model']  = 'Модель';
 $_['column_stock']  = 'Наличие';
 $_['column_price']  = 'Цена за единицу товара';
 $_['column_action'] = 'Действие';
-
+$_['button_add_short'] = 'Добавить';
+$_['text_added_short'] = 'Добавлено';

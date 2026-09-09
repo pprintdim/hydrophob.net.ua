@@ -1,11 +1,59 @@
 {{ header }}
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
-    <main class="main">
-       <section class="product" id="product-product">
+<link rel="stylesheet" href="catalog/view/theme/default/vendor/swiper-bundle.min.css">
+{# -- 2026-08-21 TODO: приберемо весь цей {% set %}-блок цілком, коли контролер product.php почне передавати faq_items / recently_viewed_products / related_products -- #}
+{% set faq_items = [
+    {
+        'question': 'Скільки тримається гідрофобне покриття?',
+        'answer': 'Залежно від поверхні та умов експлуатації ефект зберігається від 6 до 18 місяців. На склі та лакофарбовому покритті авто — довше, на текстилі — менше.'
+    },
+    {
+        'question': 'Як наносити засіб правильно?',
+        'answer': 'Поверхню очистіть і знежирте, нанесіть тонкий шар засобу мікрофіброю, дайте полімеризуватись 10-15 хвилин і зніміть залишки сухою серветкою.'
+    },
+    {
+        'question': 'Чи можна використовувати на кількох поверхнях?',
+        'answer': 'Так, більшість засобів лінійки підходять для скла, металу, пластику та текстилю — уточнюйте сумісність у характеристиках конкретного товару.'
+    },
+    {
+        'question': 'Що робити, якщо ефект гідрофобності зник раніше строку?',
+        'answer': 'Найчастіше причина — абразивне миття або хімічно агресивні мийні засоби. Повторно нанесіть засіб на очищену поверхню.'
+    }
+] %}
+{# -- END TODO fake data -- #}
+    <main class="main main--light">
+       
+<section class="product" id="product-product">
             <div class="container" id="content">
+        {% if breadcrumbs %}
+        <nav class="catalog__crumbs" aria-label="{{ text_breadcrumbs|default('') }}">
+            {% for breadcrumb in breadcrumbs %}
+            <a href="{{ breadcrumb.href }}" class="catalog__crumbs-link{% if loop.last %} is-current{% endif %}">{{ breadcrumb.text }}</a>{% if not loop.last %}<span class="catalog__crumbs-sep" aria-hidden="true">/</span>{% endif %}
+            {% endfor %}
+        </nav>
+        <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{% for breadcrumb in breadcrumbs %}{"@type":"ListItem","position":{{ loop.index }},"name":{{ breadcrumb.text|json_encode }},"item":{{ breadcrumb.href|json_encode }}}{% if not loop.last %},{% endif %}{% endfor %}]}</script>
+        {% endif %}
+        {% for block in schema_blocks %}
+        <script type="application/ld+json">{{ block|json_encode(constant('JSON_UNESCAPED_UNICODE') b-or constant('JSON_UNESCAPED_SLASHES'))|raw }}</script>
+        {% endfor %}
+        {% if ga_item %}
+        <script>
+        /* GA4: перегляд картки; той самий набір даних піде в add_to_cart */
+        window.hpGaItem = {{ ga_item|json_encode(constant('JSON_UNESCAPED_UNICODE'))|raw }};
+        if (typeof gtag === 'function') { gtag('event', 'view_item', window.hpGaItem); }
+        </script>
+        {% endif %}
                 <div class="product__inner">
                     <div class="product__left">
-						<div class="product__slider-content">
+						<div class="product__slider-content{% if images %} is-loading{% endif %}">
+							{% if special or badge_top %}
+							<div class="product__item-badges product__page-badges">
+								{% if badge_top %}<span class="product__item-badge product__item-badge--top">{{ text_badge_top|default('ХІТ') }}</span>{% endif %}
+								{% if special %}<span class="product__item-badge product__item-badge--sale">{{ text_badge_sale|default('АКЦІЯ') }}</span>{% endif %}
+							</div>
+							{% endif %}
+							{% if images %}
+							<div class="product__slider-loader" aria-hidden="true"><span></span></div>
+							{% endif %}
 							<div class="product__slider swiper">
 								<div class="swiper-wrapper">
 								{% if thumb %}
@@ -50,49 +98,95 @@
 										{% endfor %}
 									{% endif %}
 									</div>
+									<div class="swiper-scrollbar"></div>
 							</div>
 							{% endif %}
 						</div>
 					</div>
                     <div class="product__content">
                         <form class="product__top" id="product" action="{{ action }}" method="post" enctype="multipart/form-data">
-							
+
                             <p class="product__title page-title">{{ main_category_name }}</p>
-                            <h1 class="product__name">{{ heading_title }}</h1>
-                            <div class="product__info">
-								
-                                <div class="product__volume">{% if options %}
-										{% for option in options %}
-											{% if option.type == 'select' %}
-											{{ option.name }}
-											<select name="option[{{ option.product_option_id }}]" id="input-option{{ option.product_option_id }}" class="form-control">
-											{% for option_value in option.product_option_value %}
-												<option value="{{ option_value.product_option_value_id }}">{{ option_value.name }}</option>
-											{% endfor %}
-											</select>
-											{% endif %}
-										{% endfor %}{% endif %}
-								</div>
-								
-    
-<div class="product__count">
-    <button class="product__count-minus" type="button"></button>
-    <input type="text" name="quantity" value="1" min="1" max="999">
-    <button class="product__count-plus" type="button"></button>
-</div>
-
-    
-                                <p class="product__price" id="dynamic-price">{{ price }}</p>
-								<script>var product_id = {{ product_id }};</script>
-
+                            <div class="product__name-row">
+                                <h1 class="product__name">{{ heading_title }}</h1>
+                                <button type="button" class="product__wish" data-wishlist="{{ product_id }}" title="{{ button_wishlist }}" aria-label="{{ button_wishlist }}">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7z"/></svg>
+                                </button>
                             </div>
 
-                            <button id="button-cart" class="product__add btn-2" type="button" onclick="addToCart();">
-                                {{ button_cart }}
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M9.33268 2.66699H6.66602V6.66699L2.66602 6.66699V9.33366H6.66602V13.3337H9.33268V9.33366H13.3327V6.66699L9.33268 6.66699V2.66699Z" fill="white"/>
-                                </svg>
-                            </button>
+                            <div class="product__meta">
+                                {% if model %}<span class="product__sku">{{ text_sku_label }}: {{ model }}</span>{% endif %}
+                                {% if rating %}<span class="product__rating" title="{{ rating }}/5">{% for i in 1..5 %}<svg width="14" height="14" viewBox="0 0 24 24" fill="{{ i <= rating ? 'currentColor' : 'none' }}" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 2.6 5.6 6.1.8-4.5 4.2 1.2 6-5.4-3-5.4 3 1.2-6L3.3 9.4l6.1-.8z"/></svg>{% endfor %}</span>{% endif %}
+                            </div>
+
+                            {% if options %}
+                            <div class="product__options">
+                                {% for option in options %}
+                                {% if option.type == 'select' or option.type == 'radio' %}
+                                <div class="product__option">
+                                    <p class="product__option-name">{{ option.name }}</p>
+                                    <div class="product__option-list">
+                                        {% for option_value in option.product_option_value %}
+                                        <label class="product__chip">
+                                            <input type="radio" name="option[{{ option.product_option_id }}]" value="{{ option_value.product_option_value_id }}"{% if loop.first %} checked{% endif %}>
+                                            <span>{{ option_value.name }}{% if option_value.price %} <i>{{ option_value.price_prefix }}{{ option_value.price }}</i>{% endif %}</span>
+                                        </label>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                {% endif %}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+
+                            {% if key_specs %}
+                            <ul class="product__keyspecs">
+                                {% for spec in key_specs %}
+                                <li class="product__keyspec"><span class="product__keyspec-name">{{ spec.name }}</span><span class="product__keyspec-value">{{ spec.text }}</span></li>
+                                {% endfor %}
+                            </ul>
+                            {% endif %}
+
+                            <div class="product__info">
+
+                                <div class="product__count">
+                                    <button class="product__count-minus" type="button" aria-label="&minus;"></button>
+                                    <input type="text" name="quantity" value="{{ minimum }}" min="{{ minimum }}" max="999" inputmode="numeric" aria-label="{{ text_quick_qty }}">
+                                    <button class="product__count-plus" type="button" aria-label="+"></button>
+                                </div>
+
+                                <p class="product__stock{% if in_stock %} is-in{% endif %}">{{ stock }}</p>
+
+                                <div class="product__pricebox">
+                                    <p class="product__price" id="dynamic-price">{% if special %}{{ special }}{% else %}{{ price }}{% endif %}</p>
+                                    {% if special %}<span class="product__price-old">{{ price }}</span>{% endif %}
+                                    {% if saving %}<span class="product__price-save">{{ text_saving }} {{ saving }}</span>{% endif %}
+                                </div>
+                                <script>
+                                var product_id = {{ product_id }};
+                                /* відгук з картки товару — товар фіксований, автокомпліту тут нема */
+                                window.hpReviewProduct = {name: {{ heading_title|json_encode|raw }}, image: {{ (thumb ?: '')|json_encode|raw }}};
+                                </script>
+                            </div>
+
+                            <div class="product__actions">
+                                <button id="button-cart" class="product__add btn-2" type="button" onclick="addToCart();"{% if not in_stock %} disabled{% endif %}>
+                                    {{ button_cart }}
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M9.33268 2.66699H6.66602V6.66699L2.66602 6.66699V9.33366H6.66602V13.3337H9.33268V9.33366H13.3327V6.66699L9.33268 6.66699V2.66699Z" fill="white"/>
+                                    </svg>
+                                </button>
+                                <button class="product__quick" type="button" data-hp-modal-open="quick" data-in-cart-hint="{{ text_quick_in_cart }}"{% if not in_stock %} disabled{% endif %}>
+                                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12z"/></svg>
+                                    {{ button_quick }}
+                                </button>
+                            </div>
+
+                            <ul class="product__perks">
+                                <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 17h4V5H2v12h3M20 17h2v-6l-3-5h-5v11h3"/><circle cx="7.5" cy="17.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>{{ text_perk_delivery }}</li>
+                                <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>{{ text_perk_payment }}</li>
+                                <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v6c0 4.4-3 8.3-7 9-4-.7-7-4.6-7-9V6z"/><path d="m9 12 2 2 4-4"/></svg>{{ text_perk_quality }}</li>
+                            </ul>
                         </form>
 						
 						
@@ -101,7 +195,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const priceBox = document.getElementById('dynamic-price');
     const productForm = document.querySelector('#product');
     const quantityInput = productForm.querySelector('input[name="quantity"]');
-    const optionInputs = productForm.querySelectorAll('select[name^="option"]');
+    const optionInputs = productForm.querySelectorAll('[name^="option"]');
 
     const minusBtn = document.querySelector('.product__count-minus');
     const plusBtn = document.querySelector('.product__count-plus');
@@ -110,7 +204,10 @@ document.addEventListener('DOMContentLoaded', function () {
         const fd = new FormData();
         fd.append('quantity', quantityInput.value);
 
-        optionInputs.forEach(el => fd.append(el.name, el.value));
+        optionInputs.forEach(el => {
+            if (el.type === 'radio' && !el.checked) return;
+            fd.append(el.name, el.value);
+        });
 
         fetch('index.php?route=product/product/updatePrice&product_id=' + product_id, {
             method: 'POST',
@@ -151,13 +248,107 @@ document.addEventListener('DOMContentLoaded', function () {
     optionInputs.forEach(el => el.addEventListener('change', updatePrice));
 });
 
+/* згортання довгого опису товару (скрипт стоїть вище вкладок — чекаємо DOM) */
+document.addEventListener('DOMContentLoaded', function () {
+    var desc = document.querySelector('[data-product-desc]');
+    var btn = document.querySelector('[data-desc-toggle]');
+    if (!desc || !btn) return;
+
+    // короткий опис ховати нема сенсу — прибираємо кнопку
+    function syncToggle() {
+        if (desc.classList.contains('is-open')) return;
+        var fits = desc.scrollHeight <= desc.clientHeight + 4;
+        btn.hidden = fits;
+        desc.classList.toggle('is-collapsible', !fits);
+    }
+
+    syncToggle();
+    window.addEventListener('resize', syncToggle);
+    btn.addEventListener('click', function () {
+        var open = desc.classList.toggle('is-open');
+        btn.classList.toggle('is-open', open);
+        btn.querySelector('span').textContent = open ? btn.getAttribute('data-less') : btn.getAttribute('data-more');
+        if (!open) desc.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+});
+
+/* Якщо товар уже в кошику — лічильник на сторінці керує кількістю саме цієї
+   позиції: показуємо поточну кількість і оновлюємо її при зміні. */
+(function () {
+    var form = document.getElementById('product');
+    if (!form) return;
+
+    var input = form.querySelector('input[name="quantity"]');
+    var btn = document.getElementById('button-cart');
+    if (!input || !btn) return;
+
+    var timer = null;
+    var pushing = false;
+
+    function entry() {
+        return (window.hpCartItems || {})[String(product_id)] || null;
+    }
+
+    function syncFromCart() {
+        var item = entry();
+        if (!item || pushing) return;
+        if (parseInt(input.value, 10) !== item.quantity) input.value = item.quantity;
+    }
+
+    function pushQuantity() {
+        var item = entry();
+        if (!item) return;                       // товару в кошику немає — нічого не оновлюємо
+
+        var val = parseInt(input.value, 10);
+        if (isNaN(val) || val < 1) val = 1;
+
+        pushing = true;
+        btn.classList.add('is-syncing');
+
+        fetch('index.php?route=checkout/cart/edit', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest' },
+            body: 'key=' + encodeURIComponent(item.key) + '&quantity=' + val
+        })
+        .then(function () {
+            item.quantity = val;
+            if (window.jQuery) $('#cart > ul').load('index.php?route=common/cart/info ul li');
+            // hp-cart-changed → syncAll → перерахунок бейджа й мапи кошика
+            document.dispatchEvent(new CustomEvent('hp-cart-changed'));
+        })
+        .catch(function () {})
+        .then(function () {
+            pushing = false;
+            btn.classList.remove('is-syncing');
+        });
+    }
+
+    ['click'].forEach(function (evt) {
+        var minus = form.querySelector('.product__count-minus');
+        var plus = form.querySelector('.product__count-plus');
+        if (minus) minus.addEventListener(evt, function () { clearTimeout(timer); timer = setTimeout(pushQuantity, 350); });
+        if (plus) plus.addEventListener(evt, function () { clearTimeout(timer); timer = setTimeout(pushQuantity, 350); });
+    });
+
+    input.addEventListener('input', function () {
+        clearTimeout(timer);
+        timer = setTimeout(pushQuantity, 700);
+    });
+
+    document.addEventListener('hp-cart-synced', syncFromCart);
+})();
+
 function addToCart() {
+    const btn = document.getElementById('button-cart');
+    if (btn && btn.disabled) return;
+
     const quantity = parseInt(document.querySelector('input[name="quantity"]').value) || 1;
 
-    const optionInputs = document.querySelectorAll('select[name^="option"]');
+    const optionInputs = document.querySelectorAll('#product [name^="option"]');
     const options = {};
 
     optionInputs.forEach(el => {
+        if (el.type === 'radio' && !el.checked) return;
         options[el.name.replace('option[','').replace(']','')] = el.value;
     });
 
@@ -165,47 +356,151 @@ function addToCart() {
 }
 
 </script>								
+                    </div>
+                </div>
                         <div class="product__bottom">
                             <div class="product__selects">
-								{% if attribute_groups %}
-                                <button class="product__selects-btn active">загальне</button>
-								<button class="product__selects-btn">характеристики</button>
-								{% endif %}
+                                <button class="product__selects-btn active">{{ tab_description }}</button>
+                                <button class="product__selects-btn">{{ tab_specs }}</button>
+                                <button class="product__selects-btn">{{ tab_instruction }}</button>
+                                <button class="product__selects-btn">{{ tab_reviews }}{% if reviews_total %} ({{ reviews_total }}){% endif %}</button>
                             </div>
                             <div class="product__result">
                                 <div class="product__result-content active">
-									{{ description }}
+									<div class="desc{% if description_long %} is-collapsible{% endif %}" data-product-desc>{{ description }}</div>
+									{% if description_long %}
+									<button type="button" class="desc-toggle" data-desc-toggle data-more="{{ text_show_more }}" data-less="{{ text_show_less }}"><span>{{ text_show_more }}</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+									{% endif %}
                                 </div>
                                 <div class="product__result-content">
-									<table class="table table-bordered">
+									<ul class="product__specs">
 										{% for attribute_group in attribute_groups %}
-										<thead>
-											<tr>
-												<td colspan="2"><strong>{{ attribute_group.name }}</strong></td>
-											</tr>
-										</thead>
-										<tbody>
-											{% for attribute in attribute_group.attribute %}
-											<tr>
-												<td>{{ attribute.name }}</td>
-												<td>{{ attribute.text }}</td>
-											</tr>
-											{% endfor %}
-										</tbody>
+										<li class="product__specs-group">{{ attribute_group.name }}</li>
+										{% for attribute in attribute_group.attribute %}
+										<li class="product__specs-row"><span class="product__specs-name">{{ attribute.name }}</span><span class="product__specs-value">{{ attribute.text }}</span></li>
 										{% endfor %}
-									</table>
+										{% endfor %}
+										{% if model %}<li class="product__specs-row"><span class="product__specs-name">{{ text_sku_label }}</span><span class="product__specs-value">{{ model }}</span></li>{% endif %}
+										{% if category_title %}<li class="product__specs-row"><span class="product__specs-name">{{ text_category_label }}</span><span class="product__specs-value">{{ category_title }}</span></li>{% endif %}
+										<li class="product__specs-row"><span class="product__specs-name">{{ text_brand_label }}</span><span class="product__specs-value">HYDROPHOB</span></li>
+									</ul>
 								</div>
+                                <div class="product__result-content">
+									<p><b>{{ text_how_to_use }}</b></p>
+									<ol class="product__instruction">
+										<li>{{ text_step1 }}</li>
+										<li>{{ text_step2 }}</li>
+										<li>{{ text_step3 }}</li>
+										<li>{{ text_step4 }}</li>
+										<li>{{ text_step5 }}</li>
+									</ol>
+									<p>{{ text_storage }}</p>
+                                </div>
+                                <div class="product__result-content">
+									{% if reviews %}
+									{% for review in reviews %}
+									<div class="product__review">
+										<div class="product__review-head">
+											<b>{{ review.author }}</b>
+											<span class="product__review-stars" aria-label="{{ review.rating }}/5">{% for i in 1..5 %}{% if i <= review.rating %}★{% else %}☆{% endif %}{% endfor %}</span>
+											<span class="product__review-date">{{ review.date_added }}</span>
+										</div>
+										<p>{{ review.text|raw }}</p>
+									</div>
+									{% endfor %}
+									{% else %}
+									<p>{{ text_no_reviews }}</p>
+									{% endif %}
+									<button type="button" class="btn-2" data-review-open style="margin-top:16px;display:inline-flex;align-items:center;">{{ text_write_review }}
+										<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 2 4 4-14 14H4v-4L18 2z"/></svg>
+									</button>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>
             </div>
        </section>
 
-    </main>
+       {# TODO: text_faq_title зараз hardcoded fallback — перенести в catalog/language/*/product/product.php коли контролер підключить FAQ #}
+       {% if faq_items %}
+       <section class="product__faq">
+           <div class="container">
+               <h2 class="product__faq-title">{{ text_faq_title is defined ? text_faq_title : 'Часті запитання' }}</h2>
+               <div class="product__faq-list" data-faq>
+                   {% for item in faq_items %}
+                   <div class="product__faq-item{% if loop.first %} active{% endif %}">
+                       <button type="button" class="product__faq-btn" aria-expanded="{{ loop.first ? 'true' : 'false' }}" data-faq-toggle>
+                           <span class="product__faq-question">{{ item.question }}</span>
+                           <span class="product__faq-icon" aria-hidden="true">
+                               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                   <path d="m6 9 6 6 6-6"/>
+                               </svg>
+                           </span>
+                       </button>
+                       <div class="product__faq-answer"{% if not loop.first %} hidden{% endif %}>{{ item.answer }}</div>
+                   </div>
+                   {% endfor %}
+               </div>
+           </div>
+       </section>
+       {% endif %}
+
+
+       {# TODO: text_related_products / text_prev_slide / text_next_slide зараз hardcoded fallback — перенести в language-файли обох мов коли модуль related підключиться #}
+       {% if products %}
+       <section class="product__related">
+           <div class="container">
+               <div class="product__related-head">
+                   <h2 class="product__related-title">{{ text_related_products is defined ? text_related_products : 'З цим товаром також купують' }}</h2>
+                   <div class="product__related-btns">
+                       <button class="product__related-prev" aria-label="{{ text_prev_slide is defined ? text_prev_slide : 'Попередній слайд' }}">
+                           <svg xmlns="http://www.w3.org/2000/svg" width="14" height="42" viewBox="0 0 14 42" fill="none">
+                               <path d="M13.6238 3.70761C13.744 3.50915 13.8379 3.27569 13.9003 3.02057C13.9626 2.76544 13.9922 2.49364 13.9872 2.2207C13.9823 1.94775 13.9429 1.67899 13.8714 1.42978C13.7999 1.18056 13.6977 0.955764 13.5705 0.76822C13.4433 0.580676 13.2937 0.43406 13.1302 0.33674C12.9667 0.239421 12.7926 0.193306 12.6177 0.201027C12.4428 0.208748 12.2705 0.270155 12.1108 0.381741C11.9511 0.493327 11.8071 0.652908 11.6869 0.851371L0.364118 19.5604C0.130287 19.9464 0 20.4574 0 20.9885C0 21.5197 0.130287 22.0307 0.364118 22.4166L11.6869 41.1277C11.8063 41.3305 11.9503 41.4943 12.1106 41.6095C12.2709 41.7247 12.4442 41.7891 12.6206 41.7989C12.797 41.8087 12.9728 41.7637 13.1379 41.6665C13.3031 41.5693 13.4542 41.4219 13.5825 41.2328C13.7108 41.0438 13.8137 40.8168 13.8854 40.5651C13.957 40.3134 13.9958 40.042 13.9997 39.7667C14.0035 39.4914 13.9723 39.2176 13.9077 38.9613C13.8432 38.7049 13.7467 38.4712 13.6238 38.2736L3.16418 20.9885L13.6238 3.70761Z" fill="#161616"/>
+                           </svg>
+                       </button>
+                       <button class="product__related-next" aria-label="{{ text_next_slide is defined ? text_next_slide : 'Наступний слайд' }}">
+                           <svg xmlns="http://www.w3.org/2000/svg" width="14" height="42" viewBox="0 0 14 42" fill="none">
+                               <path d="M0.376226 3.70761C0.256047 3.50915 0.162095 3.27569 0.0997324 3.02057C0.0373697 2.76544 0.00781822 2.49364 0.0127659 2.2207C0.0177135 1.94775 0.0570641 1.67899 0.128569 1.42978C0.200074 1.18056 0.302334 0.955764 0.42951 0.76822C0.556686 0.580676 0.706289 0.43406 0.869775 0.33674C1.03326 0.239421 1.20743 0.193306 1.38233 0.201027C1.55724 0.208748 1.72946 0.270155 1.88916 0.381741C2.04886 0.493327 2.19291 0.652908 2.31309 0.851371L13.6359 19.5604C13.8697 19.9464 14 20.4574 14 20.9885C14 21.5197 13.8697 22.0307 13.6359 22.4166L2.31309 41.1277C2.1937 41.3305 2.04968 41.4943 1.8894 41.6095C1.72911 41.7247 1.55575 41.7891 1.37939 41.7989C1.20303 41.8087 1.02718 41.7637 0.862059 41.6665C0.696937 41.5693 0.545833 41.4219 0.417525 41.2328C0.289217 41.0438 0.186262 40.8168 0.11464 40.5651C0.0430183 40.3134 0.00415802 40.042 0.000315666 39.7667C-0.00352669 39.4914 0.0277252 39.2176 0.0922575 38.9613C0.156789 38.7049 0.253315 38.4712 0.376226 38.2736L10.8358 20.9885L0.376226 3.70761Z" fill="#161616"/>
+                           </svg>
+                       </button>
+                   </div>
+               </div>
+               <div class="product__related-slider swiper">
+                   <div class="swiper-wrapper">
+                       {% for product in products %}
+                       <div class="swiper-slide">
+                           <div class="product__item">
+                               <a class="product__item-image" href="{{ product.href }}">
+                                   <img src="{{ product.thumb }}" alt="{{ product.name }}" title="{{ product.name }}">
+                               </a>
+                               <div class="product__item-content">
+                                   <a class="product__item-title" href="{{ product.href }}">
+                                       <h3>{{ product.name }}</h3>
+                                   </a>
+                                   <p class="product__item-price">{{ product.price }}</p>
+                                   <button class="product__item-add btn-2" onclick="cart.add('{{ product.product_id }}', '{{ product.minimum }}');">
+                                       {{ button_cart }}
+                                       <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 17 17" fill="none">
+                                           <path fill-rule="evenodd" clip-rule="evenodd" d="M9.56706 2.90039H6.90039V6.90039L2.90039 6.90039V9.56706H6.90039V13.5671H9.56706V9.56706H13.5671V6.90039L9.56706 6.90039V2.90039Z" fill="white"/>
+                                       </svg>
+                                   </button>
+                               </div>
+                           </div>
+                       </div>
+                       {% endfor %}
+                   </div>
+               </div>
+           </div>
+       </section>
+       {% endif %}
+
+<div class="hm-light">{{ content_bottom }}</div>
+</main>
 
 <script type="text/javascript">
 function addToCart() {
+    const btn = document.getElementById('button-cart');
+    if (btn && btn.disabled) return;
+
     const quantity = parseInt(document.querySelector('input[name="quantity"]').value) || 1;
     const optionInputs = document.querySelectorAll('select[name^="option"]');
 
@@ -224,39 +519,9 @@ function addToCart() {
         option: options
     };
 
-    // Отправка через cart.add
-    $.ajax({
-        url: 'index.php?route=checkout/cart/add',
-        type: 'post',
-        data: data,
-        dataType: 'json',
-        beforeSend: function() {
-            $('#cart > button').button('loading');
-        },
-        complete: function() {
-            $('#cart > button').button('reset');
-        },
-        success: function(json) {
-            $('.alert-dismissible, .text-danger').remove();
-            if (json['redirect']) {
-                location = json['redirect'];
-            }
-            if (json['success']) {
-                $('#content').parent().before('<div class="alert alert-success alert-dismissible"><i class="fa fa-check-circle"></i> ' + json['success'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
-
-                setTimeout(function () {
-                    $('#cart > button').html('<span id="cart-total"><i class="fa fa-shopping-cart"></i> ' + json['total'] + '</span>');
-                }, 100);
-
-                $('html, body').animate({ scrollTop: 0 }, 'slow');
-
-                $('#cart > ul').load('index.php?route=common/cart/info ul li');
-            }
-        },
-        error: function(xhr, ajaxOptions, thrownError) {
-            alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
-        }
-    });
+    // Єдиний шлях додавання: cart.add із script.js — шухляда, бейдж,
+    // напис «В кошику» і стандартний тост. Без алертів і скролу вгору.
+    window.cart.add(product_id, quantity, options);
 }
 
 
@@ -264,8 +529,125 @@ function addToCart() {
 
 
 
-<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-<script src="catalog/view/theme/default/js/product.js" type="text/javascript"></script>
+<script src="catalog/view/theme/default/vendor/swiper-bundle.min.js"></script>
+<script src="catalog/view/theme/default/js/product.js?v=20260907a" type="text/javascript"></script>
 
 
-{{ footer }} 
+{# Швидке замовлення: імʼя + телефон, решту менеджер уточнює дзвінком #}
+<div class="cdm qo" data-hp-modal="quick" id="quick-order" hidden>
+    <div class="cdm__overlay" data-hp-modal-close></div>
+    <div class="cdm__dialog" role="dialog" aria-modal="true" aria-labelledby="qo-title">
+        <button type="button" class="cdm__close" data-hp-modal-close aria-label="{{ text_quick_close }}">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 6 12 12M18 6 6 18"/></svg>
+        </button>
+
+        <p class="cdm__title" id="qo-title">{{ text_quick_title }}</p>
+        <p class="qsm__lead">{{ text_quick_sub }}</p>
+
+        <div class="qo__product">
+            {% if thumb %}<img class="qo__product-img" src="{{ thumb }}" alt="{{ heading_title }}" width="72" height="72" loading="lazy">{% endif %}
+            <div class="qo__product-info">
+                <p class="qo__product-name">{{ heading_title }}</p>
+                <p class="qo__product-price"><span data-qo-qty>1</span> &times; <span data-qo-price>{% if special %}{{ special }}{% else %}{{ price }}{% endif %}</span></p>
+            </div>
+        </div>
+
+        <form class="qsm__form" data-hp-form="quick"
+              data-action="{{ quick_action }}"
+              data-event="purchase">
+            <input type="text" name="company_website" class="qsm__trap" tabindex="-1" autocomplete="off" aria-hidden="true">
+            <input type="hidden" name="product_id" value="{{ product_id }}">
+            {# кількість і опції беремо з форми товару в момент відкриття #}
+            <input type="hidden" name="quantity" value="1" data-qo-qty-field>
+            <span data-qo-options></span>
+
+            <div class="account__field">
+                <label for="qo-name">{{ entry_quick_name }}</label>
+                <input type="text" id="qo-name" name="firstname" placeholder="{{ entry_quick_name }}" autocomplete="name" required>
+                <em class="account__field-error" data-hp-error-for="firstname" hidden></em>
+            </div>
+            <div class="account__field">
+                <label for="qo-phone">{{ entry_quick_phone }}</label>
+                <input type="tel" id="qo-phone" name="telephone" placeholder="50 123 4567" autocomplete="tel" required>
+                <em class="account__field-error" data-hp-error-for="telephone" hidden></em>
+            </div>
+            <div class="account__field">
+                <label for="qo-email">{{ entry_quick_email }}</label>
+                <input type="email" id="qo-email" name="email" placeholder="you@example.com" autocomplete="email">
+                <em class="account__field-error" data-hp-error-for="email" hidden></em>
+            </div>
+            <div class="account__field">
+                <label for="qo-comment">{{ entry_quick_comment }}</label>
+                <textarea id="qo-comment" name="comment" rows="2" placeholder="{{ text_quick_note }}"></textarea>
+            </div>
+
+            <p class="checkout__error" data-hp-error hidden></p>
+
+            <button type="submit" class="btn-2 qsm__submit">{{ button_quick_send }}
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+/* Єдиний рушій попапів веде відкриття, валідацію й відправку. Тут лишається
+   тільки те, що унікальне для швидкого замовлення: підтягнути з картки
+   товару кількість, поточну ціну й обрані опції. */
+(function () {
+    var modal = document.getElementById('quick-order');
+    if (!modal) return;
+
+    modal.addEventListener('hp-modal-open', function () {
+        var productForm = document.getElementById('product');
+        var qty = productForm ? productForm.querySelector('input[name="quantity"]') : null;
+        var qtyValue = qty && qty.value ? qty.value : '1';
+
+        var qtyOut = modal.querySelector('[data-qo-qty]');
+        if (qtyOut) qtyOut.textContent = qtyValue;
+
+        var qtyField = modal.querySelector('[data-qo-qty-field]');
+        if (qtyField) qtyField.value = qtyValue;
+
+        var priceBox = document.getElementById('dynamic-price');
+        var priceOut = modal.querySelector('[data-qo-price]');
+        if (priceBox && priceOut) priceOut.textContent = priceBox.textContent.trim();
+
+        // обрані опції — прихованими полями, щоб пішли звичайним POST
+        var box = modal.querySelector('[data-qo-options]');
+        if (!box) return;
+
+        box.innerHTML = '';
+
+        if (!productForm) return;
+
+        productForm.querySelectorAll('[name^="option"]').forEach(function (el) {
+            if ((el.type === 'radio' || el.type === 'checkbox') && !el.checked) return;
+
+            var hidden = document.createElement('input');
+            hidden.type = 'hidden';
+            hidden.name = el.name;
+            hidden.value = el.value;
+            box.appendChild(hidden);
+        });
+    });
+})();
+</script>
+
+
+<script>
+/* Історія переглядів для модуля «Переглянуті нещодавно»: тримаємо до 12
+   останніх id у localStorage, поточний товар — на початку списку. */
+(function () {
+    var current = {{ product_id }};
+
+    try {
+        var viewed = JSON.parse(localStorage.getItem('hydro_viewed') || '[]');
+        var next = [current].concat(viewed.filter(function (id) { return parseInt(id, 10) !== current; })).slice(0, 12);
+
+        localStorage.setItem('hydro_viewed', JSON.stringify(next));
+    } catch (e) {}
+})();
+</script>
+
+{{ footer }}

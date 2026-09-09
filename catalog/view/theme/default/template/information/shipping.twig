@@ -3,6 +3,17 @@
         <section class="delivery">
             <div class="container">
                 <div class="delivery__inner">
+                    {% if breadcrumbs %}
+                    <nav class="catalog__crumbs" aria-label="Breadcrumbs">
+                        {% for breadcrumb in breadcrumbs %}
+                        <a href="{{ breadcrumb.href }}" class="catalog__crumbs-link{% if loop.last %} is-current{% endif %}">{{ breadcrumb.text }}</a>{% if not loop.last %}<span class="catalog__crumbs-sep" aria-hidden="true">/</span>{% endif %}
+                        {% endfor %}
+                    </nav>
+                    <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{% for breadcrumb in breadcrumbs %}{"@type":"ListItem","position":{{ loop.index }},"name":{{ breadcrumb.text|json_encode }},"item":{{ breadcrumb.href|json_encode }}}{% if not loop.last %},{% endif %}{% endfor %}]}</script>
+                    {% endif %}
+{% for block in schema_blocks %}
+<script type="application/ld+json">{{ block|json_encode(constant('JSON_UNESCAPED_UNICODE') b-or constant('JSON_UNESCAPED_SLASHES'))|raw }}</script>
+{% endfor %}
                     <h1 class="delivery__title page-title">{{ heading_title }}</h1>
                     <h2 class="delivery__name page-name">
 									{% if code == 'en' %}
@@ -19,4 +30,10 @@
                 </div>
             </div>
         </section>
+
+        {% if show_steps %}
+        
+        {% endif %}
+{{ content_bottom }}
+    </main>
 {{ footer }}

@@ -31,6 +31,10 @@ class ControllerAccountRegister extends Controller {
 			$this->response->redirect($this->url->link('account/success'));
 		}
 
+		foreach (array('otp_page_title', 'otp_page_lead', 'otp_step1', 'otp_step2', 'otp_step3', 'otp_get_code', 'otp_login_title', 'otp_register_title', 'otp_no_account', 'otp_register_link') as $otp_key) {
+			$data[$otp_key] = $this->language->get($otp_key);
+		}
+
 		$data['breadcrumbs'] = array();
 
 		$data['breadcrumbs'][] = array(
@@ -193,7 +197,7 @@ class ControllerAccountRegister extends Controller {
 			$information_info = $this->model_catalog_information->getInformation($this->config->get('config_account_id'));
 
 			if ($information_info) {
-				$data['text_agree'] = sprintf($this->language->get('text_agree'), $this->url->link('information/information/agree', 'information_id=' . $this->config->get('config_account_id'), true), $information_info['title']);
+				$data['text_agree'] = sprintf($this->language->get('text_agree'), $this->url->link('information/information', 'information_id=' . $this->config->get('config_account_id'), true), $information_info['title']);
 			} else {
 				$data['text_agree'] = '';
 			}

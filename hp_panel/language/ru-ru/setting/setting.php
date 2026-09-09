@@ -204,3 +204,7 @@ $_['error_log_invalid']              = 'Некорректное имя Log фа
 $_['error_log_extension']            = 'Расширение Log файла должно быть .log!';
 $_['error_encryption']               = 'Ключ шифрования должен быть от 32 до 1024 символов!';
 
+// Brevo (HTTP API для пошти)
+$_['text_brevo'] = 'Brevo (HTTP API)';
+$_['help_brevo'] = 'Отправка писем через Brevo API — обход заблокированных SMTP-портов на сервере. Отправитель берётся из «E-Mail магазина».';
+$_['help_brevo_key'] = 'Для Brevo сюда вставляется API-ключ (xkeysib-...).';

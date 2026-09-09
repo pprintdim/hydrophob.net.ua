@@ -135,6 +135,11 @@ $main_category = $this->model_catalog_product->getMainCategory($product['product
 		$data['cart'] = $this->url->link('checkout/cart');
 		$data['checkout'] = $this->url->link('checkout/checkout', '', true);
 
+		// порожній стан шухляди кошика
+		$data['text_empty_hint'] = $this->language->get('text_empty_hint');
+		$data['button_continue'] = $this->language->get('button_continue');
+		$data['cart_catalog_href'] = $this->url->link('product/category', 'path=33');
+
 		return $this->load->view('common/cart', $data);
 	}
 
@@ -197,5 +202,30 @@ public function updateQuantity() {
     $this->response->setOutput(json_encode($json));
 }
 
+
+	// Список id товарів у кошику — фронт позначає ними кнопки «В кошику»
+	// Що зараз у кошику: id товару, ключ позиції та кількість.
+	// Потрібно фронту, щоб позначати кнопки «В кошику» і оновлювати кількість
+	// прямо зі сторінки товару.
+	public function ids() {
+		$items = array();
+		$ids = array();
+
+		foreach ($this->cart->getProducts() as $product) {
+			$ids[] = (int)$product['product_id'];
+
+			$items[] = array(
+				'product_id' => (int)$product['product_id'],
+				'key'        => $product['cart_id'],
+				'quantity'   => (int)$product['quantity']
+			);
+		}
+
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode(array(
+			'ids'   => array_values(array_unique($ids)),
+			'items' => $items
+		)));
+	}
 }
 

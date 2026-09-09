@@ -1,0 +1,45 @@
+{{ header }}
+<main class="main" id="content">
+  <section class="status">
+    <div class="container">
+      <div class="status__inner">
+        <span class="status__icon status__icon--warn" aria-hidden="true">
+          <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v5"/><path d="M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg>
+        </span>
+
+        <h1 class="status__title">{{ heading_title }}</h1>
+        <p class="status__text">{{ text_message }}</p>
+
+        <p class="status__order">{{ text_order_number }}<span class="status__order-num">{{ order_id }}</span> {{ text_order_amount }} <span class="status__order-num">{{ order_total }}</span></p>
+
+        <div class="status__actions">
+          <button type="button" class="btn-2" data-retry-pay>{{ button_retry_payment }}
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </button>
+          <a href="{{ continue }}" class="btn-2 btn-2--ghost">{{ text_home }}</a>
+        </div>
+
+        <p class="status__contacts">{{ text_questions }}
+          <a href="mailto:{{ store_email }}">{{ store_email }}</a> ·
+          <a href="{{ store_telephone_link }}">{{ store_telephone }}</a>
+        </p>
+      </div>
+      <div hidden>{{ payment }}</div>
+    </div>
+  </section>
+</main>
+{{ footer }}
+<script>
+/* повторна оплата того самого замовлення: фіксуємо намір і сабмітимо форму WayForPay */
+document.querySelector('[data-retry-pay]').addEventListener('click', function () {
+    var btn = this;
+    btn.disabled = true;
+
+    fetch('index.php?route=extension/payment/wayforpay/confirm', { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+        .then(function () {
+            var form = document.getElementById('wayforpay_submit');
+            if (form) { form.submit(); } else { btn.disabled = false; }
+        })
+        .catch(function () { btn.disabled = false; });
+});
+</script>

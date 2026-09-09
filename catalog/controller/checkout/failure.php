@@ -38,6 +38,16 @@ class ControllerCheckoutFailure extends Controller {
 		$data['footer'] = $this->load->controller('common/footer');
 		$data['header'] = $this->load->controller('common/header');
 
-		$this->response->setOutput($this->load->view('common/success', $data));
+		$data['home'] = $this->url->link('common/home');
+		$data['retry'] = $this->url->link('checkout/checkout', '', true);
+		$data['contact'] = $this->url->link('information/contact');
+
+		$data['text_title'] = $this->language->get('text_status_title');
+		$data['text_lead'] = $this->language->get('text_status_lead');
+		$data['text_note'] = $this->language->get('text_status_note');
+		$data['button_retry'] = $this->language->get('button_status_retry');
+		$data['button_contact'] = $this->language->get('button_status_contact');
+
+		$this->response->setOutput($this->load->view('checkout/failure', $data));
 	}
 }

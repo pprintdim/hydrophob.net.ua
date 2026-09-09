@@ -5,6 +5,7 @@ hp_panel/config.php
 # Контент і важке — живе на сервері
 image/
 html/
+catalog/view/theme/default/vid/*.mp4
 
 # Рантайм
 storage/cache/*
@@ -18,4 +19,8 @@ storage/upload/*
 # Локальне
 backups/
 deploy.sh
+.vscode/
 .DS_Store
+
+# звіти PageSpeed/Lighthouse — робочі файли, на сайті не потрібні
+/pagespeed/

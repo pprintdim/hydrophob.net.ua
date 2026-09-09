@@ -18,6 +18,36 @@ class ControllerAccountAddress extends Controller {
 		$this->getList();
 	}
 
+	// Marking the default address happens right in the list, so it answers JSON.
+	public function setDefault() {
+		$this->load->language('account/address');
+
+		$json = array();
+
+		if (!$this->customer->isLogged()) {
+			$json['error'] = $this->language->get('text_login');
+		}
+
+		$address_id = isset($this->request->post['address_id']) ? (int)$this->request->post['address_id'] : 0;
+
+		if (!$json) {
+			$this->load->model('account/address');
+
+			if (!$this->model_account_address->getAddress($address_id)) {
+				$json['error'] = $this->language->get('error_default');
+			}
+		}
+
+		if (!$json) {
+			$this->db->query("UPDATE " . DB_PREFIX . "customer SET address_id = '" . $address_id . "' WHERE customer_id = '" . (int)$this->customer->getId() . "'");
+
+			$json['success'] = $this->language->get('text_default_set');
+		}
+
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($json));
+	}
+
 	public function add() {
 		if (!$this->customer->isLogged()) {
 			$this->session->data['redirect'] = $this->url->link('account/address', '', true);
@@ -29,15 +59,11 @@ class ControllerAccountAddress extends Controller {
 
 		$this->document->setTitle($this->language->get('heading_title'));
 
-		$this->document->addScript('catalog/view/javascript/jquery/datetimepicker/moment/moment.min.js');
-		$this->document->addScript('catalog/view/javascript/jquery/datetimepicker/moment/moment-with-locales.min.js');
-		$this->document->addScript('catalog/view/javascript/jquery/datetimepicker/bootstrap-datetimepicker.min.js');
-		$this->document->addStyle('catalog/view/javascript/jquery/datetimepicker/bootstrap-datetimepicker.min.css');
 
 		$this->load->model('account/address');
 
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validateForm()) {
-			$this->model_account_address->addAddress($this->customer->getId(), $this->request->post);
+			$this->model_account_address->addAddress($this->customer->getId(), $this->fill($this->request->post));
 
 			$this->session->data['success'] = $this->language->get('text_add');
 
@@ -58,15 +84,11 @@ class ControllerAccountAddress extends Controller {
 
 		$this->document->setTitle($this->language->get('heading_title'));
 
-		$this->document->addScript('catalog/view/javascript/jquery/datetimepicker/moment/moment.min.js');
-		$this->document->addScript('catalog/view/javascript/jquery/datetimepicker/moment/moment-with-locales.min.js');
-		$this->document->addScript('catalog/view/javascript/jquery/datetimepicker/bootstrap-datetimepicker.min.js');
-		$this->document->addStyle('catalog/view/javascript/jquery/datetimepicker/bootstrap-datetimepicker.min.css');
 
 		$this->load->model('account/address');
 
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validateForm()) {
-			$this->model_account_address->editAddress($this->request->get['address_id'], $this->request->post);
+			$this->model_account_address->editAddress($this->request->get['address_id'], $this->fill($this->request->post));
 
 			// Default Shipping Address
 			if (isset($this->session->data['shipping_address']['address_id']) && ($this->request->get['address_id'] == $this->session->data['shipping_address']['address_id'])) {
@@ -131,6 +153,7 @@ class ControllerAccountAddress extends Controller {
 	}
 
 	protected function getList() {
+
 		$data['breadcrumbs'][] = array(
 			'text' => $this->language->get('text_home'),
 			'href' => $this->url->link('common/home')
@@ -165,10 +188,13 @@ class ControllerAccountAddress extends Controller {
 		$results = $this->model_account_address->getAddresses();
 
 		foreach ($results as $result) {
-			if ($result['address_format']) {
+			// the country format would print name, company and postcode we no
+			// longer ask for
+			if (false) {
 				$format = $result['address_format'];
 			} else {
-				$format = '{firstname} {lastname}' . "\n" . '{company}' . "\n" . '{address_1}' . "\n" . '{address_2}' . "\n" . '{city} {postcode}' . "\n" . '{zone}' . "\n" . '{country}';
+				// only what the trimmed form actually collects
+				$format = '{city}' . "\n" . '{address_1}';
 			}
 
 			$find = array(
@@ -199,6 +225,9 @@ class ControllerAccountAddress extends Controller {
 
 			$data['addresses'][] = array(
 				'address_id' => $result['address_id'],
+				'default'    => $this->customer->getAddressId() == $result['address_id'],
+				'city'       => $result['city'],
+				'address_1'  => $result['address_1'],
 				'address'    => str_replace(array("\r\n", "\r", "\n"), '<br />', preg_replace(array("/\s\s+/", "/\r\r+/", "/\n\n+/"), '<br />', trim(str_replace($find, $replace, $format)))),
 				'update'     => $this->url->link('account/address/edit', 'address_id=' . $result['address_id'], true),
 				'delete'     => $this->url->link('account/address/delete', 'address_id=' . $result['address_id'], true)
@@ -207,6 +236,7 @@ class ControllerAccountAddress extends Controller {
 
 		$data['add'] = $this->url->link('account/address/add', '', true);
 		$data['back'] = $this->url->link('account/account', '', true);
+		$data['set_default_action'] = $this->url->link('account/address/setDefault', '', true);
 
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['column_right'] = $this->load->controller('common/column_right');
@@ -219,6 +249,7 @@ class ControllerAccountAddress extends Controller {
 	}
 
 	protected function getForm() {
+
 		$data['breadcrumbs'] = array();
 
 		$data['breadcrumbs'][] = array(
@@ -442,56 +473,40 @@ class ControllerAccountAddress extends Controller {
 		$this->response->setOutput($this->load->view('account/address_form', $data));
 	}
 
-	protected function validateForm() {
-		if ((utf8_strlen(trim($this->request->post['firstname'])) < 1) || (utf8_strlen(trim($this->request->post['firstname'])) > 32)) {
-			$this->error['firstname'] = $this->language->get('error_firstname');
-		}
+	// The stock address model wants the full set of columns; the trimmed form
+	// only posts city and address_1, so the rest gets sensible defaults.
+	private function fill($post) {
+		$this->load->model('account/customer');
 
-		if ((utf8_strlen(trim($this->request->post['lastname'])) < 1) || (utf8_strlen(trim($this->request->post['lastname'])) > 32)) {
-			$this->error['lastname'] = $this->language->get('error_lastname');
+		$customer = $this->model_account_customer->getCustomer($this->customer->getId());
+
+		return array_merge(array(
+			'firstname'    => isset($customer['firstname']) ? $customer['firstname'] : '',
+			'lastname'     => isset($customer['lastname']) ? $customer['lastname'] : '',
+			'company'      => '',
+			'address_2'    => '',
+			'postcode'     => '',
+			'country_id'   => 220,
+			'zone_id'      => 0,
+			'custom_field' => array(),
+			'default'      => 0
+		), $post);
+	}
+
+	protected function validateForm() {
+		// Delivery here means a city and a branch or street address — the rest of
+		// the stock address fields are not asked for.
+		if ((utf8_strlen(trim($this->request->post['city'])) < 2) || (utf8_strlen(trim($this->request->post['city'])) > 128)) {
+			$this->error['city'] = $this->language->get('error_city');
 		}
 
 		if ((utf8_strlen(trim($this->request->post['address_1'])) < 3) || (utf8_strlen(trim($this->request->post['address_1'])) > 128)) {
 			$this->error['address_1'] = $this->language->get('error_address_1');
 		}
 
-		if ((utf8_strlen(trim($this->request->post['city'])) < 2) || (utf8_strlen(trim($this->request->post['city'])) > 128)) {
-			$this->error['city'] = $this->language->get('error_city');
-		}
-
-		$this->load->model('localisation/country');
-
-		$country_info = $this->model_localisation_country->getCountry($this->request->post['country_id']);
-
-		if ($country_info && $country_info['postcode_required'] && (utf8_strlen(trim($this->request->post['postcode'])) < 2 || utf8_strlen(trim($this->request->post['postcode'])) > 10)) {
-			$this->error['postcode'] = $this->language->get('error_postcode');
-		}
-
-		if ($this->request->post['country_id'] == '' || !is_numeric($this->request->post['country_id'])) {
-			$this->error['country'] = $this->language->get('error_country');
-		}
-
-		if (!isset($this->request->post['zone_id']) || $this->request->post['zone_id'] == '' || !is_numeric($this->request->post['zone_id'])) {
-			$this->error['zone'] = $this->language->get('error_zone');
-		}
-
-		// Custom field validation
-		$this->load->model('account/custom_field');
-
-		$custom_fields = $this->model_account_custom_field->getCustomFields($this->config->get('config_customer_group_id'));
-
-		foreach ($custom_fields as $custom_field) {
-			if ($custom_field['location'] == 'address') {
-				if ($custom_field['required'] && empty($this->request->post['custom_field'][$custom_field['location']][$custom_field['custom_field_id']])) {
-					$this->error['custom_field'][$custom_field['custom_field_id']] = sprintf($this->language->get('error_custom_field'), $custom_field['name']);
-				} elseif (($custom_field['type'] == 'text') && !empty($custom_field['validation']) && !filter_var($this->request->post['custom_field'][$custom_field['location']][$custom_field['custom_field_id']], FILTER_VALIDATE_REGEXP, array('options' => array('regexp' => $custom_field['validation'])))) {
-					$this->error['custom_field'][$custom_field['custom_field_id']] = sprintf($this->language->get('error_custom_field'), $custom_field['name']);
-				}
-			}
-		}
-
 		return !$this->error;
 	}
+
 
 	protected function validateDelete() {
 		if ($this->model_account_address->getTotalAddresses() == 1) {

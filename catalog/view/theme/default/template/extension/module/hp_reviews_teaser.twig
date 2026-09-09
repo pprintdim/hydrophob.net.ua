@@ -1,0 +1,65 @@
+<section class="rv-teaser {{ light ? 'rv-teaser--light' : 'rv-teaser--dark' }}">
+    <div class="container">
+        <div class="rv-teaser__head">
+            <h2 class="hm-sec__title page-name" style="margin-bottom:0;{% if light %}color:#161616;{% endif %}">{{ heading_title }}</h2>
+            <a class="rv-teaser__all" href="{{ all_href }}">{{ text_all }}</a>
+        </div>
+        <div class="hm-slider-wrap rv-teaser__wrap">
+            <button type="button" class="hm-arrow hm-arrow--prev" data-rv-prev aria-label="{{ text_prev|default('Назад') }}">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+            </button>
+            <div class="hm-slider rv-teaser__slider" data-rv-slider>
+            {% for review in reviews %}
+            <article class="rv-card rv-teaser__slide">
+                <div class="rv-card__head">
+                    <span class="rv-card__avatar" aria-hidden="true">{{ review.initial }}</span>
+                    <div class="rv-card__ident">
+                        <h3 class="rv-card__name">{{ review.author }}</h3>
+                        <p class="rv-card__meta">{{ review.date }} &middot; {{ review.source }}</p>
+                    </div>
+                    <span class="rv-stars" role="img" aria-label="{{ text_rating|format(review.rating) }}">
+                        {%- for i in 1..5 -%}
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="rv-star{% if i <= review.rating %} rv-star--on{% endif %}"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"/></svg>
+                        {%- endfor -%}
+                    </span>
+                </div>
+                {% if review.product_name %}
+                <p class="rv-card__product">{{ text_product }} <a href="{{ review.product_href }}">{{ review.product_name }}</a></p>
+                {% endif %}
+                <p class="rv-card__text">{{ review.text }}</p>
+            </article>
+            {% endfor %}
+            </div>
+            <button type="button" class="hm-arrow hm-arrow--next" data-rv-next aria-label="{{ text_next|default('Вперед') }}">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+            </button>
+        </div>
+    </div>
+</section>
+<script>
+/* слайдер відгуків: горизонтальний скрол зі стрілками */
+(function () {
+    var wrap = document.currentScript.previousElementSibling.querySelector('.rv-teaser__wrap');
+    if (!wrap) return;
+    var slider = wrap.querySelector('[data-rv-slider]');
+    var prev = wrap.querySelector('[data-rv-prev]');
+    var next = wrap.querySelector('[data-rv-next]');
+    if (!slider || !prev || !next) return;
+
+    function step() {
+        var card = slider.querySelector('.rv-teaser__slide');
+        return card ? card.getBoundingClientRect().width + 24 : 320;
+    }
+    prev.addEventListener('click', function () { slider.scrollBy({ left: -step(), behavior: 'smooth' }); });
+    next.addEventListener('click', function () { slider.scrollBy({ left: step(), behavior: 'smooth' }); });
+
+    function sync() {
+        var max = slider.scrollWidth - slider.clientWidth - 2;
+        prev.classList.toggle('is-hidden', slider.scrollLeft <= 2);
+        next.classList.toggle('is-hidden', slider.scrollLeft >= max);
+    }
+    slider.addEventListener('scroll', sync, { passive: true });
+    window.addEventListener('resize', sync);
+    sync();
+})();
+</script>

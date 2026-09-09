@@ -77,6 +77,19 @@ class ModelCatalogProduct extends Model {
 
 		$sql .= " LEFT JOIN " . DB_PREFIX . "product_description pd ON (p.product_id = pd.product_id) LEFT JOIN " . DB_PREFIX . "product_to_store p2s ON (p.product_id = p2s.product_id) WHERE pd.language_id = '" . (int)$this->config->get('config_language_id') . "' AND p.status = '1' AND p.date_available <= NOW() AND p2s.store_id = '" . (int)$this->config->get('config_store_id') . "'";
 
+		// фільтри без прив'язки до категорії (плаский каталог /katalog)
+		if (empty($data['filter_category_id']) && !empty($data['filter_filter'])) {
+			$implode = array();
+
+			foreach (explode(',', $data['filter_filter']) as $filter_id) {
+				$implode[] = (int)$filter_id;
+			}
+
+			if ($implode) {
+				$sql .= " AND p.product_id IN (SELECT product_id FROM " . DB_PREFIX . "product_filter WHERE filter_id IN (" . implode(',', $implode) . "))";
+			}
+		}
+
 		if (!empty($data['filter_category_id'])) {
 			if (!empty($data['filter_sub_category'])) {
 				$sql .= " AND cp.path_id = '" . (int)$data['filter_category_id'] . "'";
@@ -436,6 +449,19 @@ class ModelCatalogProduct extends Model {
 
 		$sql .= " LEFT JOIN " . DB_PREFIX . "product_description pd ON (p.product_id = pd.product_id) LEFT JOIN " . DB_PREFIX . "product_to_store p2s ON (p.product_id = p2s.product_id) WHERE pd.language_id = '" . (int)$this->config->get('config_language_id') . "' AND p.status = '1' AND p.date_available <= NOW() AND p2s.store_id = '" . (int)$this->config->get('config_store_id') . "'";
 
+		// фільтри без прив'язки до категорії (плаский каталог /katalog)
+		if (empty($data['filter_category_id']) && !empty($data['filter_filter'])) {
+			$implode = array();
+
+			foreach (explode(',', $data['filter_filter']) as $filter_id) {
+				$implode[] = (int)$filter_id;
+			}
+
+			if ($implode) {
+				$sql .= " AND p.product_id IN (SELECT product_id FROM " . DB_PREFIX . "product_filter WHERE filter_id IN (" . implode(',', $implode) . "))";
+			}
+		}
+
 		if (!empty($data['filter_category_id'])) {
 			if (!empty($data['filter_sub_category'])) {
 				$sql .= " AND cp.path_id = '" . (int)$data['filter_category_id'] . "'";
@@ -564,4 +590,59 @@ public function getMainCategory($product_id) {
     return $query->num_rows ? $query->row['name'] : '';
 }
 
+
+	public function getFilterCounts($data = array()) {
+		// Per-filter product counts under the search, price and category
+		// constraints — the filter selection itself is left out so unchecked
+		// options keep showing how many products they would add.
+		$sql = "SELECT f.filter_id, f.filter_group_id, COUNT(DISTINCT p.product_id) AS total FROM " . DB_PREFIX . "product_filter pf LEFT JOIN " . DB_PREFIX . "filter f ON (pf.filter_id = f.filter_id) LEFT JOIN " . DB_PREFIX . "product p ON (pf.product_id = p.product_id) LEFT JOIN " . DB_PREFIX . "product_description pd ON (p.product_id = pd.product_id) LEFT JOIN " . DB_PREFIX . "product_to_store p2s ON (p.product_id = p2s.product_id) WHERE pd.language_id = '" . (int)$this->config->get('config_language_id') . "' AND p.status = '1' AND p.date_available <= NOW() AND p2s.store_id = '" . (int)$this->config->get('config_store_id') . "'";
+
+		if (!empty($data['filter_category_ids'])) {
+			$category_ids = array_filter(array_map('intval', (array)$data['filter_category_ids']));
+
+			if ($category_ids) {
+				$sql .= " AND p.product_id IN (SELECT product_id FROM " . DB_PREFIX . "product_to_category WHERE category_id IN (" . implode(',', $category_ids) . "))";
+			}
+		}
+
+		if (!empty($data['filter_name'])) {
+			$sql .= " AND (";
+
+			$implode = array();
+
+			$words = explode(' ', trim(preg_replace('/\s+/', ' ', $data['filter_name'])));
+
+			foreach ($words as $word) {
+				$implode[] = "pd.name LIKE '%" . $this->db->escape($word) . "%'";
+			}
+
+			$sql .= implode(" AND ", $implode);
+
+			if (!empty($data['filter_description'])) {
+				$sql .= " OR pd.description LIKE '%" . $this->db->escape($data['filter_name']) . "%'";
+			}
+
+			$sql .= ")";
+		}
+
+		if (isset($data['filter_price_min']) && $data['filter_price_min'] !== '') {
+			$sql .= " AND p.price >= '" . (float)$data['filter_price_min'] . "'";
+		}
+
+		if (isset($data['filter_price_max']) && $data['filter_price_max'] !== '') {
+			$sql .= " AND p.price <= '" . (float)$data['filter_price_max'] . "'";
+		}
+
+		$sql .= " GROUP BY f.filter_id, f.filter_group_id";
+
+		$query = $this->db->query($sql);
+
+		$counts = array();
+
+		foreach ($query->rows as $row) {
+			$counts[(int)$row['filter_id']] = (int)$row['total'];
+		}
+
+		return $counts;
+	}
 }

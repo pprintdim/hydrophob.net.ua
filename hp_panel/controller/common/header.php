@@ -31,6 +31,24 @@ class ControllerCommonHeader extends Controller {
 
 		$data['text_logged'] = sprintf($this->language->get('text_logged'), $this->user->getUserName());
 
+		// логотип панелі — з налаштувань магазину (config_logo), для обох станів
+		// favicon магазину в панелі
+		$data['panel_icon'] = 'view/image/favicon.png';
+		if ($this->config->get('config_icon') && is_file(DIR_IMAGE . $this->config->get('config_icon'))) {
+			$data['panel_icon'] = HTTP_CATALOG . 'image/' . $this->config->get('config_icon');
+		}
+
+		$data['panel_logo'] = 'view/image/logo.png';
+
+		// панель світла — беремо темний варіант логотипу, якщо він є
+		$logo_dark = 'catalog/hydrophob/logo-dark.svg';
+
+		if (is_file(DIR_IMAGE . $logo_dark)) {
+			$data['panel_logo'] = HTTP_CATALOG . 'image/' . $logo_dark;
+		} elseif ($this->config->get('config_logo') && is_file(DIR_IMAGE . $this->config->get('config_logo'))) {
+			$data['panel_logo'] = HTTP_CATALOG . 'image/' . $this->config->get('config_logo');
+		}
+
 		if (!isset($this->request->get['user_token']) || !isset($this->session->data['user_token']) || ($this->request->get['user_token'] != $this->session->data['user_token'])) {
 			$data['logged'] = '';
 

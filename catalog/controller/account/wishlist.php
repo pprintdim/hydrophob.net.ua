@@ -60,9 +60,9 @@ class ControllerAccountWishList extends Controller {
 
 			if ($product_info) {
 				if ($product_info['image']) {
-					$image = $this->model_tool_image->resize($product_info['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_wishlist_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_wishlist_height'));
+					$image = $this->model_tool_image->resize($product_info['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_product_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_product_height'));
 				} else {
-					$image = false;
+					$image = $this->model_tool_image->resize('placeholder.png', $this->config->get('theme_' . $this->config->get('config_theme') . '_image_product_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_product_height'));
 				}
 
 				if ($product_info['quantity'] <= 0) {
@@ -101,6 +101,8 @@ class ControllerAccountWishList extends Controller {
 			}
 		}
 
+		$data['button_add_short'] = $this->language->get('button_add_short');
+		$data['text_added_short'] = $this->language->get('text_added_short');
 		$data['continue'] = $this->url->link('account/account', '', true);
 
 		$data['column_left'] = $this->load->controller('common/column_left');
@@ -155,5 +157,79 @@ class ControllerAccountWishList extends Controller {
 
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));
+	}
+
+	// Тогл без перезавантаження: додає, якщо товару немає в обраному, інакше
+	// прибирає. Відповідь — стан і лічильник для бейджа в хедері.
+	public function toggle() {
+		$json = array('in' => false, 'total' => 0);
+
+		$product_id = isset($this->request->post['product_id']) ? (int)$this->request->post['product_id'] : 0;
+
+		$this->load->model('catalog/product');
+
+		if ($product_id && $this->model_catalog_product->getProduct($product_id)) {
+			if ($this->customer->isLogged()) {
+				$this->load->model('account/wishlist');
+
+				$exists = false;
+
+				foreach ($this->model_account_wishlist->getWishlist() as $row) {
+					if ((int)$row['product_id'] == $product_id) {
+						$exists = true;
+
+						break;
+					}
+				}
+
+				if ($exists) {
+					$this->model_account_wishlist->deleteWishlist($product_id);
+				} else {
+					$this->model_account_wishlist->addWishlist($product_id);
+				}
+
+				$json['in'] = !$exists;
+				$json['total'] = (int)$this->model_account_wishlist->getTotalWishlist();
+			} else {
+				// гість: список живе в сесії до логіну
+				if (!isset($this->session->data['wishlist'])) {
+					$this->session->data['wishlist'] = array();
+				}
+
+				$key = array_search($product_id, $this->session->data['wishlist']);
+
+				if ($key !== false) {
+					unset($this->session->data['wishlist'][$key]);
+				} else {
+					$this->session->data['wishlist'][] = $product_id;
+				}
+
+				$this->session->data['wishlist'] = array_values(array_unique($this->session->data['wishlist']));
+
+				$json['in'] = ($key === false);
+				$json['total'] = count($this->session->data['wishlist']);
+			}
+		}
+
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($json));
+	}
+
+	// Список id обраного — для розмітки сердечок після завантаження сторінки
+	public function ids() {
+		$ids = array();
+
+		if ($this->customer->isLogged()) {
+			$this->load->model('account/wishlist');
+
+			foreach ($this->model_account_wishlist->getWishlist() as $row) {
+				$ids[] = (int)$row['product_id'];
+			}
+		} elseif (!empty($this->session->data['wishlist'])) {
+			$ids = array_map('intval', $this->session->data['wishlist']);
+		}
+
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode(array('ids' => $ids, 'total' => count($ids))));
 	}
 }

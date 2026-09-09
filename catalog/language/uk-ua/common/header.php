@@ -14,3 +14,5 @@ $_['text_logout'] = 'Вихід';
 $_['text_checkout'] = 'Оформлення замовлення';
 $_['text_search'] = 'Пошук';
 $_['text_all'] = 'Дивитися всі';
+$_['text_menu_open']  = 'Меню';
+$_['text_menu_close'] = 'Закрити меню';

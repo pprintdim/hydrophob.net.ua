@@ -1,0 +1,2269 @@
+/* style.css — базові/глобальні стилі (reset, header, footer, hero-секції) + прелоадер модалок/оверлеїв. Завантажується на всіх сторінках, включно з welcome. */
+
+html, body, div, span, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+abbr, address, cite, code,
+del, dfn, em, img, ins, kbd, q, samp,
+small, strong, sub, sup, var,
+b, i,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section, summary,
+time, mark, audio, video {
+    margin:0;
+    padding:0;
+    border:0;
+    outline:0;
+    font-size:100%;
+    vertical-align:baseline;
+    background:transparent;
+}
+select,
+input{
+    color: #161616;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+}
+/* плейсхолдери скрізь відрізняються від введеного тексту: сірі й не жирні */
+input::placeholder,
+textarea::placeholder{
+    color: #9a9a9a;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 400;
+    opacity: 1;
+}
+body {
+    line-height:1;
+}
+* {
+    -webkit-tap-highlight-color: transparent;
+}
+article,aside,details,figcaption,figure,
+footer,header,hgroup,menu,nav,section { 
+    display:block;
+}
+
+ul, li {
+    list-style:none;
+}
+
+input, select {
+    vertical-align:middle;
+}
+*,
+*::after,
+*::before{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;   
+}
+a{
+    color: inherit;
+    text-decoration: none;
+    margin:0;
+    padding:0;
+    font-size:100%;
+    vertical-align:baseline;
+    background:transparent;
+}
+html,body{
+    font-family: 'Montserrat', sans-serif;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 28.8px;
+    scroll-behavior: smooth;
+    background: #121212;
+    color: #fff;
+}
+.body{
+    min-width: 320px;
+}
+.body.no-scroll{
+    overflow: hidden;
+}
+.container{
+    max-width: 1700px;
+    padding: 0 30px;
+    margin: 0 auto;
+}
+.btn-2,
+.btn,
+button{
+    color: #FFF;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    text-transform: uppercase; 
+    border: none;
+    outline: none;
+    background-color: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all .5s ease;
+}
+.btn:hover{
+    background-color: #fff;
+    color: #161616;
+}
+.btn svg path{
+    transition: all .5s ease;
+}
+.btn:hover svg path{
+    fill: #161616;
+}
+.btn-2{
+    background: #A7C70E;
+    color: #161616;
+    padding: 16px;
+    gap: 8px;
+}
+.btn-2:hover:not(:active){
+    background-color: #161616;
+    color: #FFF;
+}
+.btn-2 svg path{
+    fill: #161616;
+    transition: all .5s ease;
+}
+.btn-2:hover:not(:active) svg path{
+    fill: #FFF;
+}
+select,
+input{
+    border: 1px solid #161616;
+    outline: none;
+    padding: 10px 16px;
+    height: 56px;
+    width: 100%;
+}
+select {
+    align-items: center;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-color: #fff;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M3.99935 4.66602L7.99935 8.66602L11.9993 4.66602L13.3327 5.99935L7.99935 11.3327L2.66602 5.99935L3.99935 4.66602Z' fill='%23161616'/%3E%3C/svg%3E");
+    background-position: right 16px center;
+    background-repeat: no-repeat,repeat;
+    background-size: 16px;
+    box-sizing: border-box;
+    display: inline-flex;
+    padding-right: 40px;
+    cursor: pointer;
+}
+main.main{
+    overflow: hidden;
+    padding-top: var(--header-h, 80px);
+}
+main.main.main-hidden{
+    padding-top: 0;
+}
+.page-title{
+    color: #FFF;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: normal;
+    text-transform: uppercase;
+}
+.page-name{
+    color: #FFF;
+    font-size: 64px;
+    font-weight: 300;
+    line-height: normal;
+    text-transform: uppercase;
+}
+.header{
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background: rgba(22, 22, 22, 0.98);
+}
+.header__logo{
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+.header__logo img{
+    max-width: 180px;
+    height: auto;
+}
+.header__logo::after{
+    content: '';
+    position: absolute;
+    background-image: url('../img/light.webp');
+    width: 110px;
+    height: 110px;
+    min-width: 110px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    top: -30px;
+    left: -35px;
+    transform: scale(0) rotate(0deg);
+    transition: transform 0.5s ease;
+    transform-origin: center;
+}
+.header__logo:hover::after {
+    animation: pulseRotate 1s ease;
+}
+.header__block,
+.header__menu ul,
+.header__content,
+.header__inner{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+.header__inner{
+    padding: 24px 0 14px;
+    gap: 40px;
+}
+.header__content{
+    width: 100%;
+    max-width: 970px;
+    gap: 40px;
+}
+.header__menu{
+    width: 100%;
+    max-width: 603px;
+}
+.header__menu ul{
+    width: 100%;
+    gap: 10px;
+}
+.header__menu ul li a {
+    display: inline-flex;
+    font-weight: 700;
+    text-transform: uppercase;
+    transition: all .5s ease;
+}
+.header__lang-content a:hover,
+.header__menu ul li a:hover{
+    color: #A7C70E;
+}
+.header__block{
+    width: 100%;
+    /* max-content: разом із перемикачем валют фіксовані 193px не вміщали вміст */
+    max-width: max-content;
+}
+.header__icons{
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+.header__icons .header__busket{
+    width: 24px;
+    height: 24px;
+    background-size: 24px 24px;
+}
+.header__account{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    transition: all .5s ease;
+}
+.header__account:hover svg{
+    stroke: #A7C70E;
+}
+.header__account svg{
+    transition: all .5s ease;
+}
+.header__search{
+    position: relative;
+    z-index: 1;
+}
+.header__search-form{
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: -13px;
+    display: none;
+    width: 450px;
+}
+.header__search.active .header__search-form{
+    display: block;
+}
+.header__search-open{
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='25' viewBox='0 0 24 25' fill='none'%3E%3Cpath d='M11 19.5C15.4183 19.5 19 15.9183 19 11.5C19 7.08172 15.4183 3.5 11 3.5C6.58172 3.5 3 7.08172 3 11.5C3 15.9183 6.58172 19.5 11 19.5Z' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M21.0004 21.5004L16.6504 17.1504' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-position: center;
+    background-repeat: no-repeat;
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+}
+.header__search-input{
+    padding-right: 56px;
+    width: 100%;
+}
+.header__search-btn{
+    position: absolute;
+    top: 1px;
+    right: 0;
+    bottom: 1px;
+    background-color: #161616;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='25' viewBox='0 0 24 25' fill='none'%3E%3Cpath d='M11 19.5C15.4183 19.5 19 15.9183 19 11.5C19 7.08172 15.4183 3.5 11 3.5C6.58172 3.5 3 7.08172 3 11.5C3 15.9183 6.58172 19.5 11 19.5Z' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M21.0004 21.5004L16.6504 17.1504' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 50px;
+    border: 1px solid #fff;
+}
+.header__busket{
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='33' viewBox='0 0 32 33' fill='none'%3E%3Cpath d='M18.4497 20.3245C16.6602 20.3245 14.8621 20.3245 13.0726 20.3245C11.283 20.3245 10.0421 19.3196 9.67911 17.5567C8.97847 14.0906 8.30316 10.633 7.61096 7.17542C7.49278 6.59631 7.6194 6.69851 7.02006 6.68999C6.0493 6.68148 5.07854 6.69851 4.10777 6.68148C3.32272 6.67296 2.83312 5.98314 3.0526 5.26778C3.1961 4.82494 3.57597 4.51835 4.08245 4.50983C5.52593 4.50132 6.96941 4.4928 8.42134 4.50983C9.01224 4.51835 9.3921 4.87603 9.51028 5.47217C10.2278 9.12564 10.9453 12.7706 11.6628 16.4241C11.7219 16.7051 11.7641 16.9861 11.8317 17.2672C11.9583 17.7782 12.2959 18.0677 12.8109 18.1273C12.9375 18.1443 13.0641 18.1358 13.1907 18.1358C16.6686 18.1358 20.1549 18.1358 23.6328 18.1358C24.612 18.1358 24.899 17.9059 25.1016 16.935C25.6503 14.3717 26.199 11.7997 26.7392 9.23635C26.9249 8.34215 26.4775 7.78007 25.5658 7.78007C22.1049 7.78007 18.6439 7.78007 15.1829 7.78007C15.0225 7.78007 14.8621 7.78007 14.7102 7.75452C14.1953 7.67788 13.8238 7.24355 13.807 6.71554C13.7985 6.1705 14.1531 5.71914 14.6764 5.62546C14.803 5.59991 14.9297 5.5914 15.0563 5.5914C18.6017 5.5914 22.1471 5.58288 25.6925 5.5914C27.6509 5.5914 29.1703 7.19245 28.9846 9.10861C28.9171 9.83249 28.7145 10.5479 28.5626 11.2632C28.1067 13.4008 27.6424 15.5469 27.1782 17.6845C26.8321 19.277 25.5743 20.299 23.962 20.3075C22.1218 20.333 20.29 20.3245 18.4497 20.3245Z' fill='white'/%3E%3Cpath d='M23.5059 28.4915C21.7332 28.483 20.2728 26.9841 20.2813 25.1957C20.2982 23.3988 21.7754 21.9255 23.5481 21.9425C25.3208 21.9596 26.7727 23.4329 26.7727 25.2043C26.7727 27.0267 25.3039 28.5 23.5059 28.4915ZM24.6117 25.2043C24.6033 24.6081 24.1221 24.1312 23.5312 24.1397C22.9234 24.1397 22.4423 24.6422 22.4507 25.2383C22.4592 25.8345 22.9403 26.3114 23.5312 26.3114C24.1306 26.3114 24.6202 25.8089 24.6117 25.2043Z' fill='white'/%3E%3Cpath d='M10.5742 25.2129C10.5742 23.4075 12.0261 21.9427 13.8157 21.9512C15.58 21.9512 17.0403 23.4245 17.0488 25.2044C17.0488 27.0269 15.6053 28.5002 13.7988 28.5002C12.0261 28.5002 10.5742 27.0269 10.5742 25.2129ZM12.7352 25.2214C12.7352 25.8261 13.2164 26.3115 13.8157 26.3115C14.4066 26.3115 14.8962 25.8091 14.8878 25.2044C14.8793 24.6168 14.4066 24.1399 13.8157 24.1399C13.2079 24.1399 12.7352 24.6083 12.7352 25.2214Z' fill='white'/%3E%3C/svg%3E");
+    background-position: center;
+    background-repeat: no-repeat;
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    position: relative;
+}
+.header__lang{
+    position: relative;
+}
+.header__lang-content{
+    position: absolute;
+    padding: 10px;
+    background: rgba(22, 22, 22, 0.98);
+    z-index: 1;
+    top: 30px;
+    left: -10px;
+    flex-direction: column;
+    gap: 4px;
+    border-radius: 2px;
+    display: none;
+    flex-direction: column;
+    gap: 15px;
+}
+.header__lang.active .header__lang-content{
+    display: flex;
+}
+.header__lang-content a,
+.header__lang-selected{
+    font-weight: 700;
+    line-height: normal;
+}
+.header__lang-selected{
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.header__lang-selected:after{
+    content: '';
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='13' viewBox='0 0 12 13' fill='none'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M3 4L6 7L9 4L10 5L6 9L2 5L3 4Z' fill='white'/%3E%3C/svg%3E");
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 12px;
+    height: 12px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+}
+.header__lang.active .header__lang-selected:after{
+    transform: rotate(-180deg);
+}
+.header__menu-close,
+.header__burger{
+    display: none;
+}
+/* footer */
+.footer{
+    padding: 80px 0 16px;
+    background: #161616;
+}
+.footer__inner{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: start;
+    gap: 40px;
+}
+.footer__logo{
+    display: flex;
+    align-items: center;
+}
+.footer__box{
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+.footer__block{
+    display: flex;
+    flex-direction: column;
+}
+.footer__descr{
+    line-height: normal;
+    max-width: max-content;
+    transition: all .5s ease;
+}
+.footer__descr + .footer__descr{
+    margin-top: 22px;
+}
+a.footer__descr:not(:hover){
+    text-decoration: underline;
+}
+a.footer__descr:hover,
+.footer__menu li a:hover{
+    color: #A7C70E;
+}
+.footer__content{
+    width: 100%;
+    max-width: 760px;
+    flex: 1 1 480px;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(100px, 1fr));
+    align-items: start;
+    gap: 28px;
+}
+.footer__menu{
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+.footer__menu li a{
+    display: inline-flex;
+    line-height: normal;
+    transition: all .5s ease;
+}
+.footer__name{
+    font-weight: 700;
+    line-height: normal;
+    text-transform: uppercase;
+}
+.footer__socials{
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+.footer__socials a{
+    transition: all .5s ease;
+}
+.footer__socials a:hover{
+    transform: scale(1.1);
+}
+.footer__bottom{
+    margin-top: 64px;
+    padding-top: 28px;
+    border-top: 1px solid rgba(255, 255, 255, .16);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+.footer__copy{
+    text-align: center;
+    color:#FFF;
+    font-size: 13px;
+    line-height: 25px;
+}
+.footer__created{
+    color:#FFF;
+    font-weight: 700;
+    line-height: normal;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 9%;
+}
+.footer__created a{
+    color: #A7C70E;
+}
+.footer__created a:not(:hover){
+    text-decoration: underline;
+}
+/* busket */
+/* Універсальний оверлей бічних панелей (кошик, меню) */
+.side-overlay{
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.55);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .4s ease;
+    z-index: 105; /* поверх хедера (100): меню теж затемнюється */
+}
+.side-overlay.is-active{
+    opacity: 1;
+    pointer-events: auto;
+}
+/* хедер — власний stacking context (z 100), тож z-index мобільного меню
+   всередині нього не перебивав оверлей і той лягав ЗВЕРХУ, притемнюючи
+   саме меню. Поки меню відкрите — піднімаємо весь хедер над оверлеєм */
+.header:has(.header__menu.active){
+    z-index: 110;
+}
+.busket{
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    max-width: 430px;
+    border: 1px solid #161616;
+    background: #FFF;
+    z-index: 111;
+    transform: translateX(100%);
+    transition: all .5s ease;
+    display: flex;
+    flex-direction: column;
+}
+.busket.active{
+    transform: translateX(0%);
+}
+.busket__inner{
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+}
+.busket__top{
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+    height: 64px;
+    background: #E0E0E0;
+    border-bottom: 1px solid #161616;
+}
+.busket__title{
+    color: #161616;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    text-transform: uppercase;
+}
+.busket__amount{
+    color: #161616;
+    text-align: left;
+    font-weight: 700;
+    line-height: normal;
+    padding: 16px 16px 0;
+}
+.busket__block {
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: 444px;
+    margin: 16px;
+    overscroll-behavior: contain;
+    flex: 1;
+}
+.busket__block::-webkit-scrollbar {
+    width: 3px;
+}
+.busket__block::-webkit-scrollbar-track {
+    background: #D2D2D2;
+    border-radius: 20px;
+}
+.busket__block::-webkit-scrollbar-thumb {
+    background: #202222;
+    border-radius: 20px;
+}
+.busket__item + .busket__item{
+    margin-top: 16px;
+}
+.busket__item{
+    display: flex;
+    gap: 16px;
+    align-items: end;
+    border: 1px solid #161616;
+    background: #FFF;
+    position: relative;
+}
+.busket__item-image{
+    display: flex;
+    align-items: center;
+    width: 177px;
+    height: 184px;
+    flex-shrink: 0;
+    overflow: hidden;
+}
+.busket__item-image img{
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transition: all .5s ease;
+}
+.busket__item-image:hover img{
+    transform: scale(1.1);
+}
+.busket__item-content{
+    margin-bottom: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+    padding-right: 24px;
+}
+.busket__item-title h3{
+    transition: all .5s ease;
+    color: #161616;
+    font-weight: 700;
+    line-height: 1.35;
+    max-width: 263px;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+.busket__item-title:hover h3{
+    color: #A7C70E;
+}
+.busket__item-info{
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.busket__item-volume{
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+.busket__item-volume,
+.busket__item-about{
+    color: #161616;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+.busket__item-volume select{
+    border: none;
+    padding: 0;
+    font-size: 14px;
+    width: 76px;
+    flex-shrink: 0;
+    height: auto;
+    background-position: right center;
+}
+.busket__item-bottom{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.busket__item-count {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 118px;
+    height: 50px;
+    padding: 12px 16px;
+}
+.busket__item-count span{
+    height: auto;
+    border: none;
+    padding: 0;
+    width: 100%;
+    text-align: center;
+	color:#000;
+	font-weight:bold;
+	font-size:115%;
+}
+.busket__item-delete,
+.busket__item-minus,
+.busket__item-plus{
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.busket__item-minus{
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M3.33398 8H12.6673' stroke='%23161616' stroke-width='2' stroke-linecap='square' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+.busket__item-plus{
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M8 3.33301V12.6663' stroke='%23161616' stroke-width='2' stroke-linecap='square' stroke-linejoin='round'/%3E%3Cpath d='M3.33398 8H12.6673' stroke='%23161616' stroke-width='2' stroke-linecap='square' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+.busket__item-delete{
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M13.6076 4.41421L12.1934 3L8.30374 6.88962L4.41421 3.00009L3 4.41431L6.88953 8.30383L3.00097 12.1924L4.41518 13.6066L8.30374 9.71805L12.1924 13.6067L13.6066 12.1925L9.71795 8.30383L13.6076 4.41421Z' fill='%23161616'/%3E%3C/svg%3E");
+}
+.busket__item-price{
+    color: #161616;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: normal;
+}
+.busket__bottom-content{
+    padding: 24px 16px;
+    border-top: 1px solid #161616;
+    border-bottom: 1px solid #161616;
+}
+.busket__bottom-item{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.busket__bottom-item + .busket__bottom-item{
+    margin-top: 16px;
+}
+.busket__bottom-descr{
+    line-height: normal;
+    color: #161616;
+}
+.busket__bottom-total{
+    font-weight: 700;
+}
+.busket__bottom-confirm{
+    padding: 32px 16px;
+}
+.busket__bottom-btn{
+    width: 100%;
+    font-size: 16px;
+}
+.busket__empty{
+
+    padding: 16px;
+    font-weight: 700;
+    line-height: normal;
+    font-size: 24px;
+    color: #161616;
+}
+.busket__empty.active{
+    display: block;
+}
+.busket__empty.active ~ *{
+    display: none;
+}
+/* hero */
+.hero{
+    background-color: #121212;
+    position: relative;
+    z-index: 1;
+}
+.hero__video{
+    position: absolute;
+    z-index: -1;
+    display: flex;
+    align-items: center;
+    inset: 0;
+}
+.hero__video video{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+.hero__inner{
+    display: flex;
+    flex-direction: column;
+    padding-top: 150px;
+    padding-bottom: 100px;
+}
+.hero__title{
+    color: #1C1536;
+    background: #FFF;
+    font-size: 75px;
+    font-weight: 700;
+    line-height: normal;
+    text-transform: uppercase;
+    display: inline-flex;
+    padding: 0px 16px;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    max-width: max-content;
+}
+.hero__descr{
+    margin-top: 32px;
+    font-size: 30px;
+    font-weight: 700;
+    line-height: normal;
+    text-transform: uppercase;
+}
+.hero__btn{
+    margin-top: 60px;
+    height: 61px;
+    width: 100%;
+    max-width: 260px;
+    border: 2px solid #FFF;
+    gap: 8px;
+}
+.contacts__media .hero__sound{
+    right: 16px;
+    bottom: 16px;
+}
+p.product__title.page-title {
+    color: #161616;
+    font-size: 16px;
+    font-weight: 900;
+}
+.custom-select {
+    position: relative;
+    width: 100%;
+    font-family: Arial, sans-serif;
+}
+.select-items div,
+.select-selected {
+    border: 1px solid #161616;
+    padding: 10px 16px;
+    cursor: pointer;
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    height: 64px;
+    color: #161616;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: normal;
+    padding-right: 40px;
+}
+.select-icon {
+    width: 32px;
+    height: 32px;
+}
+.select-selected::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: 16px;
+    transform: translateY(-50%);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M3.99935 4.66602L7.99935 8.66602L11.9993 4.66602L13.3327 5.99935L7.99935 11.3327L2.66602 5.99935L3.99935 4.66602Z' fill='%23161616'/%3E%3C/svg%3E");
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+}
+.select-items {
+    position: absolute;
+    top: 63px;
+    left: 0;
+    right: 0;
+    background-color: #fff;
+    width: 100%;
+    z-index: 99;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid #161616;
+}
+.select-items.select-hide {
+    display: none;
+}
+.select-items div{
+    border-bottom: none;
+}
+.select-items div:hover {
+    background-color: #f0f0f0;
+}
+.checkout__block-delivery .custom-select{
+    grid-column: span 3;
+}
+.checkout__busket .busket__top{
+    height: 61px;
+    border: none;
+}
+.checkout__busket .busket__block{
+    height: auto;
+    margin: 16px 0 24px;
+    padding: 0;
+}
+.checkout__busket .busket__bottom-content{
+    border-top: 2px solid #161616;
+    border-bottom: none;
+    padding: 16px;
+}
+.checkout__busket .busket__item{
+    padding: 6px;
+}
+.checkout__busket .busket__item + .busket__item {
+    margin-top: 24px;
+}
+.checkout__busket .busket__bottom-confirm{
+    padding: 0;
+    margin-top: 16px;
+}
+
+.header__busket  #cart-total {display:none;}
+.busket__bottom {
+    margin-top: auto; /* “прибивает” к низу */
+
+
+}
+/* Контейнер алертов */
+.alert {
+    position: relative;
+	text-align:center;
+
+	width:100%;
+    padding: 15px 35px 15px 15px;
+
+    border: 1px solid transparent;
+    font-size: 14px;
+}
+
+/* Типы алертов */
+.alert-success {
+    color: #3c763d;
+    background-color: #dff0d8;
+    border-color: #d6e9c6;
+}
+
+.alert-danger {
+    color: #a94442;
+    background-color: #f2dede;
+    border-color: #ebccd1;
+}
+
+.alert-warning {
+    color: #8a6d3b;
+    background-color: #fcf8e3;
+    border-color: #faebcc;
+}
+
+.alert-info {
+    color: #31708f;
+    background-color: #d9edf7;
+    border-color: #bce8f1;
+}
+
+/* Кнопка закрытия */
+.alert-dismissible .close {
+    position: absolute;
+    top: 0;
+    right: 10px;
+    padding: 15px 15px;
+    color: inherit;
+    background: none;
+    border: none;
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+/* Иконка в алерте (например, FontAwesome) */
+.alert i {
+    margin-right: 10px;
+}
+.account__actions .btn-2{
+    padding: 16px 32px;
+    font-size: 16px;
+}
+.account__auth-card .btn-2{
+    margin-top: auto;
+    padding: 16px 32px;
+    align-self: flex-start;
+}
+.account__wishlist-actions .btn-2{
+    flex: 1;
+    height: 44px;
+    padding: 0 12px;
+    font-size: 13px;
+}
+/* ===== Мобільна зручність: глобальні дрібниці ===== */
+html{
+    scroll-behavior: smooth;
+}
+*{
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* ===== Мобільна шапка: тільки лого + пошук + кошик + бургер ===== */
+.header__menu-mob{
+    display: none;
+}
+
+/* ===== Polish-пакет: типографіка, тактильність, глибина ===== */
+/* великі заголовки: щільніший трекінг */
+.page-name{
+    letter-spacing: -0.02em;
+}
+
+/* ============================================================
+   Стилі верстки (колишній html/css/style.css) — злито 2026-08-24
+   ============================================================ */
+/* === site.css === */
+/* Глобальні стилі верстки (підключається на всіх сторінках) */
+.footer__legal{
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin-bottom: 0;
+}
+.footer__legal a{
+    font-size: 13px;
+    color: rgba(255,255,255,.65);
+    transition: color .3s ease;
+}
+.footer__legal a:hover{
+    color: #A7C70E;
+}
+
+/* === search-ui.css === */
+/* Пошук-оверлей із затемненням, поле по центру */
+.su-overlay{
+    position: fixed;
+    inset: 0;
+    z-index: 95;
+    display: none;
+    align-items: flex-start;
+    justify-content: center;
+    background: rgba(0,0,0,.75);
+    padding: 12vh 24px 24px;
+    overflow-y: auto;
+}
+.su-overlay.is-open{
+    display: flex;
+}
+.su-box{
+    position: relative;
+    width: 100%;
+    max-width: 680px;
+}
+.su-close{
+    position: absolute;
+    top: -56px;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    background: #161616;
+    color: #FFF;
+    transition: color .3s ease;
+}
+.su-close:hover{
+    color: #A7C70E;
+}
+.su-form{
+    position: relative;
+    display: flex;
+}
+/* оригінальна форма пошуку з шапки — по центру оверлея */
+.su-box .header__search-form{
+    position: unset;
+    transform: unset;
+    display: flex;
+    width: 100%;
+}
+.su-box .header__search-input{
+    width: 100%;
+    padding: 16px 64px 16px 18px;
+    font-size: 17px;
+    background: #FFF;
+}
+.su-box .header__search-btn{
+    position: absolute;
+    top: 1px;
+    right: 0;
+    bottom: 1px;
+    width: 56px;
+    height: 54px;
+}
+.su-input{
+    width: 100%;
+    padding: 18px 64px 18px 20px;
+    font-size: 18px;
+    background: #FFF;
+    border: 2px solid #A7C70E;
+    color: #161616;
+}
+.su-input::placeholder{
+    color: #8a8a8a;
+}
+.su-submit{
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #161616;
+    color: #FFF;
+    transition: background .3s ease, color .3s ease;
+}
+.su-submit:hover{
+    background: #A7C70E;
+    color: #161616;
+}
+.su-results{
+    margin-top: 8px;
+    display: flex;
+    flex-direction: column;
+    background: #FFF;
+}
+.su-item{
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 16px;
+    border-bottom: 1px solid #EFEFEF;
+    transition: background .2s ease;
+}
+.su-item:hover{
+    background: #F6F8EC;
+}
+.su-item img{
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+    background: #f4f4f4;
+}
+.su-item__name{
+    font-size: 14px;
+    color: #161616;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+.su-item__price{
+    margin-left: auto;
+    font-size: 14px;
+    font-weight: 700;
+    color: #161616;
+    white-space: nowrap;
+}
+.su-empty{
+    padding: 16px;
+    font-size: 14px;
+    color: #6b6b6b;
+}
+.su-all{
+    display: block;
+    margin-top: 8px;
+    padding: 12px;
+    text-align: center;
+    background: #161616;
+    color: #FFF;
+    font-size: 14px;
+    text-transform: uppercase;
+    transition: background .3s ease, color .3s ease;
+}
+.su-all:hover{
+    background: #A7C70E;
+    color: #161616;
+}
+/* кнопки-перелінковки між сторінками */
+.xl-nav{
+    padding: 48px 0 64px;
+}
+.xl-nav__row{
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+.xl-nav__btn{
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 24px;
+    background: #161616;
+    color: #FFF;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    transition: background .3s ease, color .3s ease;
+}
+.xl-nav__btn:hover{
+    background: #A7C70E;
+    color: #161616;
+}
+/* Футер: блок документів */
+.footer__legal a{
+    font-size: 13px;
+    color: rgba(255,255,255,.65);
+    transition: color .3s ease;
+}
+.footer__legal a:hover{
+    color: #A7C70E;
+}
+/* Hero-відеослайдер */
+.hero--slider .hero__slide{
+    display: none;
+    position: relative;
+    z-index: 1;
+}
+.hero--slider .hero__slide.is-active{
+    display: block;
+}
+.hero--slider .hero__video img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+.hero--slider .hero__video::after{
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(0,0,0,.6) 0%, rgba(0,0,0,.4) 32%, rgba(0,0,0,.12) 58%, rgba(0,0,0,0) 78%);
+    -webkit-backdrop-filter: blur(3px);
+    backdrop-filter: blur(3px);
+    -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 42%, transparent 68%);
+    mask-image: linear-gradient(90deg, #000 0%, #000 42%, transparent 68%);
+    pointer-events: none;
+}
+.hero--slider .hero__descr{
+    max-width: 560px;
+}
+.hero__note{
+    display: block;
+    margin: 14px 0 22px;
+    font-size: 15px;
+    color: rgba(255,255,255,.75);
+    border-left: 3px solid #A7C70E;
+    padding-left: 12px;
+    max-width: 480px;
+}
+.hero__sound{
+    position: absolute;
+    right: 32px;
+    bottom: 32px;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(22,22,22,.45);
+    border: 1px solid rgba(255,255,255,.25);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    color: #FFF;
+    transition: background .3s ease, border-color .3s ease, transform .2s ease;
+}
+.hero__sound:active{
+    transform: scale(.92);
+}
+.hero__sound[aria-pressed="true"]{
+    background: #A7C70E;
+    border-color: #A7C70E;
+    color: #161616;
+}
+.hero__sound svg[hidden]{
+    display: none;
+}
+.hero--slider .hero__btn{
+    width: auto;
+    max-width: max-content;
+    padding: 0 28px;
+}
+.hero__sound:hover{
+    background: #A7C70E;
+    color: #161616;
+}
+.hero__dots{
+    position: absolute;
+    left: 50%;
+    bottom: 24px;
+    transform: translateX(-50%);
+    z-index: 3;
+    display: flex;
+    gap: 10px;
+}
+.hero__dot{
+    width: 34px;
+    height: 4px;
+    background: rgba(255,255,255,.35);
+    transition: background .3s ease;
+}
+.hero__dot.is-active{
+    background: #A7C70E;
+}
+.hero__loader{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 4;
+}
+.hero__loader span{
+    display: block;
+    width: 44px;
+    height: 44px;
+    border: 4px solid rgba(255,255,255,.25);
+    border-top-color: #A7C70E;
+    border-radius: 50%;
+    animation: heroSpin 0.8s linear infinite;
+}
+.hero--slider{
+    position: relative;
+}
+
+/* Спільна модалка коду підтвердження (login/register/зміна email) */
+.otp-modal{
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(22,22,22,.7);
+    padding: 24px;
+}
+.otp-modal[hidden]{
+    display: none;
+}
+.otp-modal__dialog{
+    position: relative;
+    width: 100%;
+    max-width: 420px;
+    background: #FFF;
+    color: #161616;
+    padding: 40px 32px 32px;
+    text-align: center;
+}
+.otp-modal__close{
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    color: #161616;
+    transition: background .3s ease;
+}
+.otp-modal__close:hover{
+    background: #F0F0EC;
+}
+.otp-modal__title{
+    font-size: 22px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+.otp-modal__text{
+    margin-top: 8px;
+    font-size: 14px;
+    opacity: .65;
+}
+.otp-code{
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 28px;
+}
+.otp-code__cell{
+    width: 44px;
+    height: 52px;
+    border: 1px solid #161616;
+    text-align: center;
+    font-size: 22px;
+    font-weight: 700;
+    padding: 0;
+}
+.otp-code__cell:focus{
+    outline: none;
+    border-color: #A7C70E;
+}
+.otp-modal__error{
+    margin-top: 16px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #FF3D12;
+}
+.otp-modal__actions{
+    margin-top: 28px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+.otp-modal__actions .btn-2{
+    width: 100%;
+    justify-content: center;
+}
+.otp-modal__actions .btn-2.is-muted{
+    opacity: .4;
+    pointer-events: none;
+}
+.account__field-with-btn .btn-2{
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+.account__field-with-btn .btn-2:disabled{
+    opacity: .35;
+    pointer-events: none;
+}
+.otp-modal__timer{
+    font-size: 13px;
+    opacity: .55;
+}
+.otp-modal__resend{
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: underline;
+    color: #161616;
+}
+.otp-modal__resend:hover{
+    color: #A7C70E;
+}
+
+/* Косметичний кошик: бейдж кількості на іконці в шапці + стан "Додано" */
+.header__busket .hc-badge{
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #A7C70E;
+    color: #161616;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1;
+    border-radius: 9px;
+}
+
+
+
+/* Обране: бейдж на іконці в шапці + червоне сердечко в активному стані */
+.header__wishlist{
+    position: relative;
+}
+.header__wishlist .hc-badge{
+    position: absolute;
+    top: -8px;
+    right: -10px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #A7C70E;
+    color: #161616;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1;
+    border-radius: 9px;
+}
+
+/* кнопка закриття мінікошика */
+.busket__close{
+    position: static;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    margin-left: auto;
+    padding: 0;
+    background: none;
+    border: none;
+    flex-shrink: 0;
+    color: #161616;
+    transition: color .3s ease;
+}
+.busket__close svg{
+    display: block;
+}
+.busket__close:hover{
+    color: #FF3D12;
+}
+
+/* Стрілки секцій товару — по боках слайдера, єдиний стиль з головною */
+.side-arrows-wrap{
+    position: relative;
+}
+.side-arrows{
+    position: static;
+}
+.side-arrows .product__viewed-prev,
+.side-arrows .product__viewed-next,
+.side-arrows .product__related-prev,
+.side-arrows .product__related-next,
+.side-arrows .product__gallery-prev,
+.side-arrows .product__gallery-next{
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 3;
+    width: 44px;
+    height: 44px;
+    border: none;
+    background: #161616;
+    opacity: 1;
+    transition: background .3s ease;
+}
+.side-arrows .product__viewed-prev svg path,
+.side-arrows .product__viewed-next svg path,
+.side-arrows .product__related-prev svg path,
+.side-arrows .product__related-next svg path,
+.side-arrows .product__gallery-prev svg path,
+.side-arrows .product__gallery-next svg path{
+    fill: #FFF;
+}
+.side-arrows .product__viewed-prev:hover,
+.side-arrows .product__viewed-next:hover,
+.side-arrows .product__related-prev:hover,
+.side-arrows .product__related-next:hover,
+.side-arrows .product__gallery-prev:hover,
+.side-arrows .product__gallery-next:hover{
+    background: #A7C70E;
+}
+.side-arrows .product__viewed-prev:hover svg path,
+.side-arrows .product__related-prev:hover svg path,
+.side-arrows .product__gallery-prev:hover svg path,
+.side-arrows .product__viewed-next:hover svg path,
+.side-arrows .product__related-next:hover svg path,
+.side-arrows .product__gallery-next:hover svg path{
+    fill: #161616;
+}
+.side-arrows .product__viewed-prev,
+.side-arrows .product__related-prev,
+.side-arrows .product__gallery-prev{
+    left: -12px;
+}
+.side-arrows .product__viewed-next,
+.side-arrows .product__related-next,
+.side-arrows .product__gallery-next{
+    right: -12px;
+}
+.side-arrows .swiper-button-disabled{
+    opacity: .25;
+    pointer-events: none;
+}
+.faq-page .page-name{
+    margin-bottom: 8px;
+}
+/* Попапи відгук/питання */
+.fb-modal{
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(22,22,22,.7);
+    padding: 24px;
+}
+.fb-modal[hidden]{
+    display: none;
+}
+.fb-modal__dialog{
+    position: relative;
+    width: 100%;
+    max-width: 460px;
+    max-height: 90vh;
+    overflow-y: auto;
+    background: #FFF;
+    color: #161616;
+    padding: 40px 32px 32px;
+    text-align: center;
+}
+.fb-stars{
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin: 22px 0 6px;
+}
+.fb-star{
+    color: #C9C9C4;
+    transition: color .2s ease, transform .2s ease;
+}
+.fb-star.is-on{
+    color: #A7C70E;
+}
+.fb-star:hover{
+    transform: scale(1.15);
+}
+.fb-fields{
+    margin-top: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    text-align: left;
+}
+.fb-fields textarea{
+    min-height: 110px;
+}
+.fb-modal__dialog--wide{
+    max-width: 720px;
+    text-align: left;
+}
+
+/* --- keyframes, що використовуються вище (перенесено з pages.css при виправленні спліту) --- */
+
+@keyframes pulseRotate {
+    0% {
+        transform: scale(0) rotate(0deg);
+    }
+    50% {
+        transform: scale(1) rotate(-45deg);
+    }
+    100% {
+        transform: scale(0) rotate(-90deg);
+    }
+}
+
+@keyframes heroSpin{
+    to{ transform: rotate(360deg); }
+}
+
+/* ===== мікро-анімації (глобальні): shine кнопок, underline меню, модалки, фокуси ===== */
+
+/* кнопки: смуга-відблиск пролітає при ховері */
+.btn-2, .btn{
+    position: relative;
+    overflow: hidden;
+}
+.btn-2::after, .btn::after{
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -80%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(105deg, transparent 20%, rgba(255,255,255,.35) 50%, transparent 80%);
+    transform: skewX(-20deg);
+    pointer-events: none;
+    transition: none;
+}
+.btn-2:hover::after, .btn:hover::after{
+    animation: btnShine .7s ease forwards;
+}
+@keyframes btnShine{
+    to{ left: 130%; }
+}
+
+/* меню в хедері та легальні лінки футера: зелений підкреслювач виростає зліва */
+.header__menu ul li a,
+.footer__legal a{
+    position: relative;
+}
+.header__menu ul li a::after,
+.footer__legal a::after{
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -4px;
+    height: 2px;
+    background: #A7C70E;
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform .3s cubic-bezier(0.16,1,0.3,1);
+}
+.header__menu ul li a:hover::after,
+.footer__legal a:hover::after{
+    transform: scaleX(1);
+}
+
+/* модалки: діалог виринає, бекдроп проявляється */
+.fb-modal:not([hidden]),
+.otp-modal:not([hidden]){
+    animation: modalBackdropIn .25s ease both;
+}
+.fb-modal:not([hidden]) .fb-modal__dialog,
+.otp-modal:not([hidden]) .otp-modal__dialog{
+    animation: modalDialogIn .35s cubic-bezier(0.16,1,0.3,1) both;
+}
+@keyframes modalBackdropIn{
+    from{ opacity: 0; }
+    to{ opacity: 1; }
+}
+@keyframes modalDialogIn{
+    from{ opacity: 0; transform: translateY(18px) scale(.97); }
+    to{ opacity: 1; transform: none; }
+}
+
+/* поля: м'який зелений фокус */
+input:focus, select:focus, textarea:focus{
+    border-color: #A7C70E;
+    box-shadow: 0 0 0 3px rgba(167,199,14,.15);
+    outline: none;
+    transition: border-color .25s ease, box-shadow .25s ease;
+}
+
+/* соц-іконки футера: підйом замість плоского scale */
+.footer__socials a:hover{
+    transform: translateY(-4px) scale(1.08);
+}
+
+@media (prefers-reduced-motion: reduce){
+    .btn-2:hover::after, .btn:hover::after{ animation: none; }
+    .fb-modal:not([hidden]), .otp-modal:not([hidden]),
+    .fb-modal:not([hidden]) .fb-modal__dialog, .otp-modal:not([hidden]) .otp-modal__dialog{ animation: none; }
+}
+
+
+/* --- .variants (плитки напрямків): спільні для welcome.php і головної магазину --- */
+
+.variants__block{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 28px;
+}
+.variants__item{
+    width: 100%;
+    position: relative;
+    z-index: 1;
+    min-height: 724px;
+    border: 2px solid #FFF;
+    background: #161616;
+    transition: all 0.5s ease;
+}
+.variants__item-image{
+    display: flex;
+    align-items: center;
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    filter: blur(4px);
+    opacity: 0.4;
+    overflow: hidden;
+    transition: all .5s ease;
+}
+.variants__item-image img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+.variants__item-title{
+    position: absolute;
+    top: 50%;
+    left: 10px;
+    right: 10px;
+    transform: translateY(-50%);
+    text-align: center;
+    max-width: max-content;
+    margin: 0 auto;
+    display: inline-flex;
+    padding: 8px 24px;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    border: 2px solid #FFF;
+    font-size: clamp(22px, 2.2vw, 36px);
+    font-weight: 700;
+    line-height: normal;
+    text-transform: uppercase;
+    transition: all 0.5s ease;
+}
+.variants__item:hover .variants__item-image{
+    opacity: 0.9;
+    filter: none;
+}
+.variants__item:hover{
+    transform: translateY(-39px);
+}
+.variants__item:hover .variants__item-title{
+    top: calc(100% - 103px);
+    transform: translateY(0%);
+}
+.variants__item::before{
+    content: '';
+    position: absolute;
+    z-index: -1;
+    background: #000;
+    filter: blur(40px);
+    width: 448px;
+    height: 596px;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: -56px;
+    opacity: 0;
+    transition: all .1s ease;
+    pointer-events: none;
+}
+.variants__item:hover::before{
+    opacity: 1;
+}
+.variants__item::after{
+    content: '';
+    position: absolute;
+    left: -1px;
+    right: -1px;
+    top: 100%;
+    height: 0;
+    transition: all .1s ease;
+    background-color: transparent;
+}
+.variants__item:hover::after{
+    height: 40px;
+}
+/* variants */
+.variants{
+    background: #121212;
+    padding: 72px 0;
+}
+
+@media (max-width: 999px) {
+    .variants__block{
+        grid-template-columns: 1fr 1fr;
+    }
+    .variants__item:nth-of-type(3){
+        grid-column: span 2;
+    }
+}
+
+@media (max-width: 767px) {
+    .variants{
+        padding: 44px 0;
+    }
+    .variants__block {
+        grid-template-columns: 1fr;
+    }
+    .variants__item:nth-of-type(3){
+        grid-column: auto;
+    }
+    .variants__item {
+        min-height: 390px;
+    }
+}
+
+/* страховка: жодного горизонтального скролу на вузьких екранах */
+html, body{
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+/* ── живий пошук у шапці ─────────────────────────────────────── */
+.header__search-wrap{
+    position: static;
+}
+.smart-search__dropdown{
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    width: auto;             /* рівно по ширині поля пошуку */
+    max-width: none;
+    background: #fff;
+    color: #161616;
+    box-shadow: 0 18px 46px rgba(0, 0, 0, .22);
+    z-index: 60;
+    animation: ssDrop .18s ease both;
+    /* випадашка не має вилазити за екран: інакше «Показати всі результати»
+       опиняється нижче видимої області й на неї неможливо клікнути */
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100dvh - var(--header-h, 90px) - 24px);
+}
+.smart-search__dropdown[hidden]{
+    display: none;
+}
+@keyframes ssDrop{
+    from{ opacity: 0; transform: translateY(-6px); }
+    to{ opacity: 1; transform: none; }
+}
+/* один стовпчик: категорії/бренди зверху, товари під ними */
+.smart-search__cols{
+    display: block;
+    /* скролиться саме список результатів — кнопка «Показати всі» лишається на видноті */
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    min-height: 0;
+}
+.smart-search__side{
+    padding: 14px 16px 0;
+}
+.smart-search__side:empty{
+    display: none;
+}
+.smart-search__main{
+    padding: 14px 16px;
+    min-width: 0;
+}
+.smart-search__side .smart-search__list{
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+.smart-search__side .smart-search__list a{
+    margin: 0;
+    padding: 5px 10px;
+    border: 1px solid #E5E5E5;
+    font-size: 13px;
+}
+.smart-search__group + .smart-search__group{
+    margin-top: 18px;
+}
+.smart-search__group-title{
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: #9a9a9a;
+    margin-bottom: 10px;
+}
+.smart-search__list{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.smart-search__list a{
+    display: block;
+    padding: 6px 8px;
+    margin: 0 -8px;
+    font-size: 14px;
+    color: #161616;
+    line-height: 1.35;
+    transition: background-color .18s ease, color .18s ease;
+}
+.smart-search__list a:hover{
+    background: #F4F6E8;
+    color: #6f8a05;
+}
+.smart-search__products{
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.ss-prod{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px;
+    margin: 0 -8px;
+    color: #161616;
+    transition: background-color .18s ease;
+}
+.ss-prod:hover{
+    background: #F6F6F4;
+}
+.ss-prod__img{
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    background: #F6F6F4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.ss-prod__img img{
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+.ss-prod__body{
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.ss-prod__man{
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color: #9a9a9a;
+}
+.ss-prod__name{
+    font-size: 14px;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+.ss-prod__price{
+    font-size: 14px;
+    font-weight: 700;
+}
+.ss-price-old{
+    color: #9a9a9a;
+    font-weight: 500;
+    text-decoration: line-through;
+    margin-left: 4px;
+}
+.ss-price-new{
+    color: #6f8a05;
+}
+.smart-search__empty{
+    padding: 22px 0;
+    text-align: center;
+    font-size: 14px;
+    color: #8a8a8a;
+}
+.smart-search__all{
+    display: block;
+    flex-shrink: 0;          /* завжди видима, скільки б не було результатів */
+    background: #fff;
+    padding: 13px 16px;
+    border-top: 1px solid #ECECEC;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color: #161616;
+    transition: background-color .2s ease, color .2s ease;
+}
+.smart-search__all:hover{
+    background: #A7C70E;
+}
+
+/* єдиний оверлей спливаючих елементів */
+.hp-overlay{
+    position: fixed;
+    inset: 0;
+    z-index: 55; /* під дропдауном пошуку (60) і попапами (120+) */
+    background: rgba(12, 12, 12, .55);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .25s ease, visibility .25s ease;
+}
+.hp-overlay.is-visible{
+    opacity: 1;
+    visibility: visible;
+}
+
+/* карта у футері — окрема колонка, квадратний фрейм (Leaflet) */
+.footer__box--brand{
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 28px;
+    flex: 0 1 auto;
+    min-width: 0;
+}
+.footer__info{
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    flex-shrink: 0;
+}
+.footer__map{
+    flex-shrink: 0;
+    width: 230px;
+    max-width: 100%;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,.14);
+    background: #202222;
+    filter: grayscale(1) contrast(1.05);
+    transition: filter .3s ease;
+}
+.footer__map:hover{
+    filter: none;
+}
+.footer__map .leaflet-control-zoom a{
+    border-radius: 0;
+}
+
+/* затемнення сторінки, поки відкритий дропдаун пошуку.
+   Хедер живе у власному stacking context (z 100), тому затемнюємо його
+   окремим шаром ::after усередині — меню під тінню, активний пошук зверху */
+body.search-overlay-open::after{
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    background: rgba(12, 12, 12, .55);
+    animation: hpDimIn .25s ease both;
+}
+body.search-overlay-open .header::after{
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 50;
+    background: rgba(12, 12, 12, .55);
+    animation: hpDimIn .25s ease both;
+}
+body.search-overlay-open .header .header__search.active{
+    z-index: 60; /* поле пошуку — єдине, що лишається над тінню */
+}
+@keyframes hpDimIn{
+    from{ opacity: 0; }
+    to{ opacity: 1; }
+}
+
+/* єдиний відступ до футера на всіх сторінках: останній блок у main.
+   Секції з власним падінгом отримують те саме значення, тож задвоєння немає */
+/* після секції часто йде <script> зі schema.org, тому «останній блок»
+   визначаємо через :has(~ …), а не :last-child; крок і саме значення
+   лежать у pages.css (--page-bottom / --page-gap) */
+.main > :is(section, div, .container):not(:has(~ :is(section, div))){
+    padding-bottom: var(--page-bottom, 104px);
+}
+.main--light{
+    background: #fff;
+}
+
+/* маркер карти клікабельний — веде в Google Maps */
+.leaflet-marker-icon{
+    cursor: pointer;
+}
+
+/* панель кошика вужча (430px) — картка товару під неї: менше фото, компактний текст */
+.busket__item{
+    gap: 12px;
+}
+.busket__item-image{
+    width: 104px;
+    height: 116px;
+}
+.busket__item-content{
+    padding: 12px 12px 12px 0;
+    gap: 10px;
+}
+.busket__item-title h3{
+    font-size: 14px;
+    line-height: 1.3;
+}
+.busket__item-about,
+.busket__item-volume{
+    font-size: 12px;
+}
+.busket__item-price{
+    font-size: 16px;
+}
+.busket__item-count{
+    gap: 8px;
+}
+.busket__bottom-total{
+    font-size: 20px;
+}
+
+/* порожній мінікошик у шухляді: стан по центру.
+   Ширина панелі однакова для порожнього і заповненого кошика (див. .busket) */
+.busket__inner > li:has(.busket__empty){
+    flex: 1;
+    display: flex;
+}
+.busket__empty{
+    margin: auto;
+    padding: 40px 24px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+.busket__empty-icon{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 74px;
+    height: 74px;
+    border-radius: 50%;
+    background: rgba(167, 199, 14, .16);
+    color: #7d9410;
+}
+.busket__empty-title{
+    font-size: 18px;
+    font-weight: 700;
+    color: #161616;
+}
+.busket__empty-text{
+    font-size: 13px;
+    line-height: 1.5;
+    color: rgba(22, 22, 22, .6);
+    max-width: 250px;
+}
+.busket__empty-btn{
+    margin-top: 8px;
+    padding: 13px 26px;
+    font-size: 15px;
+}
+
+/* підписи Leaflet/OSM на картах не показуємо */
+.leaflet-control-attribution{
+    display: none !important;
+}
+
+/* ── Єдині чекбокси й радіо на весь сайт ──────────────────────
+   Кастомний вигляд замість системного: квадрат/коло з рамкою,
+   у checked — зелений бренд-фон із білою галочкою/крапкою.
+   (Глобальні правила для input розтягували їх на 56px і 100%.) */
+input[type="radio"]:not(.hpf__check),
+input[type="checkbox"]:not(.hpf__check){
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    min-width: 18px;
+    padding: 0;
+    margin: 0;
+    flex-shrink: 0;
+    border: 2px solid #B9B9B4;
+    background: #fff;
+    cursor: pointer;
+    display: inline-block;
+    vertical-align: middle;
+    position: relative;
+    transition: border-color .2s ease, background .2s ease;
+}
+input[type="checkbox"]{
+    border-radius: 3px;
+}
+input[type="radio"]{
+    border-radius: 50%;
+}
+input[type="radio"]:hover,
+input[type="checkbox"]:hover{
+    border-color: #161616;
+}
+input[type="checkbox"]:checked{
+    background: #A7C70E url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E") center / 11px no-repeat;
+    border-color: #A7C70E;
+}
+input[type="radio"]:checked{
+    border-color: #A7C70E;
+}
+input[type="radio"]:checked::after{
+    content: '';
+    position: absolute;
+    inset: 2px;
+    border-radius: 50%;
+    background: #A7C70E;
+}
+input[type="radio"]:focus-visible,
+input[type="checkbox"]:focus-visible{
+    outline: 2px solid #A7C70E;
+    outline-offset: 2px;
+}
+
+/* Єдине блокування прокрутки для всіх попапів: класи в темі різні
+   (історично), тому перелічуємо всі — і додаємо компенсацію смуги
+   прокрутки, щоб сторінка не стрибала при відкритті */
+body.no-scroll,
+body.rvm-open,
+body.qo-open,
+body.cui-drawer-open,
+body.hp-modal-open{
+    overflow: hidden;
+    padding-right: var(--hp-scrollbar, 0px);
+}
+
+/* перемикач валют: та сама випадашка, що й мовний перемикач */
+.header__currency .header__lang-selected,
+.header__currency .header__lang-content a{
+    font-size: 16px;
+    font-weight: 700;
+}
+.header__currency .header__lang-content{
+    min-width: 46px;
+    align-items: center;
+}

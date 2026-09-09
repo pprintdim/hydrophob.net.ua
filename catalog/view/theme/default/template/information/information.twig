@@ -3,12 +3,87 @@
         <section class="about">
             <div class="container">
                 <div class="about__inner">
+                    {% if breadcrumbs %}
+                    <nav class="catalog__crumbs catalog__crumbs--light" aria-label="Breadcrumbs">
+                        {% for breadcrumb in breadcrumbs %}
+                        <a href="{{ breadcrumb.href }}" class="catalog__crumbs-link{% if loop.last %} is-current{% endif %}">{{ breadcrumb.text }}</a>{% if not loop.last %}<span class="catalog__crumbs-sep" aria-hidden="true">/</span>{% endif %}
+                        {% endfor %}
+                    </nav>
+                    <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{% for breadcrumb in breadcrumbs %}{"@type":"ListItem","position":{{ loop.index }},"name":{{ breadcrumb.text|json_encode }},"item":{{ breadcrumb.href|json_encode }}}{% if not loop.last %},{% endif %}{% endfor %}]}</script>
+                    {% endif %}
+{% for block in schema_blocks %}
+<script type="application/ld+json">{{ block|json_encode(constant('JSON_UNESCAPED_UNICODE') b-or constant('JSON_UNESCAPED_SLASHES'))|raw }}</script>
+{% endfor %}
+
 					<h1 class="about__title page-title">{{ heading_title }}</h1>
-					<h2 class="about__name page-name">HYDROPHOB</h2>
-					{{ description }}
+					{% if collapsible %}<h2 class="about__name page-name">HYDROPHOB</h2>{% endif %}
+
+					<div class="about__box{% if not collapsible %} about__box--plain{% endif %}">
+						<div class="about__content">
+							{# юридичні та довідкові сторінки читають цілком, без «показати більше» #}
+							<div class="desc{% if collapsible %} is-collapsible{% endif %}" data-info-desc>{{ description }}</div>
+							{% if collapsible %}
+							<button type="button" class="desc-toggle" data-desc-toggle data-more="{{ text_show_more|default('Показати більше') }}" data-less="{{ text_show_less|default('Згорнути') }}"><span>{{ text_show_more|default('Показати більше') }}</span>
+								<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+							</button>
+							{% endif %}
+						</div>
+						{% if about_image %}
+						<div class="about__image">
+							<img src="{{ about_image }}" alt="{{ heading_title }}" data-plx="0.05" loading="lazy">
+						</div>
+						{% endif %}
+					</div>
 					{{ content_bottom }}
                 </div>
             </div>
         </section>
+
+        {% if show_steps %}
+        <section class="dx-steps"><div class="container">
+            <h2 class="dx-steps__title page-name">{{ text_steps_title }}</h2>
+            <div class="dx-steps__grid">
+                {% for step in steps %}
+                <div class="dx-step"><span class="dx-step__num">{{ loop.index }}</span>
+                    <p class="dx-step__name">{{ step.name }}</p>
+                    <p class="dx-step__text">{{ step.text }}</p>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="dx-perks">
+                {% for perk in perks %}
+                <div class="dx-perk">{{ perk.icon|raw }}<p class="dx-perk__text">{{ perk.text }}</p></div>
+                {% endfor %}
+            </div>
+        </div></section>
+        {% endif %}
+
+        
 	</main>
+<script>
+/* довгий текст інфо-сторінки згорнутий; кнопка ховається, якщо все вміщається */
+document.addEventListener('DOMContentLoaded', function () {
+    var desc = document.querySelector('[data-info-desc]');
+    var btn = document.querySelector('.about__content [data-desc-toggle]');
+    if (!desc || !btn) return;
+
+    function sync() {
+        if (desc.classList.contains('is-open')) return;
+        var fits = desc.scrollHeight <= desc.clientHeight + 4;
+        btn.hidden = fits;
+        desc.classList.toggle('is-collapsible', !fits);
+    }
+
+    btn.addEventListener('click', function () {
+        var open = desc.classList.toggle('is-open');
+        btn.classList.toggle('is-open', open);
+        btn.querySelector('span').textContent = open ? btn.getAttribute('data-less') : btn.getAttribute('data-more');
+        if (!open) desc.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    sync();
+    window.addEventListener('load', sync);
+    window.addEventListener('resize', sync);
+});
+</script>
 {{ footer }}

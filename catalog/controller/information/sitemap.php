@@ -54,28 +54,45 @@ class ControllerInformationSitemap extends Controller {
 			);
 		}
 
-		$data['special'] = $this->url->link('product/special');
-		$data['account'] = $this->url->link('account/account', '', true);
-		$data['edit'] = $this->url->link('account/edit', '', true);
-		$data['password'] = $this->url->link('account/password', '', true);
-		$data['address'] = $this->url->link('account/address', '', true);
-		$data['history'] = $this->url->link('account/order', '', true);
-		$data['download'] = $this->url->link('account/download', '', true);
-		$data['cart'] = $this->url->link('checkout/cart');
-		$data['checkout'] = $this->url->link('checkout/checkout', '', true);
-		$data['search'] = $this->url->link('product/search');
-		$data['contact'] = $this->url->link('information/contact');
+		// Кабінет, кошик і оформлення закриті в robots — у карті для людей
+		// лишаємо тільки те, що реально індексується.
+		$data['groups'] = array();
+
+		$data['groups'][] = array(
+			'title' => $this->language->get('text_shop'),
+			'links' => array(
+				array('name' => $this->language->get('text_special'), 'href' => $this->url->link('product/special')),
+				array('name' => $this->language->get('text_search'), 'href' => $this->url->link('product/search'))
+			)
+		);
 
 		$this->load->model('catalog/information');
 
-		$data['informations'] = array();
+		$info_links = array();
 
 		foreach ($this->model_catalog_information->getInformations() as $result) {
-			$data['informations'][] = array(
-				'title' => $result['title'],
-				'href'  => $this->url->link('information/information', 'information_id=' . $result['information_id'])
+			$info_links[] = array(
+				'name' => $result['title'],
+				'href' => $this->url->link('information/information', 'information_id=' . $result['information_id'])
 			);
 		}
+
+		$info_links[] = array('name' => $this->language->get('text_contact'), 'href' => $this->url->link('information/contact'));
+		$info_links[] = array('name' => $this->language->get('text_faq'), 'href' => $this->url->link('information/faq'));
+		$info_links[] = array('name' => $this->language->get('text_reviews'), 'href' => $this->url->link('information/reviews'));
+
+		$data['groups'][] = array('title' => $this->language->get('text_information'), 'links' => $info_links);
+
+		$data['text_catalog'] = $this->language->get('text_catalog');
+		$data['heading_title'] = $this->language->get('heading_title');
+
+		$data['schema_blocks'] = array(array(
+			'@context'   => 'https://schema.org',
+			'@type'      => 'WebPage',
+			'name'       => $data['heading_title'],
+			'url'        => $this->url->link('information/sitemap'),
+			'inLanguage' => $this->config->get('config_language') == 'ru-ru' ? 'ru-UA' : 'uk-UA'
+		));
 
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['column_right'] = $this->load->controller('common/column_right');

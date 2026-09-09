@@ -216,22 +216,33 @@ class ControllerCheckoutCart extends Controller {
 			$data['continue'] = $this->url->link('common/home');
 
 			$data['checkout'] = $this->url->link('checkout/checkout', '', true);
+			$data['store_phone'] = $this->config->get('config_telephone');
 
-			$this->load->model('setting/extension');
+			// «також купують» — окремою секцією-слайдером під кошиком
+			$data['cart_related'] = $this->load->controller('extension/module/hp_cart_related/section');
 
-			$data['modules'] = array();
-			
-			$files = glob(DIR_APPLICATION . '/controller/extension/total/*.php');
+			// GA4 view_cart: склад кошика в поточній валюті покупця
+			$ga_currency = isset($this->session->data['currency']) ? $this->session->data['currency'] : $this->config->get('config_currency');
+			$ga_items = array();
+			$ga_value = 0;
 
-			if ($files) {
-				foreach ($files as $file) {
-					$result = $this->load->controller('extension/total/' . basename($file, '.php'));
-					
-					if ($result) {
-						$data['modules'][] = $result;
-					}
-				}
+			foreach ($this->cart->getProducts() as $ga_product) {
+				$ga_items[] = array(
+					'item_id'    => (int)$ga_product['product_id'],
+					'item_name'  => $ga_product['name'],
+					'item_brand' => 'Hydrophob',
+					'price'      => round((float)$this->currency->convert($ga_product['price'], $this->config->get('config_currency'), $ga_currency), 2),
+					'quantity'   => (int)$ga_product['quantity']
+				);
+
+				$ga_value += (float)$this->currency->convert($ga_product['total'], $this->config->get('config_currency'), $ga_currency);
 			}
+
+			$data['ga_cart'] = $ga_items ? array(
+				'currency' => $ga_currency,
+				'value'    => round($ga_value, 2),
+				'items'    => $ga_items
+			) : array();
 
 			$data['column_left'] = $this->load->controller('common/column_left');
 			$data['column_right'] = $this->load->controller('common/column_right');
@@ -242,9 +253,20 @@ class ControllerCheckoutCart extends Controller {
 
 			$this->response->setOutput($this->load->view('checkout/cart', $data));
 		} else {
-			$data['text_error'] = $this->language->get('text_empty');
-			
-			$data['continue'] = $this->url->link('common/home');
+			// порожній кошик — той самий шаблон зі станом "порожньо", а не сторінка 404
+			$data['text_empty'] = $this->language->get('text_empty');
+			$data['text_empty_hint'] = $this->language->get('text_empty_hint');
+			$data['button_continue'] = $this->language->get('button_continue');
+
+			$data['products'] = array();
+			$data['vouchers'] = array();
+			$data['totals'] = array();
+			$data['cart_related'] = '';
+			$data['attention'] = '';
+			$data['success'] = '';
+			$data['error_warning'] = '';
+
+			$data['continue'] = $this->url->link('product/category', 'path=33');
 
 			unset($this->session->data['success']);
 
@@ -255,7 +277,7 @@ class ControllerCheckoutCart extends Controller {
 			$data['footer'] = $this->load->controller('common/footer');
 			$data['header'] = $this->load->controller('common/header');
 
-			$this->response->setOutput($this->load->view('error/not_found', $data));
+			$this->response->setOutput($this->load->view('checkout/cart', $data));
 		}
 	}
 
@@ -380,13 +402,34 @@ class ControllerCheckoutCart extends Controller {
 		$this->response->setOutput(json_encode($json));
 	}
 
+	// Оновлення кількості. Стокова версія чекала масив quantity[key] і робила
+	// редірект — для ajax зі сторінки товару та кошика приймаємо ще й пару
+	// key + quantity і відповідаємо JSON.
 	public function edit() {
 		$this->load->language('checkout/cart');
 
 		$json = array();
 
-		// Update
-		if (!empty($this->request->post['quantity'])) {
+		if (isset($this->request->post['key']) && isset($this->request->post['quantity']) && !is_array($this->request->post['quantity'])) {
+			$this->cart->update($this->request->post['key'], (int)$this->request->post['quantity']);
+
+			unset($this->session->data['shipping_method']);
+			unset($this->session->data['shipping_methods']);
+			unset($this->session->data['payment_method']);
+			unset($this->session->data['payment_methods']);
+			unset($this->session->data['reward']);
+
+			$json['success'] = true;
+			$json['total'] = $this->cart->countProducts();
+
+			$this->response->addHeader('Content-Type: application/json');
+			$this->response->setOutput(json_encode($json));
+
+			return;
+		}
+
+		// класична форма кошика: quantity[key] => value
+		if (!empty($this->request->post['quantity']) && is_array($this->request->post['quantity'])) {
 			foreach ($this->request->post['quantity'] as $key => $value) {
 				$this->cart->update($key, $value);
 			}

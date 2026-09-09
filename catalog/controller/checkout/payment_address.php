@@ -150,7 +150,22 @@ class ControllerCheckoutPaymentAddress extends Controller {
 				}
 
 				if (!$json) {
-					$address_id = $this->model_account_address->addAddress($this->customer->getId(), $this->request->post);
+					// та сама адреса не має плодитись після кожного замовлення:
+					// якщо місто й адреса збігаються — використовуємо наявну
+					$address_id = 0;
+
+					foreach ($this->model_account_address->getAddresses() as $existing) {
+						if (trim($existing['city']) == trim($this->request->post['city'])
+							&& trim($existing['address_1']) == trim($this->request->post['address_1'])) {
+							$address_id = (int)$existing['address_id'];
+
+							break;
+						}
+					}
+
+					if (!$address_id) {
+						$address_id = $this->model_account_address->addAddress($this->customer->getId(), $this->request->post);
+					}
 
 					$this->session->data['payment_address'] = $this->model_account_address->getAddress($address_id);
 

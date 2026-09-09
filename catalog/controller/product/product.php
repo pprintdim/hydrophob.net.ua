@@ -247,7 +247,16 @@ $data['main_category_id'] = $main_category_id;
 				'href' => $this->url->link('product/product', $url . '&product_id=' . $this->request->get['product_id'])
 			);
 
-			$this->document->setTitle($product_info['meta_title']);
+			// meta_title у картках — сама назва товару; для видачі дописуємо
+			// назву магазину, якщо її там ще немає (бренд у сніпеті + унікальність)
+			$meta_title = trim($product_info['meta_title']);
+			$store_name = trim((string)$this->config->get('config_name'));
+
+			if ($store_name && stripos($meta_title, $store_name) === false) {
+				$meta_title .= ' — ' . $store_name;
+			}
+
+			$this->document->setTitle($meta_title);
 			$this->document->setDescription($product_info['meta_description']);
 			$this->document->setKeywords($product_info['meta_keyword']);
 			$this->document->addLink($this->url->link('product/product', 'product_id=' . $this->request->get['product_id']), 'canonical');
@@ -274,6 +283,9 @@ $data['main_category_id'] = $main_category_id;
 			$data['reward'] = $product_info['reward'];
 			$data['points'] = $product_info['points'];
 			$data['description'] = html_entity_decode($product_info['description'], ENT_QUOTES, 'UTF-8');
+
+			// довгий опис показуємо згорнутим, щоб вкладка не з'їдала півсторінки
+			$data['description_long'] = utf8_strlen(trim(strip_tags($data['description']))) > 600;
 
 			if ($product_info['quantity'] <= 0) {
 				$data['stock'] = $product_info['stock_status'];
@@ -302,16 +314,46 @@ $data['main_category_id'] = $main_category_id;
 			$results = $this->model_catalog_product->getProductImages($this->request->get['product_id']);
 
 			foreach ($results as $result) {
+				$popup_extra = $this->model_tool_image->resize($result['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_popup_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_popup_height'));
+				$thumb_extra = $this->model_tool_image->resize($result['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_additional_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_additional_height'));
+
+				// файл міг бути видалений — тоді resize віддає порожній рядок і слайд ламається
+				if (!$popup_extra || !$thumb_extra) {
+					continue;
+				}
+
 				$data['images'][] = array(
-					'popup' => $this->model_tool_image->resize($result['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_popup_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_popup_height')),
-					'thumb' => $this->model_tool_image->resize($result['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_additional_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_additional_height'))
+					'popup' => $popup_extra,
+					'thumb' => $thumb_extra
 				);
+			}
+
+			// без жодного придатного фото показуємо плейсхолдер, а не порожні <img>
+			if (!$data['thumb']) {
+				$data['thumb'] = $this->model_tool_image->resize('placeholder.png', $this->config->get('theme_' . $this->config->get('config_theme') . '_image_thumb_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_thumb_height'));
+			}
+
+			if (!$data['popup']) {
+				$data['popup'] = $data['thumb'];
 			}
 
 			if ($this->customer->isLogged() || !$this->config->get('config_customer_price')) {
 				$data['price'] = $this->currency->format($this->tax->calculate($product_info['price'], $product_info['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
 			} else {
 				$data['price'] = false;
+			}
+
+			// стікери як на картках: ХІТ — товар у топі продажів
+			$data['text_badge_top'] = $this->language->get('text_badge_top');
+			$data['text_badge_sale'] = $this->language->get('text_badge_sale');
+			$data['badge_top'] = false;
+
+			foreach ($this->model_catalog_product->getBestSellerProducts(8) as $bestseller) {
+				if ((int)$bestseller['product_id'] == (int)$this->request->get['product_id']) {
+					$data['badge_top'] = true;
+
+					break;
+				}
 			}
 
 			if (!is_null($product_info['special']) && (float)$product_info['special'] >= 0) {
@@ -395,7 +437,214 @@ $data['main_category_id'] = $main_category_id;
 			}
 
 			$data['reviews'] = sprintf($this->language->get('text_reviews'), (int)$product_info['reviews']);
+
+			// Вкладки картки товару (Опис / Характеристики / Інструкція / Відгуки)
+			$data['reviews_total'] = (int)$product_info['reviews'];
+
+			$this->load->model('catalog/review');
+			$review_rows = $this->model_catalog_review->getReviewsByProductId($this->request->get['product_id'], 0, 20);
+			$data['reviews'] = array();
+			foreach ($review_rows as $review_row) {
+				$data['reviews'][] = array(
+					'author'     => $review_row['author'],
+					'text'       => nl2br($review_row['text']),
+					'rating'     => (int)$review_row['rating'],
+					'date_added' => date($this->language->get('date_format_short'), strtotime($review_row['date_added']))
+				);
+			}
+
+			$data['category_title'] = '';
+			if (isset($this->request->get['path'])) {
+				$path_parts = explode('_', (string)$this->request->get['path']);
+				$last_category_id = (int)array_pop($path_parts);
+				$this->load->model('catalog/category');
+				$cat_info = $this->model_catalog_category->getCategory($last_category_id);
+				if ($cat_info) {
+					$data['category_title'] = $cat_info['name'];
+				}
+			}
+
+			foreach (array('tab_description', 'tab_specs', 'tab_instruction', 'tab_reviews',
+				'text_category_label', 'text_brand_label', 'text_country_label', 'text_country_value',
+				'text_how_to_use', 'text_step1', 'text_step2', 'text_step3', 'text_step4', 'text_step5',
+				'text_storage', 'text_no_reviews', 'text_write_review',
+				'button_quick', 'text_quick_title', 'text_quick_sub', 'entry_quick_name', 'entry_quick_phone',
+				'entry_quick_email', 'entry_quick_comment', 'button_quick_send', 'text_quick_note',
+				'text_quick_close', 'text_quick_in_cart', 'text_quick_qty', 'text_instock_label', 'text_outstock_label',
+				'text_show_more', 'text_show_less', 'text_sku_label', 'text_spec_volume', 'text_spec_type', 'text_spec_area', 'text_saving', 'text_perk_delivery', 'text_perk_payment', 'text_perk_quality') as $tab_key) {
+				$data[$tab_key] = $this->language->get($tab_key);
+			}
+
+			// Швидке замовлення + дані шапки картки (наявність, економія)
+			$data['quick_action'] = $this->url->link('checkout/quick/confirm', '', true);
+
+			// Головні характеристики в шапці картки: Обʼєм, Тип засобу, Область застосування.
+			// Шукаємо їх серед атрибутів за назвою — так працює для всіх мов одразу.
+			$data['key_specs'] = array();
+
+			$wanted = array(
+				$this->language->get('text_spec_volume'),
+				$this->language->get('text_spec_type'),
+				$this->language->get('text_spec_area')
+			);
+
+			$found = array();
+
+			foreach ($this->model_catalog_product->getProductAttributes($this->request->get['product_id']) as $group) {
+				foreach ($group['attribute'] as $attribute) {
+					$key = array_search($attribute['name'], $wanted);
+
+					if ($key !== false && trim($attribute['text']) !== '') {
+						$found[$key] = array('name' => $attribute['name'], 'text' => trim($attribute['text']));
+					}
+				}
+			}
+
+			ksort($found);
+			$data['key_specs'] = array_values($found);
+			$data['in_stock']     = (int)$product_info['quantity'] > 0;
+
+			$data['saving'] = false;
+
+			if ($product_info['special']) {
+				$diff = $this->tax->calculate($product_info['price'], $product_info['tax_class_id'], $this->config->get('config_tax'))
+					- $this->tax->calculate($product_info['special'], $product_info['tax_class_id'], $this->config->get('config_tax'));
+
+				if ($diff > 0) {
+					$data['saving'] = $this->currency->format($diff, $this->session->data['currency']);
+				}
+			}
 			$data['rating'] = (int)$product_info['rating'];
+
+			// ── Структуровані дані картки: сам товар + інструкція застосування ──
+			$product_schema = array(
+				'@context'    => 'https://schema.org',
+				'@type'       => 'Product',
+				'name'        => $product_info['name'],
+				'description' => utf8_substr(trim(preg_replace('/\s+/u', ' ', strip_tags(html_entity_decode($product_info['description'], ENT_QUOTES, 'UTF-8')))), 0, 900),
+				'brand'       => array('@type' => 'Brand', 'name' => 'Hydrophob'),
+				'url'         => $this->url->link('product/product', 'product_id=' . $product_id)
+			);
+
+			if (trim((string)$product_info['model']) !== '') {
+				$product_schema['sku'] = $product_info['model'];
+				$product_schema['mpn'] = $product_info['model'];
+			}
+
+			if (!empty($product_info['image'])) {
+				$product_schema['image'] = $this->model_tool_image->resize($product_info['image'], 1200, 1200);
+			}
+
+			// характеристики картки (обʼєм, тип, область) — пошуковикам як властивості
+			foreach ($data['key_specs'] as $spec) {
+				$product_schema['additionalProperty'][] = array(
+					'@type' => 'PropertyValue',
+					'name'  => $spec['name'],
+					'value' => $spec['text']
+				);
+			}
+
+			if ((float)$product_info['price']) {
+				$product_schema['offers'] = array(
+					'@type'           => 'Offer',
+					'url'             => $product_schema['url'],
+					// ціна рахується в базовій валюті магазину — з нею й підписуємо,
+					// інакше перемикач валют розсинхронив би число і код валюти
+					'price'           => number_format((float)$this->tax->calculate(!is_null($product_info['special']) && (float)$product_info['special'] >= 0 ? $product_info['special'] : $product_info['price'], $product_info['tax_class_id'], $this->config->get('config_tax')), 2, '.', ''),
+					'priceCurrency'   => $this->config->get('config_currency'),
+					'availability'    => $product_info['quantity'] > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+					'itemCondition'   => 'https://schema.org/NewCondition',
+					'seller'          => array('@type' => 'Organization', 'name' => html_entity_decode($this->config->get('config_name'), ENT_QUOTES, 'UTF-8')),
+					// merchant listing проходить валідацію лише з обома політиками
+					'priceValidUntil' => date('Y-m-d', strtotime('+1 year')),
+					'hasMerchantReturnPolicy' => array(
+						'@type'                => 'MerchantReturnPolicy',
+						'applicableCountry'    => 'UA',
+						'returnPolicyCategory' => 'https://schema.org/MerchantReturnFiniteReturnWindow',
+						'merchantReturnDays'   => 14,
+						'returnMethod'         => 'https://schema.org/ReturnByMail',
+						'returnFees'           => 'https://schema.org/ReturnShippingFees'
+					),
+					'shippingDetails' => array(
+						'@type'               => 'OfferShippingDetails',
+						'shippingDestination' => array('@type' => 'DefinedRegion', 'addressCountry' => 'UA'),
+						'deliveryTime'        => array(
+							'@type'        => 'ShippingDeliveryTime',
+							'handlingTime' => array('@type' => 'QuantitativeValue', 'minValue' => 0, 'maxValue' => 1, 'unitCode' => 'DAY'),
+							'transitTime'  => array('@type' => 'QuantitativeValue', 'minValue' => 1, 'maxValue' => 3, 'unitCode' => 'DAY')
+						)
+					)
+				);
+			}
+
+			if ((int)$product_info['reviews'] > 0 && (float)$product_info['rating'] > 0) {
+				$product_schema['aggregateRating'] = array(
+					'@type'       => 'AggregateRating',
+					'ratingValue' => (float)$product_info['rating'],
+					'reviewCount' => (int)$product_info['reviews'],
+					'bestRating'  => 5,
+					'worstRating' => 1
+				);
+
+				foreach ($this->model_catalog_review->getReviewsByProductId($product_id, 0, 5) as $review) {
+					$product_schema['review'][] = array(
+						'@type'         => 'Review',
+						'author'        => array('@type' => 'Person', 'name' => $review['author']),
+						'datePublished' => date('c', strtotime($review['date_added'])),
+						'reviewBody'    => trim(strip_tags(html_entity_decode($review['text'], ENT_QUOTES, 'UTF-8'))),
+						'reviewRating'  => array('@type' => 'Rating', 'ratingValue' => (int)$review['rating'], 'bestRating' => 5, 'worstRating' => 1)
+					);
+				}
+			}
+
+			$data['schema_blocks'] = array($product_schema);
+
+			// у соцмережах картка товару має показувати сам товар, а не банер сайту
+			if (!empty($product_info['image'])) {
+				$this->session->data['og_image'] = $this->model_tool_image->resize($product_info['image'], 1200, 630);
+			}
+
+			// GA4 view_item: той самий набір даних піде і в add_to_cart з кнопки.
+			// Валюта — поточна валюта покупця, щоб збігалася з цінами на сторінці.
+			$ga_currency = isset($this->session->data['currency']) ? $this->session->data['currency'] : $this->config->get('config_currency');
+			$ga_price = round((float)$this->currency->convert(
+				$this->tax->calculate(!is_null($product_info['special']) && (float)$product_info['special'] >= 0 ? $product_info['special'] : $product_info['price'], $product_info['tax_class_id'], $this->config->get('config_tax')),
+				$this->config->get('config_currency'),
+				$ga_currency
+			), 2);
+
+			$data['ga_item'] = array(
+				'currency' => $ga_currency,
+				'value'    => $ga_price,
+				'items'    => array(array(
+					'item_id'       => (int)$product_id,
+					'item_name'     => $product_info['name'],
+					'item_brand'    => 'Hydrophob',
+					'item_category' => isset($data['category_title']) ? $data['category_title'] : '',
+					'price'         => $ga_price,
+					'quantity'      => 1
+				))
+			);
+
+			// інструкція застосування з вкладки — саме її цитують AI-відповіді
+			$steps = array();
+
+			foreach (array('text_step1', 'text_step2', 'text_step3', 'text_step4', 'text_step5') as $step_key) {
+				$text = trim((string)$this->language->get($step_key));
+
+				if ($text !== '') {
+					$steps[] = array('@type' => 'HowToStep', 'position' => count($steps) + 1, 'text' => $text);
+				}
+			}
+
+			if (count($steps) >= 2) {
+				$data['schema_blocks'][] = array(
+					'@context' => 'https://schema.org',
+					'@type'    => 'HowTo',
+					'name'     => $this->language->get('text_how_to_use') . ' ' . $product_info['name'],
+					'step'     => $steps
+				);
+			}
 
 			// Captcha
 			if ($this->config->get('captcha_' . $this->config->get('config_captcha') . '_status') && in_array('review', (array)$this->config->get('config_captcha_page'))) {
@@ -411,6 +660,30 @@ $data['main_category_id'] = $main_category_id;
 			$data['products'] = array();
 
 			$results = $this->model_catalog_product->getProductRelated($this->request->get['product_id']);
+
+			// привʼязані товари не заповнені — пропонуємо сусідів по категорії
+			if (!$results && !empty($data['main_category_id'])) {
+				$fallback = $this->model_catalog_product->getProducts(array(
+					'filter_category_id'  => $data['main_category_id'],
+					'filter_sub_category' => true,
+					'sort'                => 'p.sort_order',
+					'order'               => 'ASC',
+					'start'               => 0,
+					'limit'               => 9
+				));
+
+				foreach ($fallback as $fallback_product) {
+					if ((int)$fallback_product['product_id'] == (int)$this->request->get['product_id']) {
+						continue;
+					}
+
+					$results[] = $fallback_product;
+
+					if (count($results) >= 8) {
+						break;
+					}
+				}
+			}
 
 			foreach ($results as $result) {
 				if ($result['image']) {
@@ -557,6 +830,44 @@ $data['main_category_id'] = $main_category_id;
 		}
 	}
 
+	// «Переглянуті нещодавно»: фронт зберігає id у localStorage і питає дані сюди
+	public function viewedInfo() {
+		$this->load->language('product/product');
+		$this->load->model('catalog/product');
+		$this->load->model('tool/image');
+
+		$json = array('products' => array());
+
+		$ids = isset($this->request->get['ids']) ? explode(',', $this->request->get['ids']) : array();
+		$ids = array_slice(array_filter(array_map('intval', $ids)), 0, 12);
+
+		foreach ($ids as $product_id) {
+			$product_info = $this->model_catalog_product->getProduct($product_id);
+
+			if (!$product_info) {
+				continue;
+			}
+
+			$image = $this->model_tool_image->resize($product_info['image'] ? $product_info['image'] : 'placeholder.png', 450, 450);
+
+			$price = $this->currency->format($this->tax->calculate($product_info['special'] ? $product_info['special'] : $product_info['price'], $product_info['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+
+			$json['products'][] = array(
+				'product_id' => (int)$product_info['product_id'],
+				'name'       => $product_info['name'],
+				'thumb'      => $image,
+				'price'      => $price,
+				'minimum'    => $product_info['minimum'] > 0 ? (int)$product_info['minimum'] : 1,
+				'href'       => html_entity_decode($this->url->link('product/product', 'product_id=' . $product_info['product_id']), ENT_QUOTES, 'UTF-8')
+			);
+		}
+
+		$json['button_cart'] = $this->language->get('button_cart');
+
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($json));
+	}
+
 	public function review() {
 		$this->load->language('product/product');
 
@@ -613,6 +924,12 @@ $data['main_category_id'] = $main_category_id;
 			
 				if (empty($this->request->post['rating']) || $this->request->post['rating'] < 0 || $this->request->post['rating'] > 5) {
 					$json['error'] = $this->language->get('error_rating');
+				}
+
+				// відгук лишає лише покупець із підтвердженою поштою: гість
+				// проходить код і стає зареєстрованим (як у швидкому замовленні)
+				if (!isset($json['error']) && !$this->customer->isLogged()) {
+					$json['error'] = $this->language->get('error_review_verify');
 				}
 
 				// Captcha

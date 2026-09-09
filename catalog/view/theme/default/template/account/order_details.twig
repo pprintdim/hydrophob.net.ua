@@ -1,0 +1,51 @@
+<div class="order__items">
+    {% for product in products %}
+    <div class="order__item">
+        <img class="order__item-img" src="{{ product.thumb }}" alt="{{ product.name }}" width="48" height="48">
+        <div class="order__item-body">
+            <p class="order__item-title">{% if product.href %}<a href="{{ product.href }}">{{ product.name }}</a>{% else %}{{ product.name }}{% endif %}</p>
+            <p class="order__item-qty">{{ product.quantity }} × {{ product.price }}{% for option in product.option %} · {{ option.name }}: {{ option.value }}{% endfor %}</p>
+        </div>
+        <span class="order__item-total">{{ product.total }}</span>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="order__meta">
+    {% for total in totals %}
+    <div>
+        <p class="order__label">{{ total.title }}</p>
+        <p class="order__value">{{ total.text }}</p>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="order__meta">
+    {% if shipping_address %}
+    <div>
+        <p class="order__label">{{ text_shipping_address }}</p>
+        <p class="order__value">{{ shipping_address }}</p>
+    </div>
+    {% endif %}
+    {% if shipping_method %}
+    <div>
+        <p class="order__label">{{ text_shipping_method }}</p>
+        <p class="order__value">{{ shipping_method }}</p>
+    </div>
+    {% endif %}
+    {% if payment_method %}
+    <div>
+        <p class="order__label">{{ text_payment_method }}</p>
+        <p class="order__value">{{ payment_method }}</p>
+    </div>
+    {% endif %}
+</div>
+
+{% if comment %}
+<div class="order__meta">
+    <div>
+        <p class="order__label">{{ text_comment }}</p>
+        <p class="order__value">{{ comment|raw }}</p>
+    </div>
+</div>
+{% endif %}

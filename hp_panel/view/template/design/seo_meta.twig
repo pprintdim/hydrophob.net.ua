@@ -1,0 +1,416 @@
+{{ header }}{{ column_left }}
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="pull-right">
+        <button type="submit" form="form-seo-meta" class="btn btn-primary">
+          <i class="fa fa-save"></i> {{ button_save }}
+        </button>
+        <a href="{{ cancel }}" class="btn btn-default">
+          <i class="fa fa-reply"></i> {{ button_cancel }}
+        </a>
+      </div>
+      <h1>{{ heading_title }}</h1>
+      <ul class="breadcrumb">
+        {% for bc in breadcrumbs %}
+          <li><a href="{{ bc.href }}">{{ bc.text }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+  <div class="container-fluid">
+    {% if success %}
+      <div class="alert alert-success alert-dismissible">
+        <i class="fa fa-check-circle"></i> {{ success }}
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+      </div>
+    {% endif %}
+    {% if error_warning %}
+      <div class="alert alert-danger alert-dismissible">
+        <i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+      </div>
+    {% endif %}
+    <div class="alert alert-info">
+      <i class="fa fa-info-circle"></i> {{ text_help_priority }}
+    </div>
+    <style>
+      .seo-meta-vars { display:flex; flex-wrap:wrap; gap:8px; margin:8px 0 14px; }
+      .seo-meta-var {
+        border:1px solid #d6dde5;
+        background:#f8fafc;
+        color:#334155;
+        border-radius:3px;
+        padding:5px 8px;
+        font-family: Menlo, Monaco, Consolas, monospace;
+        font-size:12px;
+        cursor:pointer;
+      }
+      .seo-meta-var:hover { background:#eef4fb; border-color:#9fb8d0; }
+      .seo-meta-var.copied { background:#dff0d8; border-color:#a6d49f; color:#2f6f2f; }
+      .seo-meta-var-desc { color:#6b7280; font-family:inherit; margin-left:4px; }
+    </style>
+
+    <form action="{{ action }}" method="post" id="form-seo-meta" class="form-horizontal">
+
+      {# ===== STATUS ===== #}
+      <div class="panel panel-default">
+        <div class="panel-heading"><h3 class="panel-title"><i class="fa fa-cog"></i> Загальне</h3></div>
+        <div class="panel-body">
+          <div class="form-group">
+            <label class="col-sm-3 control-label">{{ entry_status }}</label>
+            <div class="col-sm-9">
+              <select name="module_seo_meta_status" class="form-control">
+                <option value="1" {% if module_seo_meta_status %}selected{% endif %}>{{ text_enabled }}</option>
+                <option value="0" {% if not module_seo_meta_status %}selected{% endif %}>{{ text_disabled }}</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label">{{ text_indexing }}</label>
+            <div class="col-sm-9">
+              <select name="config_noindex" class="form-control">
+                <option value="1" {% if config_noindex %}selected{% endif %}>{{ text_index_closed }}</option>
+                <option value="0" {% if not config_noindex %}selected{% endif %}>{{ text_index_open }}</option>
+              </select>
+              <p class="help-block">{{ text_index_help|raw }}</p>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label">{{ text_ga4 }}</label>
+            <div class="col-sm-9">
+              <div class="checkbox" style="margin-top:0;">
+                <label>
+                  <input type="checkbox" name="config_ga4_debug" value="1" data-ga4-debug {% if config_ga4_debug %}checked{% endif %}>
+                  {{ text_ga4_debug }}
+                </label>
+              </div>
+              <p class="help-block">{{ text_ga4_debug_help|raw }}</p>
+              {# у тестовому режимі ідентифікатор не потрібен — поле ховаємо #}
+              <div data-ga4-id-row{% if config_ga4_debug %} style="display:none;"{% endif %}>
+                <input type="text" name="config_ga4_id" value="{{ config_ga4_id }}" placeholder="G-XXXXXXXXXX" class="form-control">
+                <p class="help-block" style="margin-bottom:0;">{{ text_ga4_help|raw }}</p>
+              </div>
+            </div>
+          </div>
+          <script>
+          document.addEventListener('change', function (e) {
+              if (!e.target.matches('[data-ga4-debug]')) return;
+              var row = document.querySelector('[data-ga4-id-row]');
+              if (row) row.style.display = e.target.checked ? 'none' : '';
+          });
+          </script>
+          {# Home — read-only from OC Settings #}
+          <div class="form-group">
+            <label class="col-sm-3 control-label">{{ text_home_meta }}</label>
+            <div class="col-sm-9">
+              <div class="alert alert-warning" style="margin:0;">
+                <i class="fa fa-link"></i>
+                {{ text_help_home|format(settings_url)|raw }}
+              </div>
+              {% for language in languages %}
+                <div style="margin-top:8px;">
+                  {% if language.image %}<img src="{{ language.image }}" style="margin-right:4px;">{% endif %}
+                  <strong>{{ language.name }}:</strong>
+                  {{ config_meta_title[language.language_id] ?? '—' }}
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {# ===== SEO TEMPLATES ===== #}
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title"><i class="fa fa-file-code-o"></i> {{ text_templates }}</h3>
+        </div>
+        <div class="panel-body">
+          <p class="help-block">{{ text_variables|raw }}</p>
+          <div class="panel-group" id="seo-meta-variable-groups" style="margin-bottom:18px;">
+            {% for group_key, group in variable_groups %}
+              <div class="panel panel-default">
+                <div class="panel-heading" style="padding:8px 12px;">
+                  <h4 class="panel-title" style="font-size:13px;">
+                    <a data-toggle="collapse" data-parent="#seo-meta-variable-groups" href="#seo-vars-{{ group_key }}">
+                      {{ group.label }}
+                    </a>
+                  </h4>
+                </div>
+                <div id="seo-vars-{{ group_key }}" class="panel-collapse collapse {{ loop.first ? 'in' : '' }}">
+                  <div class="panel-body" style="padding:10px 12px;">
+                    <div class="seo-meta-vars">
+                      {% for variable, description in group.items %}
+                        <button type="button" class="seo-meta-var" data-copy="{{ variable }}">
+                          {{ variable }}<span class="seo-meta-var-desc">{{ description }}</span>
+                        </button>
+                      {% endfor %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+          <div id="templates-container">
+
+            {% for ti, tpl in templates %}
+              <div class="panel panel-default template-row" data-index="{{ ti }}">
+                <div class="panel-heading" style="cursor:pointer;" data-toggle="collapse" data-target="#tpl-body-{{ ti }}">
+                  <h4 class="panel-title">
+                    <span class="template-label">{{ tpl.name ?: ('Шаблон #' ~ (ti + 1)) }}</span>
+                    <button type="button" class="btn btn-danger btn-xs pull-right btn-remove-template" style="margin-top:-2px;">
+                      <i class="fa fa-trash"></i>
+                    </button>
+                  </h4>
+                </div>
+                <div class="collapse in" id="tpl-body-{{ ti }}">
+                  <div class="panel-body">
+                    <div class="form-group">
+                      <label class="col-sm-3 control-label">{{ text_template_name }}</label>
+                      <div class="col-sm-9">
+                        <input type="text" name="templates[{{ ti }}][name]"
+                               value="{{ tpl.name }}"
+                               class="form-control template-name-input"
+                               placeholder="{{ text_template_example }}">
+                      </div>
+                    </div>
+                    {# Language tabs #}
+                    <ul class="nav nav-tabs" style="margin-bottom:12px;">
+                      {% for language in languages %}
+                        <li class="{{ loop.first ? 'active' : '' }}">
+                          <a href="#tpl-{{ ti }}-lang-{{ language.language_id }}" data-toggle="tab">
+                            {% if language.image %}<img src="{{ language.image }}" style="margin-right:3px;">{% endif %}{{ language.name }}
+                          </a>
+                        </li>
+                      {% endfor %}
+                    </ul>
+                    <div class="tab-content">
+                      {% for language in languages %}
+                        <div class="tab-pane {{ loop.first ? 'active' : '' }}" id="tpl-{{ ti }}-lang-{{ language.language_id }}">
+                          <div class="form-group">
+                            <label class="col-sm-3 control-label">{{ entry_page_title }}</label>
+                            <div class="col-sm-9">
+                              <input type="text"
+                                     name="templates[{{ ti }}][content][{{ language.language_id }}][page_title]"
+                                     value="{{ tpl.content[language.language_id].page_title ?? '' }}"
+                                     class="form-control">
+                            </div>
+                          </div>
+                          <div class="form-group">
+                            <label class="col-sm-3 control-label">{{ entry_description }}</label>
+                            <div class="col-sm-9">
+                              <textarea name="templates[{{ ti }}][content][{{ language.language_id }}][description]"
+                                        rows="3" class="form-control">{{ tpl.content[language.language_id].description ?? '' }}</textarea>
+                            </div>
+                          </div>
+                        </div>
+                      {% endfor %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+
+          </div>{# /templates-container #}
+
+          <button type="button" id="btn-add-template" class="btn btn-success btn-sm">
+            <i class="fa fa-plus"></i> {{ text_add_template }}
+          </button>
+        </div>
+      </div>
+
+      {# ===== ASSIGNMENTS ===== #}
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title"><i class="fa fa-sitemap"></i> {{ text_assignments }}</h3>
+        </div>
+        <div class="panel-body">
+          <table class="table table-bordered table-hover" id="assignments-table">
+            <thead>
+              <tr>
+                <th style="width:200px;">{{ column_page_type }}</th>
+                <th style="width:250px;">{{ column_template }}</th>
+                <th style="width:36px;"></th>
+              </tr>
+            </thead>
+            <tbody id="assignments-body">
+              {% for ai, row in assignments %}
+                <tr>
+                  <td>
+                    <select name="assignments[{{ ai }}][type]" class="form-control input-sm assignment-type-select">
+                      {% for key, label in page_types %}
+                        <option value="{{ key }}" {% if row.type == key %}selected{% endif %}>{{ label }}</option>
+                      {% endfor %}
+                    </select>
+                  </td>
+                  <td>
+                    <select name="assignments[{{ ai }}][template]" class="form-control input-sm template-select">
+                      <option value="">{{ text_select_template }}</option>
+                      {% for ti, tpl in templates %}
+                        <option value="{{ ti }}" {% if row.template == ti %}selected{% endif %}>
+                          {{ tpl.name ?: ('Шаблон #' ~ (ti + 1)) }}
+                        </option>
+                      {% endfor %}
+                    </select>
+                  </td>
+                  <td>
+                    <button type="button" class="btn btn-danger btn-sm btn-remove-assignment">
+                      <i class="fa fa-trash"></i>
+                    </button>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          <button type="button" id="btn-add-assignment" class="btn btn-success btn-sm">
+            <i class="fa fa-plus"></i> {{ text_add_assignment }}
+          </button>
+        </div>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+{# ===== JS data for templates ===== #}
+<script>
+var seoMetaLangs = [
+    {% for language in languages %}
+    { id: {{ language.language_id }}, name: {{ language.name|json_encode }}, image: {{ language.image|json_encode }} }{% if not loop.last %},{% endif %}
+    {% endfor %}
+];
+var seoPageTypes = {
+    {% for key, label in page_types %}
+    {{ key|json_encode }}: {{ label|json_encode }}{% if not loop.last %},{% endif %}
+    {% endfor %}
+};
+var tplCounter = {{ templates|length }};
+var assignCounter = {{ assignments|length }};
+</script>
+
+<script>
+$(function () {
+    function copyTextToClipboard(text, done) {
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(text).then(done);
+            return;
+        }
+
+        var $temp = $('<textarea>');
+        $('body').append($temp);
+        $temp.val(text).select();
+        document.execCommand('copy');
+        $temp.remove();
+        done();
+    }
+
+    $(document).on('click', '.seo-meta-var', function () {
+        var $button = $(this);
+        var text = $button.data('copy');
+
+        copyTextToClipboard(text, function () {
+            $button.addClass('copied');
+            setTimeout(function () {
+                $button.removeClass('copied');
+            }, 800);
+        });
+    });
+
+    // ===== Collect current template options for selects =====
+    function buildTemplateOptions(selectedIndex) {
+        var opts = '<option value="">' + {{ text_select_template|json_encode }} + '</option>';
+        $('#templates-container .template-row').each(function (i) {
+            var idx = $(this).data('index');
+            var name = $(this).find('.template-name-input').val() || ('Шаблон #' + (i + 1));
+            var sel = (selectedIndex !== undefined && parseInt(selectedIndex) === parseInt(idx)) ? ' selected' : '';
+            opts += '<option value="' + idx + '"' + sel + '>' + name + '</option>';
+        });
+        return opts;
+    }
+
+    // Refresh all template SELECTs in assignments (preserve current selection)
+    function refreshTemplateSelects() {
+        $('#assignments-body .template-select').each(function () {
+            var current = $(this).val();
+            $(this).html(buildTemplateOptions(current));
+        });
+    }
+
+    // Update template label in heading when name changes
+    $(document).on('input', '.template-name-input', function () {
+        var $row = $(this).closest('.template-row');
+        var name = $(this).val() || ('Шаблон #' + ($row.index() + 1));
+        $row.find('.template-label').text(name);
+        refreshTemplateSelects();
+    });
+
+    // ===== Add Template =====
+    $('#btn-add-template').on('click', function () {
+        var i = tplCounter++;
+        var tabsHtml = '';
+        var contentHtml = '';
+
+        $.each(seoMetaLangs, function (li, lang) {
+            var active = li === 0 ? ' active' : '';
+            var imgHtml = lang.image ? '<img src="' + lang.image + '" style="margin-right:3px;">' : '';
+            tabsHtml += '<li class="' + active + '"><a href="#tpl-' + i + '-lang-' + lang.id + '" data-toggle="tab">' + imgHtml + lang.name + '</a></li>';
+
+            contentHtml += '<div class="tab-pane' + active + '" id="tpl-' + i + '-lang-' + lang.id + '">'
+                + '<div class="form-group"><label class="col-sm-3 control-label">' + {{ entry_page_title|json_encode }} + '</label><div class="col-sm-9"><input type="text" name="templates[' + i + '][content][' + lang.id + '][page_title]" class="form-control"></div></div>'
+                + '<div class="form-group"><label class="col-sm-3 control-label">' + {{ entry_description|json_encode }} + '</label><div class="col-sm-9"><textarea name="templates[' + i + '][content][' + lang.id + '][description]" rows="3" class="form-control"></textarea></div></div>'
+                + '</div>';
+        });
+
+        var html = '<div class="panel panel-default template-row" data-index="' + i + '">'
+            + '<div class="panel-heading" style="cursor:pointer;" data-toggle="collapse" data-target="#tpl-body-' + i + '">'
+            + '<h4 class="panel-title"><span class="template-label">{{ text_new_template }}</span>'
+            + '<button type="button" class="btn btn-danger btn-xs pull-right btn-remove-template" style="margin-top:-2px;"><i class="fa fa-trash"></i></button>'
+            + '</h4></div>'
+            + '<div class="collapse in" id="tpl-body-' + i + '"><div class="panel-body">'
+            + '<div class="form-group"><label class="col-sm-3 control-label">' + {{ text_template_name|json_encode }} + '</label><div class="col-sm-9"><input type="text" name="templates[' + i + '][name]" class="form-control template-name-input" placeholder="' + {{ text_template_example|json_encode }} + '"></div></div>'
+            + '<ul class="nav nav-tabs" style="margin-bottom:12px;">' + tabsHtml + '</ul>'
+            + '<div class="tab-content">' + contentHtml + '</div>'
+            + '</div></div></div>';
+
+        $('#templates-container').append(html);
+        refreshTemplateSelects();
+    });
+
+    // Remove Template
+    $(document).on('click', '.btn-remove-template', function (e) {
+        e.stopPropagation();
+        $(this).closest('.template-row').remove();
+        refreshTemplateSelects();
+    });
+
+    // ===== Add Assignment =====
+    $('#btn-add-assignment').on('click', function () {
+        var i = assignCounter++;
+
+        var typeOpts = '';
+        $.each(seoPageTypes, function (key, label) {
+            typeOpts += '<option value="' + key + '">' + label + '</option>';
+        });
+
+        var tplOpts = buildTemplateOptions();
+
+        var html = '<tr>'
+            + '<td><select name="assignments[' + i + '][type]" class="form-control input-sm assignment-type-select">' + typeOpts + '</select></td>'
+            + '<td><select name="assignments[' + i + '][template]" class="form-control input-sm template-select">' + tplOpts + '</select></td>'
+            + '<td><button type="button" class="btn btn-danger btn-sm btn-remove-assignment"><i class="fa fa-trash"></i></button></td>'
+            + '</tr>';
+
+        var $tr = $(html);
+        $('#assignments-body').append($tr);
+    });
+
+    // Remove Assignment
+    $('#assignments-body').on('click', '.btn-remove-assignment', function () {
+        $(this).closest('tr').remove();
+    });
+
+});
+</script>
+
+{{ footer }}

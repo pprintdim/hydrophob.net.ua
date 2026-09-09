@@ -1,0 +1,88 @@
+{% for block in schema_videos %}<script type="application/ld+json">{{ block|json_encode(constant('JSON_UNESCAPED_UNICODE') b-or constant('JSON_UNESCAPED_SLASHES'))|raw }}</script>{% endfor %}
+<section class="hm-sec" id="gallery"><div class="container">
+    <h2 class="hm-sec__title page-name">{{ heading_title }}</h2>
+    <div class="hm-gallery">
+        {% for item in items %}
+        <button type="button" class="hm-gallery__item{% if loop.first %} hm-gallery__item--wide{% endif %}" data-lightbox-type="{{ item.type }}" data-lightbox-src="{{ item.src }}"{% if item.poster %} data-lightbox-poster="{{ item.poster }}"{% endif %}>
+            <img src="{{ item.thumb }}" alt="{{ text_alt }}" loading="lazy">
+            {%- if item.type == 'video' -%}
+            <span class="hm-gallery__play" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+            {%- endif -%}
+        </button>
+        {% endfor %}
+    </div>
+</div></section>
+<script>
+/* лайтбокс галереї (фото + відео) з гортанням */
+(function () {
+    var script = document.currentScript;
+    var section = script ? script.previousElementSibling : null;
+    if (!section) return;
+
+    var buttons = [].slice.call(section.querySelectorAll('[data-lightbox-src]'));
+    if (!buttons.length) return;
+
+    var lbItems = buttons.map(function (el) {
+        return {
+            type: el.getAttribute('data-lightbox-type'),
+            src: el.getAttribute('data-lightbox-src'),
+            poster: el.getAttribute('data-lightbox-poster') || ''
+        };
+    });
+    var lbIndex = 0;
+    var altText = {{ text_alt|json_encode|raw }};
+
+    var lb = document.createElement('div');
+    lb.className = 'hm-lightbox';
+    lb.innerHTML = '<button type="button" class="hm-lightbox__close" aria-label="' + {{ text_close|json_encode|raw }} + '">' +
+        '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 6 12 12M18 6 6 18"/></svg>' +
+        '</button>' +
+        '<button type="button" class="hm-lightbox__nav hm-lightbox__nav--prev" aria-label="' + {{ text_prev|json_encode|raw }} + '">' +
+        '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>' +
+        '</button>' +
+        '<div class="hm-lightbox__body"></div>' +
+        '<button type="button" class="hm-lightbox__nav hm-lightbox__nav--next" aria-label="' + {{ text_next|json_encode|raw }} + '">' +
+        '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>' +
+        '</button>' +
+        '<div class="hm-lightbox__counter"></div>';
+    document.body.appendChild(lb);
+    var lbBody = lb.querySelector('.hm-lightbox__body');
+    var lbCounter = lb.querySelector('.hm-lightbox__counter');
+
+    function showLb(i) {
+        lbIndex = (i + lbItems.length) % lbItems.length;
+        var item = lbItems[lbIndex];
+        if (item.type === 'video') {
+            lbBody.innerHTML = '<video src="' + item.src + '"' + (item.poster ? ' poster="' + item.poster + '"' : '') + ' controls autoplay playsinline></video>';
+        } else {
+            lbBody.innerHTML = '<img src="' + item.src + '" alt="' + altText + '">';
+        }
+        lbCounter.textContent = (lbIndex + 1) + ' / ' + lbItems.length;
+    }
+    function openLb(i) {
+        showLb(i);
+        lb.classList.add('is-open');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeLb() {
+        lb.classList.remove('is-open');
+        lbBody.innerHTML = '';
+        document.body.style.overflow = '';
+    }
+    lb.addEventListener('click', function (e) {
+        if (e.target === lb || e.target.closest('.hm-lightbox__close')) closeLb();
+    });
+    lb.querySelector('.hm-lightbox__nav--prev').addEventListener('click', function () { showLb(lbIndex - 1); });
+    lb.querySelector('.hm-lightbox__nav--next').addEventListener('click', function () { showLb(lbIndex + 1); });
+    document.addEventListener('keydown', function (e) {
+        if (!lb.classList.contains('is-open')) return;
+        if (e.key === 'Escape') closeLb();
+        if (e.key === 'ArrowLeft') showLb(lbIndex - 1);
+        if (e.key === 'ArrowRight') showLb(lbIndex + 1);
+    });
+
+    buttons.forEach(function (el, i) {
+        el.addEventListener('click', function () { openLb(i); });
+    });
+})();
+</script>

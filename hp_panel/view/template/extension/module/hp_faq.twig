@@ -1,0 +1,219 @@
+{{ header }}{{ column_left }}
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="pull-right">
+        <button type="submit" form="form-hp-faq" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+        <a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a>
+      </div>
+      <h1>{{ heading_title }}</h1>
+      <ul class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}
+        <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div class="container-fluid">
+    {% if error_warning %}
+    <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
+    {% endif %}
+    <style>
+      .hp-lang-pane{padding-top:15px}
+      .hp-rep [data-repeater-row]{margin-bottom:8px}
+      .hp-rep-head{display:flex;align-items:center;gap:8px;padding:6px 10px;cursor:pointer}
+      .hp-rep-chev{transition:transform .2s}
+      [data-repeater-row].is-open .hp-rep-chev{transform:rotate(180deg)}
+      .hp-rep-preview{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
+      .hp-rep-body{display:none;padding:10px}
+      [data-repeater-row].is-open .hp-rep-body{display:block}
+    </style>
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-pencil"></i> {{ text_edit }}</h3>
+      </div>
+      <div class="panel-body">
+        <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-hp-faq" class="form-horizontal">
+          <div class="form-group required">
+            <label class="col-sm-2 control-label" for="input-name">{{ entry_name }}</label>
+            <div class="col-sm-10">
+              <input type="text" name="name" value="{{ name }}" placeholder="{{ entry_name }}" id="input-name" class="form-control" />
+              {% if error_name %}<div class="text-danger">{{ error_name }}</div>{% endif %}
+            </div>
+          </div>
+
+          <ul class="nav nav-tabs" id="language">
+            {% for language in languages %}
+            <li{% if loop.first %} class="active"{% endif %}><a href="#" data-lang="{{ language.language_id }}"><img src="language/{{ language.code }}/{{ language.code }}.png" title="{{ language.name }}" /> {{ language.name }}</a></li>
+            {% endfor %}
+          </ul>
+
+          <div class="hp-lang-pane">
+            {% for language in languages %}
+            <div class="js-lang js-lang-{{ language.language_id }}"{% if not loop.first %} hidden{% endif %}>
+              <div class="form-group">
+                <label class="col-sm-2 control-label">{{ entry_heading }}</label>
+                <div class="col-sm-10">
+                  <input type="text" name="faq_description[{{ language.language_id }}][heading_title]" value="{{ faq_description[language.language_id] ? faq_description[language.language_id].heading_title }}" class="form-control" placeholder="{{ entry_heading }}" />
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+
+          <div class="form-group">
+            <label class="col-sm-2 control-label">{{ entry_items }}</label>
+            <div class="col-sm-10 hp-rep">
+              <div data-repeater data-prefix="items">
+                {% for item in items %}
+                <div class="panel panel-default" data-repeater-row>
+                  <div class="hp-rep-head" data-repeater-toggle>
+                    <i class="fa fa-chevron-down hp-rep-chev"></i>
+                    <span class="hp-rep-preview" data-repeater-preview>{{ loop.index }}</span>
+                    <button type="button" class="btn btn-default btn-xs" data-repeater-up title="{{ text_move_up }}"><i class="fa fa-arrow-up"></i></button>
+                    <button type="button" class="btn btn-default btn-xs" data-repeater-down title="{{ text_move_down }}"><i class="fa fa-arrow-down"></i></button>
+                    <button type="button" class="btn btn-danger btn-xs" data-repeater-remove title="{{ button_remove }}"><i class="fa fa-minus-circle"></i></button>
+                  </div>
+                  <div class="hp-rep-body">
+                    {% set item_index = loop.index0 %}
+                    {% for language in languages %}
+                    <div class="js-lang js-lang-{{ language.language_id }}"{% if not loop.first %} hidden{% endif %}>
+                      <input type="text" name="items[{{ item_index }}][{{ language.language_id }}][question]" value="{{ item[language.language_id] ? item[language.language_id].question }}" class="form-control" placeholder="{{ entry_question }}" style="margin-bottom:6px"{% if language.code == 'uk-ua' %} data-preview{% endif %} />
+                      <textarea name="items[{{ item_index }}][{{ language.language_id }}][answer]" rows="3" class="form-control" placeholder="{{ entry_answer }}">{{ item[language.language_id] ? item[language.language_id].answer }}</textarea>
+                    </div>
+                    {% endfor %}
+                  </div>
+                </div>
+                {% endfor %}
+              </div>
+              <button type="button" class="btn btn-primary" data-repeater-add><i class="fa fa-plus-circle"></i> {{ button_add }}</button>
+
+              <template data-repeater-template>
+                <div class="panel panel-default is-open" data-repeater-row>
+                  <div class="hp-rep-head" data-repeater-toggle>
+                    <i class="fa fa-chevron-down hp-rep-chev"></i>
+                    <span class="hp-rep-preview" data-repeater-preview></span>
+                    <button type="button" class="btn btn-default btn-xs" data-repeater-up title="{{ text_move_up }}"><i class="fa fa-arrow-up"></i></button>
+                    <button type="button" class="btn btn-default btn-xs" data-repeater-down title="{{ text_move_down }}"><i class="fa fa-arrow-down"></i></button>
+                    <button type="button" class="btn btn-danger btn-xs" data-repeater-remove title="{{ button_remove }}"><i class="fa fa-minus-circle"></i></button>
+                  </div>
+                  <div class="hp-rep-body">
+                    {% for language in languages %}
+                    <div class="js-lang js-lang-{{ language.language_id }}"{% if not loop.first %} hidden{% endif %}>
+                      <input type="text" name="items[__index__][{{ language.language_id }}][question]" value="" class="form-control" placeholder="{{ entry_question }}" style="margin-bottom:6px"{% if language.code == 'uk-ua' %} data-preview{% endif %} />
+                      <textarea name="items[__index__][{{ language.language_id }}][answer]" rows="3" class="form-control" placeholder="{{ entry_answer }}"></textarea>
+                    </div>
+                    {% endfor %}
+                  </div>
+                </div>
+              </template>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-status">{{ entry_status }}</label>
+            <div class="col-sm-10">
+              <select name="status" id="input-status" class="form-control">
+                {% if status %}
+                <option value="1" selected="selected">{{ text_enabled }}</option>
+                <option value="0">{{ text_disabled }}</option>
+                {% else %}
+                <option value="1">{{ text_enabled }}</option>
+                <option value="0" selected="selected">{{ text_disabled }}</option>
+                {% endif %}
+              </select>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <script type="text/javascript"><!--
+// один глобальний перемикач мов на всю форму (разом із рядами репітера)
+(function () {
+  var tabs = document.querySelectorAll('#language a[data-lang]');
+
+  function show(language_id) {
+    document.querySelectorAll('.js-lang').forEach(function (block) {
+      block.hidden = !block.classList.contains('js-lang-' + language_id);
+    });
+
+    tabs.forEach(function (tab) {
+      tab.parentNode.classList.toggle('active', tab.dataset.lang === language_id);
+    });
+  }
+
+  tabs.forEach(function (tab) {
+    tab.addEventListener('click', function (event) {
+      event.preventDefault();
+      show(tab.dataset.lang);
+    });
+  });
+
+  window.hpActiveLanguage = function () {
+    var active = document.querySelector('#language li.active a[data-lang]');
+
+    return active ? active.dataset.lang : null;
+  };
+})();
+
+// репітер: акордеон-картки (згорнуті), шеврон + укр-прев'ю + видалення
+(function () {
+  var list = document.querySelector('[data-repeater]');
+  var template = document.querySelector('[data-repeater-template]');
+  if (!list || !template) return;
+
+  var prefix = list.dataset.prefix || 'items';
+
+  function syncPreview(row, index) {
+    var preview = row.querySelector('[data-repeater-preview]');
+    var source = row.querySelector('[data-preview]');
+    if (preview) preview.textContent = (index + 1) + '. ' + (source && source.value ? source.value : '');
+  }
+
+  function renumber() {
+    list.querySelectorAll('[data-repeater-row]').forEach(function (row, index) {
+      row.querySelectorAll('[name]').forEach(function (field) {
+        field.name = field.name.replace(new RegExp('^' + prefix + '\\[[^\\]]*\\]'), prefix + '[' + index + ']');
+      });
+      syncPreview(row, index);
+    });
+  }
+
+  renumber();
+
+  list.addEventListener('input', function (event) {
+    if (event.target.hasAttribute('data-preview')) renumber();
+  });
+
+  document.querySelector('[data-repeater-add]').addEventListener('click', function () {
+    list.insertAdjacentHTML('beforeend', template.innerHTML);
+    renumber();
+
+    var language_id = window.hpActiveLanguage();
+
+    if (language_id) {
+      list.lastElementChild.querySelectorAll('.js-lang').forEach(function (block) {
+        block.hidden = !block.classList.contains('js-lang-' + language_id);
+      });
+    }
+  });
+
+  list.addEventListener('click', function (event) {
+    var row = event.target.closest('[data-repeater-row]');
+    if (!row) return;
+
+    if (event.target.closest('[data-repeater-remove]')) row.remove();
+    else if (event.target.closest('[data-repeater-up]') && row.previousElementSibling) row.parentNode.insertBefore(row, row.previousElementSibling);
+    else if (event.target.closest('[data-repeater-down]') && row.nextElementSibling) row.parentNode.insertBefore(row.nextElementSibling, row);
+    else if (event.target.closest('[data-repeater-toggle]') && !event.target.closest('button') && !event.target.closest('a')) { row.classList.toggle('is-open'); return; }
+    else return;
+
+    renumber();
+  });
+})();
+//--></script>
+</div>
+{{ footer }}

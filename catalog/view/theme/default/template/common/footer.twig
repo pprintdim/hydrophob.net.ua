@@ -2,37 +2,41 @@
 	<footer class="footer">
         <div class="container">
             <div class="footer__inner">
-                <div class="footer__box">
-                    <a class="header__logo footer__logo" href="/">
-                        <img src="catalog/view/theme/default/img/logo.svg" alt="">
-                    </a>
-                    <div class="footer__block">
-                        <p class="footer__descr">{{ brs_adress }}</p>
-                        <a class="footer__descr" href="tel:{{ store_phone }}">{{ store_phone }}</a>
-                        <a class="footer__descr" href="mailto:{{ store_email }}">{{ store_email }}</a>
+                <div class="footer__box footer__box--brand">
+                    <div class="footer__info">
+                        <a class="header__logo footer__logo" href="{{ home }}">
+                            <img src="catalog/view/theme/default/img/logo.svg" alt="Hydrophob" width="220" height="46">
+                        </a>
+                        <div class="footer__block">
+                            <p class="footer__descr">{{ brs_adress }}</p>
+                            <a class="footer__descr" href="tel:{{ store_phone }}">{{ store_phone }}</a>
+                            <a class="footer__descr" href="mailto:{{ store_email }}">{{ store_email }}</a>
+                        </div>
                     </div>
+                    {% if map_lat and map_lng %}
+                    <div class="footer__map" id="footer-map" data-lat="{{ map_lat }}" data-lng="{{ map_lng }}" data-title="{{ map_title }}" data-address="{{ brs_adress }}"></div>
+                    {% endif %}
                 </div>
                 <div class="footer__content">
                     <div class="footer__box">
-                        <h3 class="footer__name">
+                        <h2 class="footer__name">
 							{{ brs_information }}
-						</h3>
+						</h2>
                         <ul class="footer__menu">
                             <li>
 								<a href="/about_us" title="{{ brs_about_us }}">{{ brs_about_us }}</a>
                             </li>
                             <li>
-								<a href="/delivery" title="{{ brs_shipping }}">{{ brs_shipping }}</a>
-                            </li>
-                            <li>
-                                <a href="{{ contact }}">{{ text_contact }}</a>
+                                <a href="{{ contact }}">{{ text_contact }}</a></li>
+                            <li><a href="{{ reviews_href }}">{{ text_reviews_menu|default('Відгуки') }}</a></li>
+                            <li><a href="{{ faq_href }}">{{ text_faq_menu|default('Питання та відповіді') }}</a>
                             </li>
                         </ul>
                     </div>
                     <div class="footer__box">
-                        <h3 class="footer__name">
+                        <h2 class="footer__name">
 							{{ brs_products }}
-						</h3>
+						</h2>
                         <ul class="footer__menu">
                             <li>
                                 <a href="/nano-ceramic" title="{{ brs_nano_ceramic }}">{{ brs_nano_ceramic }}</a>
@@ -46,20 +50,28 @@
                         </ul>
                     </div>
                     <div class="footer__box">
-                        <h3 class="footer__name">{{ brs_socials }}</h3>
+                        <h2 class="footer__name">{{ text_for_customers|default('Покупцям') }}</h2>
+                        <ul class="footer__menu">
+                            {% for legal in legal_links %}
+                            <li><a href="{{ legal.href }}">{{ legal.text }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="footer__box">
+                        <h2 class="footer__name">{{ brs_socials }}</h2>
                         <div class="footer__socials">
-                            <a href="#" target="_blank">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none">
+                            <a href="#" target="_blank" rel="noopener" aria-label="Instagram">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true">
                                     <path d="M23.3379 0H8.66211C3.88574 0 0 3.88574 0 8.66211V23.3381C0 28.1143 3.88574 32 8.66211 32H23.3381C28.1143 32 32 28.1143 32 23.3381V8.66211C32 3.88574 28.1143 0 23.3379 0ZM16 24.7498C11.1753 24.7498 7.25024 20.8247 7.25024 16C7.25024 11.1753 11.1753 7.25024 16 7.25024C20.8247 7.25024 24.7498 11.1753 24.7498 16C24.7498 20.8247 20.8247 24.7498 16 24.7498ZM24.959 9.31372C23.5332 9.31372 22.3735 8.15405 22.3735 6.72827C22.3735 5.30249 23.5332 4.14258 24.959 4.14258C26.3848 4.14258 27.5447 5.30249 27.5447 6.72827C27.5447 8.15405 26.3848 9.31372 24.959 9.31372Z" fill="#A7C70E"/>
                                     <path d="M16 8.96C12.1183 8.96 8.96 12.1181 8.96 16C8.96 19.8817 12.1183 23.04 16 23.04C19.8819 23.04 23.04 19.8817 23.04 16C23.04 12.1181 19.8819 8.96 16 8.96Z" fill="#A7C70E"/>
                                 </svg>
                             </a>
-                            <a href="#" target="_blank">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none">
+                            <a href="#" target="_blank" rel="noopener" aria-label="Facebook">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true">
                                     <path d="M27.3125 0H4.6875C2.10303 0 0 2.10303 0 4.6875V27.3125C0 29.897 2.10303 32 4.6875 32H14.125V20.6875H10.375V15.0625H14.125V11.25C14.125 8.14819 16.6482 5.625 19.75 5.625H25.4375V11.25H19.75V15.0625H25.4375L24.5 20.6875H19.75V32H27.3125C29.897 32 32 29.897 32 27.3125V4.6875C32 2.10303 29.897 0 27.3125 0Z" fill="#A7C70E"/>
                                 </svg>
                             </a>
-                            <a href="https://t.me/Hydrophob1" target="_blank">
+                            <a href="https://t.me/Hydrophob1" target="_blank" rel="noopener" aria-label="Telegram">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none">
                                     <g clip-path="url(#clip0_1_56)">
                                       <rect width="32" height="32" rx="4" fill="#A7C70E"/>
@@ -72,7 +84,7 @@
                                     </defs>
                                 </svg>
                             </a>
-                            <a href="viber://chat?number=+%2B380731081212">
+                            <a href="viber://chat?number=+%2B380731081212" aria-label="Viber">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none">
                                     <rect width="32" height="32" rx="4" fill="#A7C70E"/>
                                     <path fill-rule="evenodd" clip-rule="evenodd" d="M22.2355 3.50406C18.0406 2.56635 13.6904 2.56635 9.49549 3.50406L9.04349 3.60406C7.86351 3.86788 6.77977 4.45364 5.91265 5.29628C5.04552 6.13892 4.42898 7.20545 4.13149 8.37739C3.06815 12.5674 3.06815 16.9567 4.13149 21.1467C4.41519 22.2644 4.98936 23.2872 5.7958 24.1114C6.60223 24.9357 7.61226 25.532 8.72349 25.8401L9.34349 29.5414C9.36328 29.6589 9.41422 29.769 9.491 29.8602C9.56778 29.9513 9.6676 30.0202 9.78005 30.0597C9.89251 30.0992 10.0135 30.1078 10.1304 30.0847C10.2473 30.0615 10.3559 30.0074 10.4448 29.9281L14.0862 26.6707C16.8196 26.8375 19.5629 26.6189 22.2355 26.0214L22.6888 25.9214C23.8688 25.6576 24.9525 25.0718 25.8197 24.2292C26.6868 23.3865 27.3033 22.32 27.6008 21.1481C28.664 16.958 28.664 12.5688 27.6008 8.37873C27.3032 7.20662 26.6865 6.13997 25.8191 5.29731C24.9517 4.45465 23.8677 3.86899 22.6875 3.60539L22.2355 3.50406ZM10.6208 8.26939C10.373 8.23333 10.1203 8.2832 9.90482 8.41073H9.88615C9.38615 8.70406 8.93549 9.07339 8.55149 9.50806C8.23149 9.87739 8.05815 10.2507 8.01282 10.6107C7.98615 10.8241 8.00482 11.0401 8.06749 11.2441L8.09149 11.2574C8.45149 12.3147 8.92082 13.3321 9.49415 14.2894C10.2334 15.634 11.1432 16.8777 12.2008 17.9894L12.2328 18.0347L12.2835 18.0721L12.3142 18.1081L12.3515 18.1401C13.4671 19.2009 14.7136 20.115 16.0608 20.8601C17.6008 21.6987 18.5355 22.0947 19.0968 22.2601V22.2681C19.2608 22.3187 19.4102 22.3414 19.5608 22.3414C20.0389 22.3061 20.4914 22.1117 20.8462 21.7894C21.2795 21.4054 21.6462 20.9534 21.9315 20.4507V20.4414C22.1995 19.9347 22.1088 19.4574 21.7222 19.1334C20.9455 18.4548 20.1057 17.852 19.2142 17.3334C18.6168 17.0094 18.0102 17.2054 17.7648 17.5334L17.2408 18.1947C16.9715 18.5227 16.4835 18.4774 16.4835 18.4774L16.4702 18.4854C12.8288 17.5561 11.8568 13.8694 11.8568 13.8694C11.8568 13.8694 11.8115 13.3681 12.1488 13.1121L12.8048 12.5841C13.1195 12.3281 13.3382 11.7227 13.0008 11.1254C12.4856 10.2331 11.8841 9.3935 11.2048 8.61873C11.0567 8.43639 10.8489 8.3122 10.6182 8.26806L10.6208 8.26939ZM16.7728 6.66673C16.596 6.66673 16.4264 6.73697 16.3014 6.86199C16.1764 6.98701 16.1062 7.15658 16.1062 7.33339C16.1062 7.5102 16.1764 7.67977 16.3014 7.8048C16.4264 7.92982 16.596 8.00006 16.7728 8.00006C18.4595 8.00006 19.8595 8.55073 20.9675 9.60673C21.5368 10.1841 21.9808 10.8681 22.2715 11.6174C22.5635 12.3681 22.6968 13.1694 22.6622 13.9721C22.6585 14.0596 22.6721 14.147 22.7022 14.2293C22.7323 14.3116 22.7783 14.3872 22.8376 14.4517C22.9574 14.5819 23.124 14.6593 23.3008 14.6667C23.4776 14.6742 23.6502 14.611 23.7804 14.4913C23.9107 14.3715 23.9881 14.2049 23.9955 14.0281C24.0368 13.0407 23.873 12.0555 23.5142 11.1347C23.1538 10.2096 22.6074 9.36822 21.9088 8.66273L21.8955 8.64939C20.5208 7.33606 18.7808 6.66673 16.7728 6.66673ZM16.7275 8.85873C16.5507 8.85873 16.3811 8.92897 16.2561 9.05399C16.1311 9.17901 16.0608 9.34858 16.0608 9.52539C16.0608 9.70221 16.1311 9.87177 16.2561 9.9968C16.3811 10.1218 16.5507 10.1921 16.7275 10.1921H16.7502C17.9662 10.2787 18.8515 10.6841 19.4715 11.3494C20.1075 12.0347 20.4368 12.8867 20.4115 13.9401C20.4074 14.1169 20.4738 14.2881 20.5959 14.416C20.7181 14.5439 20.886 14.618 21.0628 14.6221C21.2396 14.6261 21.4108 14.5598 21.5387 14.4376C21.6666 14.3155 21.7408 14.1475 21.7448 13.9707C21.7768 12.5881 21.3315 11.3947 20.4488 10.4427V10.4401C19.5462 9.47206 18.3075 8.96006 16.8168 8.86006L16.7942 8.85739L16.7275 8.85873ZM16.7022 11.0921C16.6129 11.0842 16.523 11.0944 16.4379 11.122C16.3527 11.1496 16.2739 11.1942 16.2063 11.2529C16.1387 11.3117 16.0836 11.3834 16.0443 11.4639C16.0051 11.5444 15.9825 11.632 15.9778 11.7215C15.9731 11.8109 15.9865 11.9004 16.0172 11.9845C16.0479 12.0687 16.0952 12.1458 16.1564 12.2112C16.2175 12.2767 16.2912 12.3291 16.3731 12.3655C16.4549 12.4018 16.5433 12.4213 16.6328 12.4227C17.1902 12.4521 17.5462 12.6201 17.7702 12.8454C17.9955 13.0721 18.1635 13.4361 18.1942 14.0054C18.1958 14.0949 18.2155 14.1831 18.252 14.2648C18.2884 14.3465 18.341 14.42 18.4065 14.481C18.472 14.5419 18.5491 14.5891 18.6332 14.6196C18.7173 14.6502 18.8067 14.6635 18.8961 14.6587C18.9854 14.654 19.0729 14.6313 19.1533 14.592C19.2337 14.5527 19.3054 14.4977 19.3641 14.4301C19.4227 14.3626 19.4672 14.2839 19.4948 14.1988C19.5224 14.1137 19.5326 14.0239 19.5248 13.9347C19.4822 13.1347 19.2315 12.4281 18.7182 11.9081C18.2022 11.3881 17.4995 11.1347 16.7022 11.0921Z" fill="#161616"/>
@@ -83,9 +95,296 @@
                 </div>
             </div>
             <div class="footer__bottom">
-                <p class="footer__copy">&copy; {{ "now"|date("Y") }} {{ year }} Hydrophonob</p>
+                <p class="footer__copy">&copy; {{ "now"|date("Y") }} Hydrophob — {{ text_copy_tagline|default('нанокерамічний захист') }}</p>
             </div>
         </div>
     </footer>
-<script src="catalog/view/theme/default/js/script.js" type="text/javascript"></script>
+<script>
+/* Leaflet важить разом із тайлами ~200 КБ і тягнеться зі сторонніх доменів,
+   тому вантажимо його лише коли карта справді доїхала до екрана.
+   Хелпер спільний: ним користуються і футер, і сторінка контактів. */
+window.hpLeaflet = (function () {
+    var state = 'idle';
+    var queue = [];
+
+    function run() {
+        state = 'ready';
+        queue.splice(0).forEach(function (cb) { cb(); });
+    }
+
+    return function (cb) {
+        if (window.L) return cb();
+
+        queue.push(cb);
+
+        if (state !== 'idle') return;
+        state = 'loading';
+
+        var css = document.createElement('link');
+        css.rel = 'stylesheet';
+        css.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+        document.head.appendChild(css);
+
+        var js = document.createElement('script');
+        js.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+        js.onload = run;
+        document.body.appendChild(js);
+    };
+})();
+
+/* спостерігач: викликає колбек, коли елемент майже доїхав до екрана */
+window.hpWhenVisible = function (el, cb) {
+    if (!('IntersectionObserver' in window)) {
+        window.addEventListener('load', cb);
+
+        return;
+    }
+
+    var io = new IntersectionObserver(function (entries) {
+        if (!entries[0].isIntersecting) return;
+
+        io.disconnect();
+        cb();
+    }, { rootMargin: '200px' });
+
+    io.observe(el);
+};
+
+(function () {
+    var el = document.getElementById('footer-map');
+    if (!el) return;
+
+    var lat = parseFloat(el.getAttribute('data-lat'));
+    var lng = parseFloat(el.getAttribute('data-lng'));
+    if (isNaN(lat) || isNaN(lng)) return;
+
+    var started = false;
+
+    function draw() {
+        var map = L.map(el, { scrollWheelZoom: false, attributionControl: false }).setView([lat, lng], 15);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
+
+        var gmaps = 'https://www.google.com/maps/search/?api=1&query=' + lat + ',' + lng;
+
+        // маркер у фірмовому зеленому — стандартний синій PNG Leaflet не в стилі
+        var pin = L.divIcon({
+            className: 'hp-map-pin',
+            html: '<svg width="34" height="44" viewBox="0 0 24 32" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 0C5.4 0 0 5.4 0 12c0 8.4 12 20 12 20s12-11.6 12-20c0-6.6-5.4-12-12-12z" fill="#A7C70E"/><circle cx="12" cy="12" r="4.4" fill="#ffffff"/></svg>',
+            iconSize: [34, 44],
+            iconAnchor: [17, 44]
+        });
+
+        var marker = L.marker([lat, lng], { icon: pin })
+            .addTo(map)
+            .on('click', function () { window.open(gmaps, '_blank', 'noopener'); });
+
+        // при наведенні показуємо адресу магазину
+        var address = (el.getAttribute('data-address') || el.getAttribute('data-title') || '').trim();
+
+        if (address) {
+            marker.bindTooltip(address, { direction: 'top', offset: [0, -38], className: 'hp-map-tip' });
+        }
+    }
+
+    window.hpWhenVisible(el, function () {
+        if (started) return;
+        started = true;
+
+        window.hpLeaflet(draw);
+    });
+})();
+</script>
+<script src="catalog/view/theme/default/js/script.js?v=20260905e" type="text/javascript" defer></script>
+<!-- Спільна модалка коду підтвердження: одна на весь сайт, відкривається будь-яким [data-code-trigger] -->
+<div class="otp-modal" data-code-modal hidden role="dialog" aria-modal="true" aria-label="{{ otp_title }}">
+    <div class="otp-modal__dialog">
+        <button type="button" class="otp-modal__close" data-modal-close aria-label="{{ otp_close }}">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 6 12 12M18 6 6 18"/></svg>
+        </button>
+        <p class="otp-modal__title" data-code-title>{{ otp_title }}</p>
+        <p class="otp-modal__text">{{ otp_sent }} <b data-code-mail></b></p>
+
+        <div class="otp-code">
+            {% for i in 1..6 %}
+            <input class="otp-code__cell" inputmode="numeric" maxlength="1" aria-label="{{ otp_digit }} {{ i }}" data-code-cell>
+            {% endfor %}
+        </div>
+
+        <p class="otp-modal__error" data-code-error hidden></p>
+
+        <div class="otp-modal__actions">
+            <button type="button" class="btn-2" data-code-confirm aria-disabled="true">{{ otp_confirm }}
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+            </button>
+            <p class="otp-modal__timer" data-code-timer></p>
+            <button type="button" class="otp-modal__resend" data-code-resend hidden>{{ otp_resend }}</button>
+        </div>
+    </div>
+</div>
+<script>
+window.hpCustomer = {{ hp_customer|json_encode|raw }};
+window.hpWishlistText = { added: {{ text_wish_added|default('Додано в обране')|json_encode|raw }}, removed: {{ text_wish_removed|default('Прибрано з обраного')|json_encode|raw }} };
+window.hpCartText = { inCart: {{ text_in_cart|default('В кошику')|json_encode|raw }}, addToCart: {{ button_cart|default('Додати в кошик')|json_encode|raw }}, addedToast: {{ text_added_toast|default('Товар додано в кошик')|json_encode|raw }} };
+window.hpOtpText = {
+    sending: {{ otp_sending|json_encode|raw }},
+    resend: {{ otp_resend|json_encode|raw }},
+    resendIn: {{ otp_resend_in|json_encode|raw }},
+    error: {{ otp_error_generic|json_encode|raw }},
+    incomplete: {{ otp_error_incomplete|json_encode|raw }},
+    needEmail: {{ otp_need_email|json_encode|raw }}
+};
+</script>
+
+{# Модалка відгуку: на картці товару товар уже відомий, на /vidhuky його обирають автокомплітом #}
+<div class="rvm" id="review-modal" aria-hidden="true">
+    <div class="rvm__overlay" data-review-close></div>
+    <div class="rvm__box" role="dialog" aria-modal="true" aria-labelledby="rvm-title">
+        <button type="button" class="rvm__close" data-review-close aria-label="{{ text_quick_close|default('Закрити') }}">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>
+        </button>
+
+        <p class="rvm__title" id="rvm-title">{{ text_review_title }}</p>
+
+        <form class="rvm__form" data-review-form>
+            <div class="rvm__field" data-review-product-field hidden>
+                <span class="rvm__label">{{ text_review_product }}</span>
+                <div class="rvm__search">
+                    <input type="text" class="rvm__input" placeholder="{{ text_review_product_ph }}" autocomplete="off" data-review-search>
+                    <div class="rvm__results" data-review-results hidden></div>
+                </div>
+                <div class="rvm__picked qo__product" data-review-picked hidden>
+                    <img class="qo__product-img" src="" alt="" width="72" height="72" data-review-picked-img>
+                    <span class="qo__product-name" data-review-picked-name></span>
+                    <button type="button" class="rvm__picked-clear" data-review-picked-clear aria-label="×">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m6 6 12 12M18 6 6 18"/></svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="rvm__field">
+                <span class="rvm__label">{{ text_review_rating }}</span>
+                <div class="rvm__stars" data-review-stars>
+                    {% for i in 1..5 %}
+                    <button type="button" class="rvm__star" data-value="{{ i }}" aria-label="{{ i }}/5">
+                        <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.5l2.9 5.9 6.5.9-4.7 4.6 1.1 6.4L12 17.3 6.2 20.3l1.1-6.4L2.6 9.3l6.5-.9z"/></svg>
+                    </button>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="account__field">
+                <label for="rvm-name">{{ text_review_name }}</label>
+                <input type="text" id="rvm-name" name="name" autocomplete="name" required>
+                <em class="account__field-error" data-hp-error-for="name" hidden></em>
+            </div>
+
+            <div class="account__field">
+                <label for="rvm-phone">{{ text_review_phone }}</label>
+                <input type="tel" id="rvm-phone" name="telephone" autocomplete="tel" required>
+                <em class="account__field-error" data-hp-error-for="telephone" hidden></em>
+            </div>
+
+            <div class="account__field">
+                <label for="rvm-email">{{ text_review_email }}</label>
+                <input type="email" id="rvm-email" name="email" autocomplete="email" required>
+                <em class="account__field-error" data-hp-error-for="email" hidden></em>
+                {% if not hp_customer.email %}
+                <p class="qsm__hint">{{ text_review_verify|default('Пошту підтвердимо кодом після натискання «Надіслати». Якщо акаунта ще немає — створимо його автоматично.') }}</p>
+                {% endif %}
+            </div>
+
+            <div class="account__field">
+                <label for="rvm-text">{{ text_review_text }}</label>
+                <textarea id="rvm-text" name="text" rows="4" required></textarea>
+            </div>
+
+            <p class="rvm__error" data-review-error hidden></p>
+
+            <button type="submit" class="btn-2 rvm__submit">{{ text_review_send }}</button>
+        </form>
+
+        <div class="rvm__done" hidden>
+            <span class="rvm__done-icon"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+            <p>{{ text_review_thanks }}</p>
+            <button type="button" class="btn-2" data-review-close>{{ text_quick_close|default('Закрити') }}</button>
+        </div>
+    </div>
+</div>
+
+<script>
+window.hpReviewText = {
+    title: {{ text_review_title|json_encode|raw }},
+    pick: {{ text_review_pick|json_encode|raw }},
+    searchUrl: {{ review_search_url|json_encode|raw }},
+    action: {{ review_action|json_encode|raw }}
+};
+</script>
+<script src="catalog/view/theme/default/js/review-modal.js?v=20260906b" defer></script>
+<script src="catalog/view/theme/default/vendor/intlTelInput.min.js" defer></script>
+<script src="catalog/view/theme/default/js/phone-input.js?v=20260905b" defer></script>
+<script src="catalog/view/theme/default/js/otp.js?v=20260905a" type="text/javascript" defer></script>
+<script src="catalog/view/theme/default/js/hp-form-modal.js?v=20260905a" defer></script>
+
+{# Єдиний попап успіху для всіх форм сайту: розмітка одна, текст підставляє форма #}
+<div class="cdm okm" data-ok-modal hidden>
+    <div class="cdm__overlay" data-ok-close></div>
+    <div class="cdm__dialog okm__dialog" role="dialog" aria-modal="true" aria-live="polite">
+        <button type="button" class="cdm__close" data-ok-close aria-label="{{ text_close|default('Закрити') }}">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 6 12 12M18 6 6 18"/></svg>
+        </button>
+        <span class="okm__icon" aria-hidden="true">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+        </span>
+        <p class="okm__title" data-ok-title></p>
+        <p class="okm__text" data-ok-text></p>
+        <button type="button" class="btn-2 okm__btn" data-ok-close>{{ text_ok_close|default('Зрозуміло') }}</button>
+    </div>
+</div>
+<script>
+/* window.hpSuccess(текст, заголовок) — один вигляд успіху на всі форми.
+   Якщо форма перезавантажує сторінку (реєстрація/вхід), текст їде через
+   sessionStorage і попап показується вже після редіректу. */
+(function () {
+    var modal = document.querySelector('[data-ok-modal]');
+    if (!modal) return;
+
+    var titleEl = modal.querySelector('[data-ok-title]');
+    var textEl = modal.querySelector('[data-ok-text]');
+
+    function close() {
+        modal.hidden = true;
+        document.body.classList.remove('no-scroll');
+    }
+
+    window.hpSuccess = function (text, title) {
+        titleEl.textContent = title || {{ text_ok_title|default('Готово')|json_encode|raw }};
+        textEl.textContent = text || '';
+        modal.hidden = false;
+        document.body.classList.add('no-scroll');
+    };
+
+    // показати після редіректу
+    window.hpSuccessAfterReload = function (text, title) {
+        try {
+            sessionStorage.setItem('hp_success', JSON.stringify({ text: text || '', title: title || '' }));
+        } catch (e) {}
+    };
+
+    modal.querySelectorAll('[data-ok-close]').forEach(function (el) { el.addEventListener('click', close); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !modal.hidden) close(); });
+
+    try {
+        var stored = sessionStorage.getItem('hp_success');
+
+        if (stored) {
+            sessionStorage.removeItem('hp_success');
+
+            var data = JSON.parse(stored);
+            window.hpSuccess(data.text, data.title);
+        }
+    } catch (e) {}
+})();
+</script>
+
 </body></html>
+{{ schema }}

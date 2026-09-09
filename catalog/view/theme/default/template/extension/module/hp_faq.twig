@@ -1,0 +1,30 @@
+<script type="application/ld+json">{{ schema|json_encode(constant('JSON_UNESCAPED_UNICODE') b-or constant('JSON_UNESCAPED_SLASHES'))|raw }}</script>
+<section class="hm-sec hm-faq-sec" id="faq"><div class="container">
+    <h2 class="hm-sec__title page-name">{{ heading_title }}</h2>
+    <div class="hm-faq">
+        {% for item in items %}
+        <div class="hm-faq__item{% if loop.first %} is-open{% endif %}">
+            <button type="button" class="hm-faq__btn" aria-expanded="{{ loop.first ? 'true' : 'false' }}">
+                <span>{{ item.question }}</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+            </button>
+            <div class="hm-faq__answer"><p>{{ item.answer }}</p></div>
+        </div>
+        {% endfor %}
+    </div>
+</div></section>
+<script>
+/* FAQ акордеон */
+(function () {
+    var script = document.currentScript;
+    var section = script ? script.previousElementSibling : null;
+    if (!section) return;
+    section.querySelectorAll('.hm-faq__btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            var item = btn.parentNode;
+            var open = item.classList.toggle('is-open');
+            btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        });
+    });
+})();
+</script>

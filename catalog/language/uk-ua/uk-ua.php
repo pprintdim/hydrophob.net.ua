@@ -10,7 +10,7 @@ $_['decimal_point'] = '.';
 $_['thousand_point'] = '';
 
 // Text
-$_['text_home'] = '<i class="fa fa-home"></i>';
+$_['text_home'] = 'Головна';
 $_['text_yes'] = 'Так';
 $_['text_no'] = 'Ні';
 $_['text_none'] = ' --- Не обрано --- ';

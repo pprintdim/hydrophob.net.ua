@@ -1,0 +1,59 @@
+{{ header }}
+<main class="main main--light" id="content">
+    <section class="rv-page">
+        <div class="container">
+            {% if breadcrumbs %}
+            <nav class="catalog__crumbs" aria-label="Breadcrumbs">
+                {% for breadcrumb in breadcrumbs %}
+                <a href="{{ breadcrumb.href }}" class="catalog__crumbs-link{% if loop.last %} is-current{% endif %}">{{ breadcrumb.text }}</a>{% if not loop.last %}<span class="catalog__crumbs-sep" aria-hidden="true">/</span>{% endif %}
+                {% endfor %}
+            </nav>
+            <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{% for breadcrumb in breadcrumbs %}{"@type":"ListItem","position":{{ loop.index }},"name":{{ breadcrumb.text|json_encode }},"item":{{ breadcrumb.href|json_encode }}}{% if not loop.last %},{% endif %}{% endfor %}]}</script>
+            {% endif %}
+{% for block in schema_blocks %}
+<script type="application/ld+json">{{ block|json_encode(constant('JSON_UNESCAPED_UNICODE') b-or constant('JSON_UNESCAPED_SLASHES'))|raw }}</script>
+{% endfor %}
+
+            <h1 class="page-name" style="color:#161616;">{{ heading_title }}</h1>
+
+            <div class="rv-rating">
+                <div class="rv-rating__score">
+                    <span class="rv-rating__value">{{ rating_avg }}</span>
+                    <span class="rv-stars" aria-hidden="true">{% for i in 1..5 %}<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" class="rv-star{% if i <= rating_avg_int %} rv-star--on{% endif %}"><path d="M12 2.5l2.9 5.9 6.5.9-4.7 4.6 1.1 6.4L12 17.3 6.2 20.3l1.1-6.4L2.6 9.3l6.5-.9z"/></svg>{% endfor %}</span>
+                    <span class="rv-rating__count">{{ reviews_total }} {{ text_reviews_count }}</span>
+                </div>
+                <button type="button" class="btn-2" data-review-open>{{ text_write_review }}
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 2 4 4-14 14H4v-4L18 2z"/></svg>
+                </button>
+            </div>
+
+            {% if reviews %}
+            <div class="rv-list">
+                {% for review in reviews %}
+                <article class="rv-card">
+                    <div class="rv-card__head">
+                        <span class="rv-card__avatar" aria-hidden="true">{{ review.author|slice(0, 1) }}</span>
+                        <div class="rv-card__ident">
+                            <h2 class="rv-card__name">{{ review.author }}</h2>
+                            <p class="rv-card__meta">{{ review.date_added }}{% if review.source_url %} &middot; <a class="rv-card__source" href="{{ review.source_url }}" target="_blank" rel="nofollow noopener">prom.ua</a>{% endif %}</p>
+                        </div>
+                        <span class="rv-stars" aria-hidden="true">{% for i in 1..5 %}<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" class="rv-star{% if i <= review.rating %} rv-star--on{% endif %}"><path d="M12 2.5l2.9 5.9 6.5.9-4.7 4.6 1.1 6.4L12 17.3 6.2 20.3l1.1-6.4L2.6 9.3l6.5-.9z"/></svg>{% endfor %}</span>
+                    </div>
+                    {% if review.product_name %}<p class="rv-card__product">{{ text_product }} <a href="{{ review.product_href }}">{{ review.product_name }}</a></p>{% endif %}
+                    <p class="rv-card__text">{{ review.text|raw }}</p>
+                </article>
+                {% endfor %}
+            </div>
+
+            <div id="json-pagination">
+                {{ pagination }}
+                {% if pagination %}<p class="cui-results">{{ results }}</p>{% endif %}
+            </div>
+            {% else %}
+            <p>{{ text_empty }}</p>
+            {% endif %}
+        </div>
+    </section>
+    {{ content_bottom }}
+</main>
+{{ footer }}

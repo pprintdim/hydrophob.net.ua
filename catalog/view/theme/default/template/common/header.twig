@@ -17,26 +17,93 @@
 {% if keywords %}
 <meta name="keywords" content="{{ keywords }}" />
 {% endif %}
+{% if meta_robots %}<meta name="robots" content="{{ meta_robots }}" />{% endif %}
+{% if canonical %}
+<link href="{{ canonical }}" rel="canonical" />
+{% endif %}
+<meta property="og:site_name" content="{{ og_site_name }}">
+<meta property="og:locale" content="{{ og_locale }}">
+<meta property="og:title" content="{{ og_title|default(title) }}">
+<meta property="og:type" content="{{ og_type|default('website') }}">
+<meta property="og:url" content="{{ og_url }}">
+{% if description %}
+<meta property="og:description" content="{{ description }}">
+{% endif %}
+{% if og_image %}
+<meta property="og:image" content="{{ og_image }}">
+{% if og_image_width %}<meta property="og:image:width" content="{{ og_image_width }}">
+<meta property="og:image:height" content="{{ og_image_height }}">{% endif %}
+<meta name="twitter:image" content="{{ og_image }}">
+{% endif %}
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ og_title|default(title) }}">
+{% if description %}
+<meta name="twitter:description" content="{{ description }}">
+{% endif %}
+{# jQuery без defer: десятки стокових шаблонів мають інлайн-скрипти з $(),
+   які виконуються під час парсингу — з відкладеним завантаженням вони падають #}
 <script src="catalog/view/javascript/jquery/jquery-3.7.1.min.js" type="text/javascript"></script>
 <script src="catalog/view/javascript/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-<link href="catalog/view/theme/default/stylesheet/stylesheet.css" rel="stylesheet">
+{# Montserrat роздаємо самі: два зовнішні домени давали зайвий ланцюг запитів #}
+<link rel="preload" href="catalog/view/theme/default/fonts/montserrat-var-cyr.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="catalog/view/theme/default/fonts/montserrat-var-lat.woff2" as="font" type="font/woff2" crossorigin>
+<link href="catalog/view/theme/default/stylesheet/montserrat.css?v=20260904b" rel="stylesheet">
+{# Стилі маски телефону підключаємо звичайно, не асинхронно: intlTelInput
+   рахує відступ поля по ширині кнопки з прапорцем, і якщо стилі ще не
+   застосовані на момент ініціалізації — виходить padding-left у 250px. #}
+<link href="catalog/view/theme/default/vendor/intlTelInput.css" rel="stylesheet">
+<link href="catalog/view/theme/default/stylesheet/style.css?v=20260907a" rel="stylesheet">
+<link href="catalog/view/theme/default/stylesheet/pages.css?v=20260906n" rel="stylesheet">
+<link href="catalog/view/theme/default/stylesheet/media.css?v=20260907a" rel="stylesheet">
 {% for style in styles %}
 <link href="{{ style.href }}" type="text/css" rel="{{ style.rel }}" media="{{ style.media }}" />
 {% endfor %}
 {% for script in scripts %}
+{# без defer: стокові шаблони викликають ці плагіни інлайном одразу #}
 <script src="{{ script }}" type="text/javascript"></script>
 {% endfor %}
-<script src="catalog/view/javascript/common.js" type="text/javascript"></script>
-<script src="catalog/view/theme/default/js/checkout.js" type="text/javascript"></script>
+<script src="catalog/view/javascript/common.js" type="text/javascript" defer></script>
+<script src="catalog/view/theme/default/js/checkout.js?v=20260821" type="text/javascript" defer></script>
+{% if hreflangs %}
+{% for hl in hreflangs %}
+<link rel="alternate" hreflang="{{ hl.code }}" href="{{ hl.href }}" />
+{% endfor %}
+{% endif %}
 {% for link in links %}
 <link href="{{ link.href }}" rel="{{ link.rel }}" />
 {% endfor %}
+{# Фавікон. Google Search показує в видачі ЛИШЕ растровий (SVG ігнорує),
+   тому першими йдуть ico/png кратні 48px, а svg — бонусом для браузерів. #}
+<link rel="icon" href="{{ base }}favicon.ico" sizes="any" />
+<link rel="icon" type="image/png" sizes="48x48" href="{{ base }}catalog/view/theme/default/img/favicon-48.png" />
+<link rel="icon" type="image/png" sizes="96x96" href="{{ base }}catalog/view/theme/default/img/favicon-96.png" />
+<link rel="icon" type="image/svg+xml" href="{{ base }}catalog/view/theme/default/img/favicon.svg" />
+<link rel="apple-touch-icon" sizes="180x180" href="{{ base }}catalog/view/theme/default/img/favicon-180.png" />
 {% for analytic in analytics %}
 {{ analytic }}
 {% endfor %}
+{% if ga4_debug %}
+<script>
+/* GA4 у тестовому режимі: нікуди не шлемо, кожну подію друкуємо в консоль —
+   так видно, що саме пішло б у аналітику, без реального потоку даних */
+window.dataLayer = window.dataLayer || [];
+window.hpGaCurrency = {{ ga4_currency|json_encode|raw }};
+window.hpGaDebug = true;
+window.gtag = function (type, name, params) {
+    if (type !== 'event') return;
+    console.log('%cGA4 · ' + name, 'background:#A7C70E;color:#161616;font-weight:700;padding:2px 6px;border-radius:3px', params || {});
+};
+</script>
+{% elseif ga4_id %}
+<script async src="https://www.googletagmanager.com/gtag/js?id={{ ga4_id }}"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', {{ ga4_id|json_encode|raw }});
+window.hpGaCurrency = {{ ga4_currency|json_encode|raw }};
+</script>
+{% endif %}
 </head>
 <body class="body">
 	<div id="alert-container">
@@ -51,12 +118,12 @@
     <header class="header">
         <div class="container">
             <div class="header__inner">
-                <a class="header__logo" href="/">
-                    <img src="catalog/view/theme/default/img/logo.svg" alt="">
+                <a class="header__logo" href="{{ home }}">
+                    <img src="catalog/view/theme/default/img/logo-animated.svg" alt="Hydrophob" width="250" height="52">
                 </a>
                 <div class="header__content">
                     <nav class="header__menu">
-                        <button class="header__menu-close">
+                        <button class="header__menu-close" type="button" aria-label="{{ text_menu_close|default('Закрити меню') }}">
                             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none">
                                 <path d="M0.515398 0.514573C0.905923 0.124049 1.53909 0.124049 1.92961 0.514573L17.486 16.0709C17.8765 16.4614 17.8765 17.0946 17.486 17.4851C17.0954 17.8757 16.4623 17.8757 16.0717 17.4851L0.515399 1.92879C0.124874 1.53826 0.124874 0.905097 0.515398 0.514573Z" fill="white"/>
                                 <path d="M0.515398 0.514573C0.905923 0.124049 1.53909 0.124049 1.92961 0.514573L17.486 16.0709C17.8765 16.4614 17.8765 17.0946 17.486 17.4851C17.0954 17.8757 16.4623 17.8757 16.0717 17.4851L0.515399 1.92879C0.124874 1.53826 0.124874 0.905097 0.515398 0.514573Z" fill="white"/>
@@ -77,15 +144,57 @@
                                 <a href="/delivery" title="{{ brs_shipping }}">{{ brs_shipping }}</a>
                             </li>
                             <li>
+                                <a href="{{ reviews_href }}" title="{{ text_reviews_menu|default('Відгуки') }}">{{ text_reviews_menu|default('Відгуки') }}</a>
+                            </li>
+                            <li>
                                 <a href="{{ contact }}" title="{{ text_contact }}">{{ text_contact }}</a>
                             </li>
+                            <li class="header__menu-mob">
+                                <a href="{{ account }}" title="{{ text_account }}">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                                    {{ text_menu_account|default('Кабінет') }}
+                                </a>
+                            </li>
+                            <li class="header__menu-mob">
+                                <a href="{{ wishlist }}" title="{{ text_menu_wishlist|default('Обране') }}">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 5.6a5.2 5.2 0 0 0-7.4 0l-1.4 1.4-1.4-1.4a5.2 5.2 0 1 0-7.4 7.4l8.8 8.8 8.8-8.8a5.2 5.2 0 0 0 0-7.4z"/></svg>
+                                    {{ text_menu_wishlist|default('Обране') }}
+                                </a>
+                            </li>
+                            {% if mob_languages|length > 1 %}
+                            <li class="header__menu-mob header__menu-lang">
+                                {% set lang_map = {'uk-ua':'UA', 'ru-ru':'RU', 'en-gb':'EN'} %}
+                                {% for language in mob_languages %}
+                                <a href="{{ language.href }}" class="language-select{% if language.code == mob_lang_code %} is-current{% endif %}" hreflang="{{ language.code[:2] }}">{{ lang_map[language.code]|default(language.code|upper) }}</a>
+                                {% endfor %}
+                            </li>
+                            {% endif %}
+                            {% if currency %}
+                            <li class="header__menu-mob header__menu-lang header__menu-currency">
+                                {{ currency }}
+                            </li>
+                            {% endif %}
                         </ul>
                     </nav>
                     <div class="header__block">
-						{{ search }}
-						{{ cart }}
+						<div class="header__icons">
+							<a href="{{ account }}" class="header__account" title="{{ text_account }}">
+								<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+									<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+									<circle cx="12" cy="7" r="4"/>
+								</svg>
+							</a>
+							<a href="{{ wishlist }}" class="header__account header__wishlist" title="{{ text_wishlist_menu|default('Вибране') }}">
+								<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+									<path d="M20.8 5.6a5.2 5.2 0 0 0-7.4 0l-1.4 1.4-1.4-1.4a5.2 5.2 0 1 0-7.4 7.4l8.8 8.8 8.8-8.8a5.2 5.2 0 0 0 0-7.4z"/>
+								</svg>
+							</a>
+							{{ search }}
+							{{ cart }}
+						</div>
 						{{ language }}
-                        <button class="header__burger">
+						{{ currency }}
+                        <button class="header__burger" type="button" aria-label="{{ text_menu_open|default('Меню') }}" aria-expanded="false">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="16" viewBox="0 0 24 16" fill="none">
                                 <path d="M0 1C0 0.447715 0.447715 0 1 0H23C23.5523 0 24 0.447715 24 1C24 1.55228 23.5523 2 23 2H1C0.447716 2 0 1.55228 0 1Z" fill="white"/>
                                 <path d="M0 1C0 0.447715 0.447715 0 1 0H23C23.5523 0 24 0.447715 24 1C24 1.55228 23.5523 2 23 2H1C0.447716 2 0 1.55228 0 1Z" fill="white"/>

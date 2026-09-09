@@ -68,7 +68,13 @@ class ControllerStartupStartup extends Controller {
 		if (isset($this->session->data['language'])) {
 			$code = $this->session->data['language'];
 		}
-				
+
+		// ?language=<code> перемикає мову з url: так працюють hreflang-альтернативи
+		// в хедері та мовні посилання sitemap (мови тут без префікса в шляху)
+		if (isset($this->request->get['language']) && array_key_exists($this->request->get['language'], $languages) && $languages[$this->request->get['language']]['status']) {
+			$code = $this->request->get['language'];
+		}
+
 		if (isset($this->request->cookie['language']) && !array_key_exists($code, $languages)) {
 			$code = $this->request->cookie['language'];
 		}
