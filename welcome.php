@@ -2,12 +2,309 @@
 require_once __DIR__ . '/helper/general.php';
 
 $pageTitle = 'Ласкаво просимо';
-$pageLangRedirect = 'https://hydrophob.net.ua/index.php?route=information/contact';
+$pageIsWelcome = true;
 
 require __DIR__ . '/sections/document-start.php';
-require __DIR__ . '/sections/header.php';
-require __DIR__ . '/sections/variants.php';
-require __DIR__ . '/sections/footer.php';
+?>
+<div class="wl-preloader" id="wl-preloader">
+    <div class="wl-preloader__inner">
+        <div class="wl-preloader__logo">
+            <img src="https://hydrophob.net.ua/catalog/view/theme/default/img/logo-animated.svg" alt="Hydrophob" width="280">
+        </div>
+        <div class="wl-preloader__bar"><i id="wl-progress"></i></div>
+        <div class="wl-preloader__pct" id="wl-pct">0%</div>
+    </div>
+</div>
 
-$pageExtraFoot = '<script>try{localStorage.setItem("hydro_visited","1");}catch(e){}</script>';
-require __DIR__ . '/sections/document-end.php';
+<main class="main wl-main">
+    <section class="wl-intro" id="wl-intro">
+        <div class="wl-intro__video">
+            <video data-src="media/porsche.mp4" poster="media/porsche-poster.jpg" preload="none" muted loop playsinline></video>
+        </div>
+        <div class="wl-intro__overlay" aria-hidden="true"></div>
+        <div class="wl-intro__content" id="wl-content">
+            <p class="wl-intro__eyebrow" data-wl-line>Nano Technology</p>
+            <h1 class="wl-intro__title" data-wl-title>HYDROPHOB</h1>
+            <p class="wl-intro__descr" data-wl-type>Захист, який працює на тебе — для авто, одягу та дому</p>
+        </div>
+        <button type="button" class="hero__sound wl-sound" id="wl-sound" aria-label="Увімкнути звук" aria-pressed="false">
+            <svg class="hero__sound-off" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4zM22 9l-6 6M16 9l6 6"/></svg>
+            <svg class="hero__sound-on" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" hidden><path d="M11 5 6 9H2v6h4l5 4zM15.54 8.46a5 5 0 0 1 0 7.07M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+        </button>
+        <button type="button" class="wl-scroll" id="wl-scroll" aria-label="До вибору напряму">
+            <span class="wl-scroll__track"><span class="wl-scroll__line"></span></span>
+            <span class="wl-scroll__text" id="wl-scroll-text">Клік</span>
+        </button>
+    </section>
+
+    <section class="welcome wl-choose" id="wl-choose">
+        <div class="container">
+            <p class="welcome__eyebrow">Hydrophob</p>
+            <h2 class="welcome__title">Що вас цікавить?</h2>
+            <p class="welcome__text">Оберіть напрям — і ми одразу покажемо потрібні засоби</p>
+            <section class="variants">
+                <div class="variants__inner">
+                    <div class="variants__block">
+                        <a class="variants__item" href="catalog.php?id=59">
+                            <div class="variants__item-image">
+                                <img src="https://hydrophob.net.ua/catalog/view/theme/default/img/catalog/1.jpg" alt="">
+                            </div>
+                            <h3 class="variants__item-title">Нанокераміка</h3>
+                        </a>
+                        <a class="variants__item" href="catalog.php?id=61">
+                            <div class="variants__item-image">
+                                <img src="https://hydrophob.net.ua/catalog/view/theme/default/img/catalog/2.jpg" alt="">
+                            </div>
+                            <h3 class="variants__item-title">Захист авто</h3>
+                        </a>
+                        <a class="variants__item" href="catalog.php?id=60">
+                            <div class="variants__item-image">
+                                <img src="https://hydrophob.net.ua/catalog/view/theme/default/img/catalog/3.jpg" alt="">
+                            </div>
+                            <h3 class="variants__item-title">Захист одягу</h3>
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <div class="wl-perks">
+                <div class="wl-perk">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 17h4V5H2v12h3M20 17h2v-6l-3-5h-5v11h3"/><circle cx="7.5" cy="17.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>
+                    Доставка по всій Україні
+                </div>
+                <div class="wl-perk">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+                    Оплата при отриманні
+                </div>
+                <div class="wl-perk">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
+                    Понад 70 засобів у каталозі
+                </div>
+                <a class="wl-perk" href="tel:+380731081212">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                    +38 073 108 12 12
+                </a>
+            </div>
+
+            <p class="wl-seo">HYDROPHOB — український бренд нанокерамічних та гідрофобних засобів: захисні покриття для кузова, скла й салону авто, спреї для одягу та взуття, гідрофобізатори для будівельних матеріалів. Відправляємо замовлення в день оплати Новою Поштою, Укрпоштою або Meest.</p>
+
+            <a class="welcome__skip" href="index.php">Перейти на головну
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10"/></svg>
+            </a>
+        </div>
+
+        <footer class="wl-footer">
+            <nav class="footer__legal">
+                <a href="delivery.php">Доставка та оплата</a>
+                <a href="returns.php">Обмін і повернення</a>
+                <a href="privacy.php">Політика конфіденційності</a>
+                <a href="terms.php">Умови користування</a>
+            </nav>
+            <p class="footer__copy">&copy; <?= date('Y') ?> Hydrophob — нанокерамічний захист</p>
+        </footer>
+    </section>
+</main>
+
+<script>
+if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+window.scrollTo(0, 0);
+/* скрол заблоковано з найпершого моменту (ще під прелоадером) — розблокує лише клік по кнопці */
+document.documentElement.style.overflow = 'hidden';
+document.addEventListener('DOMContentLoaded', function () {
+    window.scrollTo(0, 0);
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var pre = document.getElementById('wl-preloader');
+    var vid = document.querySelector('.wl-intro__video video');
+    var intro = document.getElementById('wl-intro');
+    var choose = document.getElementById('wl-choose');
+    var scrollBtn = document.getElementById('wl-scroll');
+
+    /* --- прелоадер: висить, доки відео і сторінка не готові --- */
+    var videoReady = new Promise(function (resolve) {
+        if (!vid || !vid.dataset.src) return resolve();
+        vid.addEventListener('canplaythrough', resolve, { once: true });
+        setTimeout(resolve, 7000);
+        vid.src = vid.dataset.src;
+        vid.load();
+    });
+    var pageReady = new Promise(function (resolve) {
+        if (document.readyState === 'complete') resolve();
+        else window.addEventListener('load', resolve, { once: true });
+    });
+    var minShow = new Promise(function (resolve) { setTimeout(resolve, reduce ? 0 : 1200); });
+
+    window.addEventListener('load', function () {
+        setTimeout(function () {
+            ['media/moto.mp4', 'media/instruction.mp4', 'media/twerk.mp4', 'media/talk.mp4'].forEach(function (url) {
+                try { fetch(url, { priority: 'low' }).catch(function () {}); } catch (e) {}
+            });
+        }, 2500);
+    });
+
+    var progEl = document.getElementById('wl-progress');
+    var pctEl = document.getElementById('wl-pct');
+    var prog = 0;
+    var progTimer = setInterval(function () {
+        prog = Math.min(90, prog + Math.random() * 7 + 2);
+        progEl.style.width = prog + '%';
+        pctEl.textContent = Math.round(prog) + '%';
+    }, 180);
+
+    Promise.all([videoReady, pageReady, minShow]).then(function () {
+        clearInterval(progTimer);
+        progEl.style.width = '100%';
+        pctEl.textContent = '100%';
+        if (vid) {
+            /* якщо браузер дозволяє автоплей зі звуком — граємо одразу зі звуком */
+            vid.muted = false;
+            var p = vid.play();
+            if (p && p.then) {
+                p.then(syncSoundIcon).catch(function () {
+                    vid.muted = true;
+                    var p2 = vid.play();
+                    if (p2 && p2.catch) p2.catch(function () {});
+                    syncSoundIcon();
+                });
+            } else {
+                syncSoundIcon();
+            }
+        }
+
+        setTimeout(function () {
+            pre.classList.add('is-hidden');
+            setTimeout(function () { pre.remove(); }, 900);
+            intro.classList.add('is-ready');   /* запускає розблюр відео + reveal текстів (CSS) */
+            typeDescr();
+        }, 350);
+    });
+
+    /* друкування підзаголовка інтро */
+    function typeDescr() {
+        var el = document.querySelector('[data-wl-type]');
+        if (!el || el.dataset.typed) return;
+        el.dataset.typed = '1';
+        var full = el.textContent;
+        el.textContent = '';
+        var i = 0;
+        var delay = reduce ? 0 : 900;
+        setTimeout(function () {
+            if (reduce) { el.textContent = full; showScrollBtn(); return; }
+            (function tick() {
+                if (i <= full.length) {
+                    el.textContent = full.slice(0, i);
+                    i++;
+                    setTimeout(tick, 32);
+                } else {
+                    showScrollBtn();
+                }
+            })();
+        }, delay);
+    }
+
+    function showScrollBtn() {
+        scrollBtn.classList.add('is-visible');
+    }
+
+    /* --- клік по «Скрол»: розблоковуємо скрол, choose (у потоці, на 100dvh нижче)
+       природним рухом наїжджає поверх fixed-інтро; паралакс/блюр/opacity інтро — нижче, по scrollY --- */
+    var opened = false;
+    var scrollTextEl = document.getElementById('wl-scroll-text');
+    /* опис у секції вибору друкується посимвольно — до кліку тримаємо його порожнім */
+    var chooseTextEl = document.querySelector('.wl-choose .welcome__text');
+    var chooseTextFull = chooseTextEl ? chooseTextEl.textContent : '';
+    if (chooseTextEl && !reduce) chooseTextEl.textContent = '';
+
+    scrollBtn.addEventListener('click', function () {
+        if (opened) return;
+        opened = true;
+        document.body.classList.add('wl-opened');
+        choose.classList.add('is-open');
+        document.documentElement.style.overflow = '';
+        if (scrollTextEl) scrollTextEl.textContent = 'Скрол';
+        scrollToCards();
+        typeChooseText();
+    });
+
+    /* друк опису вибору — стартує після вспливання h2 */
+    function typeChooseText() {
+        if (!chooseTextEl || chooseTextEl.dataset.typed) return;
+        chooseTextEl.dataset.typed = '1';
+        if (reduce) { chooseTextEl.textContent = chooseTextFull; return; }
+        var i = 0;
+        setTimeout(function tick() {
+            if (i <= chooseTextFull.length) {
+                chooseTextEl.textContent = chooseTextFull.slice(0, i);
+                i++;
+                setTimeout(tick, 28);
+            }
+        }, 750);
+    }
+
+    /* паралакс: hero (fixed) тане/блюриться/спливає вниз, а choose, що наїжджає,
+       сам поступово розблюрюється/світлішає, доки плитки не стануть повністю видимі */
+    var cardEls = document.querySelectorAll('.wl-choose .variants__item');
+    var vh = window.innerHeight;
+    window.addEventListener('resize', function () { vh = window.innerHeight; });
+    var ticking = false;
+    function updateParallax() {
+        ticking = false;
+        if (!opened) return;
+        var y = window.scrollY;
+        var progress = Math.min(1, Math.max(0, y / vh));       /* 0 → 1 за перший екран скролу */
+        var fadeProgress = Math.min(1, progress / 0.85);        /* тане трохи швидше, ніж блюриться */
+        intro.style.opacity = String(1 - fadeProgress);
+        intro.style.transform = 'translateY(' + (progress * vh * 0.22).toFixed(1) + 'px)';
+        vid.style.filter = 'blur(' + (progress * 20).toFixed(1) + 'px) brightness(' + (1 - progress * 0.4).toFixed(2) + ')';
+        if (progress >= 1) intro.style.visibility = 'hidden'; else intro.style.visibility = '';
+
+        /* кожна плашка розблюрюється окремо в міру в'їзду знизу:
+           поки її низ нижче краю екрана — вона розмита/пригашена пропорційно;
+           повністю видима або проскролена вище — чиста. Працює в обидва боки скролу */
+        cardEls.forEach(function (el) {
+            var r = el.getBoundingClientRect();
+            var sf = Math.min(1, Math.max(0, r.bottom - window.innerHeight) / Math.max(1, r.height));
+            el.style.filter = sf > 0.005
+                ? 'blur(' + (sf * 14).toFixed(1) + 'px) brightness(' + (1 - sf * 0.45).toFixed(2) + ')'
+                : '';
+        });
+    }
+    window.addEventListener('scroll', function () {
+        if (!ticking) { requestAnimationFrame(updateParallax); ticking = true; }
+    }, { passive: true });
+
+    /* скрол саме до плиток напрямків — щоб вони максимально вмістились в екран
+       (центруємо у вільному просторі під хедером, з урахуванням його висоти) */
+    function scrollToCards() {
+        var variantsEl = document.querySelector('.wl-choose .variants');
+        if (!variantsEl) { choose.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' }); return; }
+        var headerH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--header-h')) || 0;
+        var rect = variantsEl.getBoundingClientRect();
+        var availH = window.innerHeight - headerH;
+        var extra = Math.max(0, availH - rect.height);
+        var targetTop = window.scrollY + rect.top - headerH - extra / 2;
+        window.scrollTo({ top: Math.max(0, targetTop), behavior: reduce ? 'auto' : 'smooth' });
+    }
+
+    /* звук відео: іконка віддзеркалює реальний стан, клік перемикає */
+    var sndBtn = document.getElementById('wl-sound');
+    function syncSoundIcon() {
+        if (!sndBtn || !vid) return;
+        var on = sndBtn.querySelector('.hero__sound-on');
+        var off = sndBtn.querySelector('.hero__sound-off');
+        if (vid.muted) { on.setAttribute('hidden', ''); off.removeAttribute('hidden'); }
+        else { off.setAttribute('hidden', ''); on.removeAttribute('hidden'); }
+        sndBtn.setAttribute('aria-pressed', vid.muted ? 'false' : 'true');
+        sndBtn.setAttribute('aria-label', vid.muted ? 'Увімкнути звук' : 'Вимкнути звук');
+    }
+    if (sndBtn) {
+        sndBtn.addEventListener('click', function () {
+            if (!vid || !vid.src) return;
+            vid.muted = !vid.muted;
+            syncSoundIcon();
+        });
+    }
+});
+</script>
+
+<script>try{localStorage.setItem("hydro_visited","1");}catch(e){}</script>
+</body></html>

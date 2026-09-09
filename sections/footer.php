@@ -26,6 +26,12 @@
                             <li>
                                 <a href="contact.php">Контакти</a>
                             </li>
+                            <li>
+                                <a href="reviews.php" title="Відгуки">Відгуки</a>
+                            </li>
+                            <li>
+                                <a href="faq.php" title="Питання та відповіді">Питання та відповіді</a>
+                            </li>
                         </ul>
                     </div>
                     <div class="footer__box">

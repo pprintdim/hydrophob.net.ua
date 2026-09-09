@@ -18,7 +18,7 @@ require __DIR__ . '/sections/header.php';
                     <div id="content" class="col-sm-12">
 
                         <h1 class="account__title">Реєстрація нового клієнта</h1>
-                        <p class="account__lead">Вже маєте акаунт? <a href="login.php" class="account__link">Увійти в особистий кабінет</a></p>
+                        <p class="account__lead">Пароль не потрібен — після натискання кнопки ми надішлемо одноразовий код на вказаний email. Вже маєте акаунт? <a href="login.php" class="account__link">Увійти</a></p>
 
                         <form action="#" method="post" class="account__form" onsubmit="return false;">
                             <div class="account__panel account__fieldset">
@@ -34,25 +34,11 @@ require __DIR__ . '/sections/header.php';
                                     </div>
                                     <div class="account__field">
                                         <label for="input-email">E-Mail</label>
-                                        <input type="email" name="email" value="" placeholder="E-Mail" id="input-email" />
+                                        <input type="email" name="email" value="" placeholder="E-Mail" id="input-email" data-code-email />
                                     </div>
                                     <div class="account__field">
                                         <label for="input-telephone">Телефон</label>
-                                        <input type="tel" name="telephone" value="" placeholder="Телефон" id="input-telephone" />
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="account__panel account__fieldset">
-                                <h2 class="account__legend">Пароль</h2>
-                                <div class="account__form-grid">
-                                    <div class="account__field">
-                                        <label for="input-password">Пароль</label>
-                                        <input type="password" name="password" value="" placeholder="Пароль" id="input-password" />
-                                    </div>
-                                    <div class="account__field">
-                                        <label for="input-confirm">Підтвердження паролю</label>
-                                        <input type="password" name="confirm" value="" placeholder="Підтвердження паролю" id="input-confirm" />
+                                        <input type="tel" name="telephone" value="" placeholder="Телефон" id="input-telephone" data-code-field />
                                     </div>
                                 </div>
                             </div>
@@ -73,8 +59,8 @@ require __DIR__ . '/sections/header.php';
                                     <input type="checkbox" name="agree" value="1" />
                                     Я прочитав(-ла) і погоджуюсь з <a href="privacy.php" class="account__link">Умовами використання</a>
                                 </label>
-                                <button type="submit" class="btn-2">Продовжити
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                                <button type="button" class="btn-2" data-code-trigger data-code-type="register" data-code-title="Код для реєстрації" data-code-redirect="account.php">Отримати код
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4 20-7z"/></svg>
                                 </button>
                             </div>
                         </form>

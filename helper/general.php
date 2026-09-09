@@ -99,6 +99,12 @@ function hp_t(array $entity, string $field, string $lang = 'uk-ua'): string
     return is_string($value) ? $value : '';
 }
 
+/** HTML-поле з дампа OpenCart (description тощо) — зберігається ескейпнутим, декодимо для виводу. */
+function hp_html(array $entity, string $field, string $lang = 'uk-ua'): string
+{
+    return html_entity_decode(hp_t($entity, $field, $lang), ENT_QUOTES, 'UTF-8');
+}
+
 function hp_e(?string $value): string
 {
     return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
@@ -132,13 +138,7 @@ function hp_cache_img(?string $path, int $size): string
     if (!$path) {
         return HP_CDN . 'image/placeholder.png';
     }
-    $dot = strrpos($path, '.');
-    if ($dot === false) {
-        return HP_CDN . 'image/placeholder.png';
-    }
-    $base = substr($path, 0, $dot);
-    $ext = substr($path, $dot + 1);
-    return HP_CDN . 'image/cache/' . hp_encode_uri_path($base) . '-' . $size . 'x' . $size . '.' . $ext;
+    return HP_CDN . 'image/' . hp_encode_uri_path($path);
 }
 
 function hp_badges_map(): array
@@ -222,4 +222,30 @@ function hp_breadcrumb_ld(array $items): string
         'itemListElement' => $list,
     ];
     return json_encode($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+}
+
+/* Уніфікована пагінація: стрілки + сторінки по центру, "Показано з..." справа.
+   $urlFn(int $page): string — генератор посилання на сторінку. */
+function hp_pagination(int $page, int $pages, int $total, int $perPage, callable $urlFn): string
+{
+    if ($pages <= 1) return '';
+    $from = $total ? ($page - 1) * $perPage + 1 : 0;
+    $to = min($page * $perPage, $total);
+    $prevSvg = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>';
+    $nextSvg = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>';
+    $h = '<ul class="pagination">';
+    $h .= $page > 1
+        ? '<li><a href="' . hp_e($urlFn($page - 1)) . '" class="prev" aria-label="Попередня">' . $prevSvg . '</a></li>'
+        : '<li class="is-disabled"><a class="prev" aria-hidden="true">' . $prevSvg . '</a></li>';
+    for ($i = 1; $i <= $pages; $i++) {
+        $h .= $i === $page
+            ? '<li class="active"><a>' . $i . '</a></li>'
+            : '<li><a href="' . hp_e($urlFn($i)) . '">' . $i . '</a></li>';
+    }
+    $h .= $page < $pages
+        ? '<li><a href="' . hp_e($urlFn($page + 1)) . '" class="next" aria-label="Наступна">' . $nextSvg . '</a></li>'
+        : '<li class="is-disabled"><a class="next" aria-hidden="true">' . $nextSvg . '</a></li>';
+    $h .= '</ul>';
+    $h .= '<p class="cui-results">Показано з ' . $from . ' по ' . $to . ' із ' . $total . ' (сторінок: ' . $pages . ')</p>';
+    return $h;
 }

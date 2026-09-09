@@ -11,6 +11,7 @@ require __DIR__ . '/sections/document-start.php';
 require __DIR__ . '/sections/header.php';
 require __DIR__ . '/sections/hero-slider.php';
 require __DIR__ . '/sections/seo-text.php';
+require __DIR__ . '/sections/reviews-teaser.php';
 ?>
     </main>
 <?php

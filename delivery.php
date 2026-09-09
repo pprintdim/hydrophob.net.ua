@@ -10,6 +10,13 @@ require __DIR__ . '/sections/header.php';
         <section class="delivery">
             <div class="container">
                 <div class="delivery__inner">
+                    <nav class="catalog__crumbs" aria-label="Хлібні крихти">
+                        <a href="index.php" class="catalog__crumbs-link">Головна</a><span class="catalog__crumbs-sep" aria-hidden="true">/</span><a class="catalog__crumbs-link is-current">Доставка та оплата</a>
+                    </nav>
+                    <script type="application/ld+json"><?= hp_breadcrumb_ld([
+                        ['name' => 'Головна', 'url' => 'index.php'],
+                        ['name' => 'Доставка та оплата', 'url' => 'delivery.php'],
+                    ]) ?></script>
                     <h1 class="delivery__title page-title">Доставка та оплата</h1>
                     <h2 class="delivery__name page-name">
 																			Умови доставки та оплати

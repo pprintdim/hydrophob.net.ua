@@ -5,7 +5,7 @@ $pageLangRedirect = $pageLangRedirect ?? 'https://hydrophob.net.ua/index.php?rou
         <div class="container">
             <div class="header__inner">
                 <a class="header__logo" href="index.php">
-                    <img src="https://hydrophob.net.ua/catalog/view/theme/default/img/logo.svg" alt="">
+                    <img src="https://hydrophob.net.ua/catalog/view/theme/default/img/logo-animated.svg" alt="Hydrophob — Nano Technology">
                 </a>
                 <div class="header__content">
                     <nav class="header__menu">
@@ -30,7 +30,27 @@ $pageLangRedirect = $pageLangRedirect ?? 'https://hydrophob.net.ua/index.php?rou
                                 <a href="delivery.php" title="Доставка та оплата">Доставка та оплата</a>
                             </li>
                             <li>
+                                <a href="reviews.php" title="Відгуки">Відгуки</a>
+                            </li>
+                            <li>
                                 <a href="contact.php" title="Контакти">Контакти</a>
+                            </li>
+                            <li class="header__menu-mob">
+                                <a href="account.php" title="Особистий кабінет">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                                    Кабінет
+                                </a>
+                            </li>
+                            <li class="header__menu-mob">
+                                <a href="wishlist.php" title="Вибране">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 5.6a5.2 5.2 0 0 0-7.4 0l-1.4 1.4-1.4-1.4a5.2 5.2 0 1 0-7.4 7.4l8.8 8.8 8.8-8.8a5.2 5.2 0 0 0 0-7.4z"/></svg>
+                                    Обране
+                                </a>
+                            </li>
+                            <li class="header__menu-mob header__menu-lang">
+                                <a href="#" class="language-select is-current" data-code="uk-ua">UA</a>
+                                <a href="#" class="language-select" data-code="ru-ru">RU</a>
+                                <a href="#" class="language-select" data-code="en-gb">EN</a>
                             </li>
                         </ul>
                     </nav>
@@ -46,6 +66,7 @@ $pageLangRedirect = $pageLangRedirect ?? 'https://hydrophob.net.ua/index.php?rou
 <section id="cart"  class="busket">
 	<div class="busket__top">
 		<p class="busket__title">Кошик</p>
+		<button type="button" class="busket__close" aria-label="Закрити кошик"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
 	</div>
   <ul class="busket__inner">
      				<li>
@@ -75,7 +96,7 @@ $pageLangRedirect = $pageLangRedirect ?? 'https://hydrophob.net.ua/index.php?rou
 </div>
 
 <script>
-document.querySelectorAll('.header__lang-content .language-select').forEach(function(el) {
+document.querySelectorAll('.header__lang-content .language-select, .header__menu .language-select').forEach(function(el) {
     el.addEventListener('click', function(e) {
         e.preventDefault();
         var code = this.getAttribute('data-code');

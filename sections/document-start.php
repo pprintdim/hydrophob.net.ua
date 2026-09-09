@@ -8,6 +8,7 @@ $pageCanonical = $pageCanonical ?? '';
 $pageExtraHead = $pageExtraHead ?? '';
 $pageWelcomeRedirect = $pageWelcomeRedirect ?? false;
 $pageBodyClass = $pageBodyClass ?? 'body';
+$pageIsWelcome = $pageIsWelcome ?? false;
 ?>
 <!DOCTYPE html>
 <!--[if IE]><![endif]-->
@@ -36,10 +37,13 @@ $pageBodyClass = $pageBodyClass ?? 'body';
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-<link href="https://hydrophob.net.ua/catalog/view/theme/default/stylesheet/stylesheet.css?v=20260821" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css">
-<link rel="stylesheet" href="css/pages.css">
-<link rel="stylesheet" href="css/media.css">
+<link href="css/style.css?v=<?= filemtime(__DIR__ . '/../css/style.css') ?>" rel="stylesheet">
+<?php if ($pageIsWelcome): ?>
+<link rel="stylesheet" href="css/welcome.css?v=<?= filemtime(__DIR__ . '/../css/welcome.css') ?>">
+<?php else: ?>
+<link rel="stylesheet" href="css/pages.css?v=<?= filemtime(__DIR__ . '/../css/pages.css') ?>">
+<link rel="stylesheet" href="css/media.css?v=<?= filemtime(__DIR__ . '/../css/media.css') ?>">
+<?php endif; ?>
 <script src="https://hydrophob.net.ua/catalog/view/javascript/common.js" type="text/javascript"></script>
 <script src="https://hydrophob.net.ua/catalog/view/theme/default/js/checkout.js" type="text/javascript"></script>
 <?php if ($pageCanonical !== ''): ?>

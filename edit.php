@@ -34,7 +34,12 @@ require __DIR__ . '/sections/header.php';
                                     </div>
                                     <div class="account__field">
                                         <label for="input-email">E-Mail</label>
-                                        <input type="email" name="email" value="ivan.petrenko@example.com" placeholder="E-Mail" id="input-email" />
+                                        <div class="account__field-with-btn">
+                                            <input type="email" name="email" value="ivan.petrenko@example.com" placeholder="E-Mail" id="input-email" data-code-email data-code-update="#input-email" data-email-original="ivan.petrenko@example.com" />
+                                            <button type="button" class="btn-2" data-code-trigger data-code-type="email" data-code-title="Підтвердження нового email" data-code-inline="1" data-code-update="#input-email" data-email-send-btn disabled>Надіслати код
+                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4 20-7z"/></svg>
+                                            </button>
+                                        </div>
                                     </div>
                                     <div class="account__field">
                                         <label for="input-telephone">Телефон</label>

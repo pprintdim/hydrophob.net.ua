@@ -9,6 +9,13 @@ require __DIR__ . '/sections/header.php';
 <main class="main" id="content">
         <section class="contacts">
             <div class="container">
+                <nav class="catalog__crumbs catalog__crumbs--light" aria-label="Хлібні крихти">
+                    <a href="index.php" class="catalog__crumbs-link">Головна</a><span class="catalog__crumbs-sep" aria-hidden="true">/</span><a class="catalog__crumbs-link is-current">Контакти</a>
+                </nav>
+                <script type="application/ld+json"><?= hp_breadcrumb_ld([
+                    ['name' => 'Головна', 'url' => 'index.php'],
+                    ['name' => 'Контакти', 'url' => 'contact.php'],
+                ]) ?></script>
                 <div class="contacts__inner">
                     <div class="contacts__content">
                         <h1 class="contacts__title page-title">
@@ -75,8 +82,15 @@ require __DIR__ . '/sections/header.php';
                         </div>
 						 						                     </div>
                     <div class="contacts__map">
-													<iframe width="100%" height="450" style="border:0" loading="lazy" allowfullscreen src="https://www.google.com/maps?q=50.460167%2C%2030.636083&hl=uk-ua&t=m&z=15&output=embed"> </iframe>
-											</div>
+                        <div class="contacts__media">
+                            <video src="media/talk.mp4" poster="media/talk-poster.jpg" autoplay muted loop playsinline></video>
+                            <button type="button" class="hero__sound" data-media-sound aria-label="Увімкнути звук" aria-pressed="false">
+                                <svg class="hero__sound-off" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4zM22 9l-6 6M16 9l6 6"/></svg>
+                                <svg class="hero__sound-on" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" hidden><path d="M11 5 6 9H2v6h4l5 4zM15.54 8.46a5 5 0 0 1 0 7.07M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+                            </button>
+                        </div>
+                        <iframe width="100%" height="450" style="border:0" loading="lazy" allowfullscreen src="https://www.google.com/maps?q=50.460167%2C%2030.636083&hl=uk-ua&t=m&z=15&output=embed"> </iframe>
+                    </div>
                 </div>
             </div>
         </section>

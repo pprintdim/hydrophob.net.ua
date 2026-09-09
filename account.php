@@ -14,33 +14,45 @@ require __DIR__ . '/sections/header.php';
                     <span>Особистий кабінет</span>
                 </nav>
 
-                <div class="account__notice account__notice--ok">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-                    <span>Ви увійшли як Іван Петренко</span>
-                </div>
-
                 <div class="row">
                     <div id="content" class="col-sm-12">
 
-                        <h1 class="account__title">Особистий кабінет</h1>
-                        <p class="account__lead">Вітаємо, Іван Петренко! Тут можна редагувати особисті дані, керувати адресами доставки, переглядати замовлення та список обраного.</p>
+                        <div class="account__welcome">
+                            <span class="account__welcome-avatar">ІП</span>
+                            <div class="account__welcome-text">
+                                <h1 class="account__title">Вітаємо, Іван Петренко!</h1>
+                                <p class="account__lead">Тут можна редагувати особисті дані, керувати адресами доставки, переглядати замовлення та список обраного.</p>
+                            </div>
+                        </div>
 
                         <div class="account__group">
                             <h2 class="account__group-title">Мій кабінет</h2>
                             <div class="account__menu">
                                 <div class="account__menu-item">
-                                    <a href="edit.php">Редагування профілю
-                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 2 4 4-14 14H4v-4L18 2z"/></svg>
+                                    <a href="edit.php">
+                                        <span class="account__menu-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 2 4 4-14 14H4v-4L18 2z"/></svg></span>
+                                        <span class="account__menu-text">
+                                            <span class="account__menu-title">Редагування профілю</span>
+                                            <span class="account__menu-sub">Ім'я, телефон, пароль</span>
+                                        </span>
                                     </a>
                                 </div>
                                 <div class="account__menu-item">
-                                    <a href="address_list.php">Адресна книга
-                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                                    <a href="address_list.php">
+                                        <span class="account__menu-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg></span>
+                                        <span class="account__menu-text">
+                                            <span class="account__menu-title">Адресна книга</span>
+                                            <span class="account__menu-sub">Адреси доставки</span>
+                                        </span>
                                     </a>
                                 </div>
                                 <div class="account__menu-item">
-                                    <a href="wishlist.php">Список обраного
-                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 5.6a5.2 5.2 0 0 0-7.4 0L12 7l-1.4-1.4a5.2 5.2 0 1 0-7.4 7.4L12 21l8.8-8.8a5.2 5.2 0 0 0 0-7.4z"/></svg>
+                                    <a href="wishlist.php">
+                                        <span class="account__menu-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 5.6a5.2 5.2 0 0 0-7.4 0L12 7l-1.4-1.4a5.2 5.2 0 1 0-7.4 7.4L12 21l8.8-8.8a5.2 5.2 0 0 0 0-7.4z"/></svg></span>
+                                        <span class="account__menu-text">
+                                            <span class="account__menu-title">Список обраного</span>
+                                            <span class="account__menu-sub">Збережені товари</span>
+                                        </span>
                                     </a>
                                 </div>
                             </div>
@@ -50,8 +62,12 @@ require __DIR__ . '/sections/header.php';
                             <h2 class="account__group-title">Мої замовлення</h2>
                             <div class="account__menu">
                                 <div class="account__menu-item">
-                                    <a href="order_list.php">Історія замовлень
-                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                                    <a href="order_list.php">
+                                        <span class="account__menu-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>
+                                        <span class="account__menu-text">
+                                            <span class="account__menu-title">Історія замовлень</span>
+                                            <span class="account__menu-sub">Статус і деталі покупок</span>
+                                        </span>
                                     </a>
                                 </div>
                             </div>

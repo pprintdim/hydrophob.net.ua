@@ -50,7 +50,7 @@ $heroSlides = [
                 <path fill-rule="evenodd" clip-rule="evenodd" d="M7 18.5L13 12.5L7 6.5L9 4.5L17 12.5L9 20.5L7 18.5Z" fill="white"></path>
             </svg></a>
     </div></div>
-    <button type="button" class="hero__sound" data-hero-sound aria-label="Увімкнути звук">
+    <button type="button" class="hero__sound" data-hero-sound aria-label="Увімкнути звук" aria-pressed="false">
         <svg class="hero__sound-off" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4zM22 9l-6 6M16 9l6 6"/></svg>
         <svg class="hero__sound-on" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" hidden><path d="M11 5 6 9H2v6h4l5 4zM15.54 8.46a5 5 0 0 1 0 7.07M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
     </button>

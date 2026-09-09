@@ -1,0 +1,421 @@
+/* welcome.css — стилі лише для welcome.php (.wl-*, .welcome та welcome-специфічні перевизначення .variants).
+   Базові .variants живуть у style.css, бо спільні з головною магазину. Завантажується ЛИШЕ на welcome.php. */
+
+
+/* Вітальна сторінка (перший візит) */
+.welcome{
+    padding: 72px 0 96px;
+    background: #121212;
+    min-height: calc(100vh - 300px);
+    text-align: center;
+}
+.welcome .variants__block{
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+}
+
+/* ===== Вітальна сторінка: прелоадер + відео-інтро + перехід (GSAP) ===== */
+.wl-preloader{
+    position: fixed;
+    inset: 0;
+    z-index: 300;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #121212;
+    transition: transform .8s cubic-bezier(0.16,1,0.3,1);
+}
+.wl-preloader.is-hidden{
+    transform: translateY(-100%);
+}
+.wl-preloader__inner{
+    opacity: 0;
+    transform: scale(.92);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    animation: wlPreIn .6s ease-out .1s forwards;
+}
+.wl-preloader__logo{
+    width: 280px;
+    aspect-ratio: 402 / 70;
+    overflow: hidden;
+}
+.wl-preloader__logo img{
+    display: block;
+    width: 280px;
+}
+.wl-preloader__bar{
+    width: 220px;
+    height: 2px;
+    background: rgba(255,255,255,.14);
+    border-radius: 2px;
+    overflow: hidden;
+}
+.wl-preloader__bar i{
+    display: block;
+    width: 0;
+    height: 100%;
+    background: #A7C70E;
+    border-radius: 2px;
+    transition: width .25s ease;
+}
+.wl-preloader__pct{
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .18em;
+    color: rgba(255,255,255,.55);
+    font-variant-numeric: tabular-nums;
+}
+
+.wl-main{
+    padding-top: 0 !important;
+}
+
+/* ---------- інтро: fixed на весь екран, choose йде в потоці й наїжджає зверху при скролі ---------- */
+.wl-intro{
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: #121212;
+    will-change: transform, opacity;
+}
+.wl-intro__video{
+    position: absolute;
+    inset: 0;
+    filter: blur(22px) brightness(.7);
+    transform: scale(1.08);
+    transition: filter 1.3s ease, transform 1.3s ease;
+}
+.wl-intro.is-ready .wl-intro__video{
+    filter: blur(0) brightness(1);
+    transform: scale(1);
+}
+/* після відкриття паралакс керує filter/transform напряму з JS щоразу на кадр —
+   вимикаємо CSS-transition, щоб не було лагу відносно скролу */
+body.wl-opened .wl-intro,
+body.wl-opened .wl-intro__video{
+    transition: none;
+}
+.wl-intro__video video{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+.wl-intro__overlay{
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(18,18,18,.16) 0%, rgba(18,18,18,0) 45%, rgba(18,18,18,.26) 100%);
+    pointer-events: none;
+}
+.wl-intro__content{
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding: 0 20px;
+}
+.wl-intro__eyebrow,
+.wl-intro__title,
+.wl-intro__descr{
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity .8s cubic-bezier(0.16,1,0.3,1), transform .8s cubic-bezier(0.16,1,0.3,1);
+}
+.wl-intro.is-ready .wl-intro__eyebrow{ opacity: 1; transform: none; transition-delay: .15s; }
+.wl-intro.is-ready .wl-intro__title{ opacity: 1; transform: none; transition-delay: .28s; }
+.wl-intro.is-ready .wl-intro__descr{ opacity: 1; transform: none; transition-delay: .5s; }
+.wl-intro__eyebrow{
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: .5em;
+    text-transform: uppercase;
+    color: #A7C70E;
+    margin-bottom: 18px;
+}
+.wl-intro__title{
+    font-size: clamp(48px, 10vw, 120px);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    color: #FFF;
+}
+.wl-intro__descr{
+    margin-top: 20px;
+    font-size: clamp(15px, 2vw, 19px);
+    color: rgba(255,255,255,.85);
+    max-width: 560px;
+    margin-left: auto;
+    margin-right: auto;
+    min-height: 1.6em;
+}
+
+/* scroll-кнопка: з'являється після друкування підзаголовка */
+.wl-scroll{
+    position: absolute;
+    left: 50%;
+    bottom: 28px;
+    transform: translateX(-50%) translateY(10px);
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    color: #FFF;
+    background: none;
+    cursor: pointer;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .6s ease, transform .6s ease;
+}
+.wl-scroll.is-visible{
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+    pointer-events: auto;
+}
+.wl-scroll__track{
+    display: block;
+    width: 1px;
+    height: 48px;
+    background: rgba(255,255,255,.25);
+    overflow: hidden;
+}
+.wl-scroll__line{
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: #A7C70E;
+    transform: translateY(-100%);
+    animation: wlScrollLine 1.8s cubic-bezier(0.16,1,0.3,1) infinite;
+}
+.wl-scroll__text{
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .3em;
+    text-transform: uppercase;
+}
+
+/* ---------- вибір напряму: у звичайному потоці, стартує на 100dvh нижче —
+   тому природно наїжджає поверх fixed-інтро вже під час самого скролу ---------- */
+.wl-choose{
+    position: relative;
+    z-index: 2;
+    background: #121212;
+    margin-top: 100dvh;
+    padding: 64px 0 25px;
+}
+.wl-info .wl-perks{
+    margin-top: 0;
+}
+.wl-perks{
+    margin-top: 44px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 14px 32px;
+}
+.wl-perk{
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    color: rgba(255,255,255,.85);
+}
+.wl-perk svg{
+    flex-shrink: 0;
+    color: #A7C70E;
+}
+a.wl-perk:hover{
+    color: #A7C70E;
+}
+.wl-seo{
+    margin: 28px auto 0;
+    max-width: 720px;
+    font-size: 14px;
+    line-height: 1.7;
+    color: rgba(255,255,255,.6);
+    text-align: center;
+}
+
+/* welcome: мінімальний legal-рядок замість повного футера (тут немає хедера/футера сайту) */
+.wl-footer{
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(255,255,255,.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+/* welcome: кнопка звуку в інтро — з'являється при ховері секції */
+.wl-intro .wl-sound{
+    opacity: 0;
+    transition: opacity .3s ease, background .3s ease;
+}
+.wl-intro:hover .wl-sound{
+    opacity: 1;
+}
+
+/* паралакс при скролі: hero (fixed) тане/блюриться/зсувається — керується інлайн-стилями з JS,
+   прив'язаними до scrollY, доки .wl-choose природним рухом потоку наїжджає зверху */
+
+/* тексти вибору напряму: eyebrow і h2 вспливають, опис — друкується JS-ом */
+.wl-choose .welcome__eyebrow,
+.wl-choose .welcome__title{
+    opacity: 0;
+    transform: translateY(30px);
+}
+body.wl-opened .wl-choose .welcome__eyebrow,
+body.wl-opened .wl-choose .welcome__title{
+    animation: wlChooseReveal .7s cubic-bezier(0.16,1,0.3,1) forwards;
+}
+body.wl-opened .wl-choose .welcome__eyebrow{ animation-delay: .35s; }
+body.wl-opened .wl-choose .welcome__title{ animation-delay: .42s; }
+.wl-choose .welcome__text{
+    min-height: 1.6em; /* друк не смикає розкладку */
+}
+
+/* плитки напрямків: translate/scale — окремі властивості від transform,
+   тому не конфліктують з transform:translateY(-39px) на :hover */
+.wl-choose .variants__item{
+    opacity: 0;
+    translate: 0 46px;
+    scale: .95;
+}
+body.wl-opened .wl-choose .variants__item{
+    animation: wlCardReveal .75s cubic-bezier(0.16,1,0.3,1) forwards;
+}
+body.wl-opened .wl-choose .variants__item:nth-child(1){ animation-delay: .58s; }
+body.wl-opened .wl-choose .variants__item:nth-child(2){ animation-delay: .68s; }
+body.wl-opened .wl-choose .variants__item:nth-child(3){ animation-delay: .78s; }
+/* блюр при напливі — на кожній плашці окремо, інлайн filter керується JS по скролу */
+
+
+
+@media (prefers-reduced-motion: reduce){
+    .wl-preloader{ transition: none; }
+    .wl-preloader__inner{ animation: none; opacity: 1; transform: none; }
+    .wl-intro__video{ transition: none; }
+    .wl-intro__eyebrow, .wl-intro__title, .wl-intro__descr{ transition: none; }
+    .wl-scroll{ transition: none; }
+    .wl-scroll__line{ animation: none; transform: none; }
+    body.wl-opened .wl-choose{ animation: none; }
+    body.wl-opened .wl-intro__video{ transition: none; }
+    .wl-choose .welcome__eyebrow, .wl-choose .welcome__title{ opacity: 1; transform: none; }
+    .wl-choose .variants__item{ opacity: 1; translate: 0 0; scale: 1; }
+    body.wl-opened .wl-choose .welcome__eyebrow, body.wl-opened .wl-choose .welcome__title, body.wl-opened .wl-choose .welcome__text, body.wl-opened .wl-choose .variants__item{ animation: none; }
+}
+
+/* --- keyframes, що використовуються вище (перенесено з pages.css при виправленні спліту) --- */
+
+@keyframes wlPreIn{
+    to{ opacity: 1; transform: scale(1); }
+}
+
+@keyframes wlScrollLine{
+    0%{ transform: translateY(-100%); }
+    55%{ transform: translateY(0); }
+    100%{ transform: translateY(100%); }
+}
+
+@keyframes wlChooseReveal{
+    to{ opacity: 1; transform: none; }
+}
+
+@keyframes wlCardReveal{
+    to{ opacity: 1; translate: 0 0; scale: 1; }
+}
+
+/* ---------- тексти секції вибору: базові стилі (welcome не вантажить pages.css) ---------- */
+.welcome__eyebrow{
+    font-size: 14px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: #A7C70E;
+    margin-bottom: 12px;
+}
+.welcome__title{
+    font-size: 40px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #FFF;
+    margin-bottom: 12px;
+}
+.welcome__text{
+    font-size: 16px;
+    color: rgba(255,255,255,.7);
+    margin-bottom: 48px;
+}
+.welcome__skip{
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 48px;
+    color: #FFF;
+    font-size: 15px;
+    font-weight: 700;
+    text-transform: uppercase;
+    border-bottom: 2px solid #A7C70E;
+    transition: color .3s ease;
+}
+.welcome__skip:hover{
+    color: #A7C70E;
+}
+
+/* ---------- адаптив: media.css на welcome не вантажиться, всі медіа — власні ---------- */
+@media (max-width: 1279px){
+    .wl-choose .variants__item{
+        min-height: 450px;
+    }
+}
+@media (max-width: 999px){
+    /* плашки напрямків — у стовпчик, по центру */
+    .welcome .variants__block{
+        flex-direction: column;
+        align-items: center;
+    }
+    .welcome .variants__item{
+        width: 100%;
+        max-width: 560px;
+    }
+    .welcome__title{
+        font-size: 28px;
+    }
+}
+@media (max-width: 767px){
+    .container{
+        padding: 0 16px;
+    }
+    .wl-choose{
+        padding: 44px 0 20px;
+    }
+    .welcome .variants__item{
+        min-height: 390px;
+    }
+    .wl-perks{
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+    }
+    .wl-seo{
+        font-size: 13px;
+    }
+    .welcome__text{
+        margin-bottom: 36px;
+    }
+    .welcome__skip{
+        margin-top: 36px;
+    }
+    .wl-footer{
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+}
