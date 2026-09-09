@@ -44,6 +44,17 @@ class ControllerExtensionModuleSeoMeta extends Controller {
         // кошик, оформлення, пошук) і пагінація ≥2 лишались відкритими для
         // індексації. Кладемо і в заголовок, і в реєстр — шаблон додасть <meta>.
         if (!empty($meta['robots'])) {
+            // Контролер сторінки міг сам закрити її від індексації (404,
+            // комбінація 2+ фільтрів). Правило контролера строгіше за
+            // шаблонне — не перетираємо його на «index».
+            $already = $this->registry->has('seo_meta_robots')
+                ? (string)$this->registry->get('seo_meta_robots')
+                : '';
+
+            if ($already !== '' && stripos($already, 'noindex') !== false && stripos($meta['robots'], 'noindex') === false) {
+                return;
+            }
+
             if (!headers_sent()) {
                 header('X-Robots-Tag: ' . $meta['robots'], true);
             }

@@ -1,0 +1,66 @@
+User-agent: *
+Allow: /
+
+# службові теки
+Disallow: /hp_panel/
+Disallow: /system/
+Disallow: /storage/
+
+# технічні GET-хвости (ЧПУ-версії лишаються відкритими)
+Disallow: /*?sort=
+Disallow: /*&sort=
+Disallow: /*?order=
+Disallow: /*&order=
+Disallow: /*?limit=
+Disallow: /*&limit=
+Disallow: /*?search=
+Disallow: /*&search=
+Disallow: /*?filter_name=
+Disallow: /*&filter_name=
+Disallow: /*?filter_sub_category=
+Disallow: /*&filter_sub_category=
+Disallow: /*?filter_description=
+Disallow: /*&filter_description=
+Disallow: /*?tracking=
+Disallow: /*&tracking=
+
+# Кабінет, кошик, оформлення й пошук закриті метатегом noindex у самих
+# сторінках — тут їх НЕ забороняємо: заборонений у robots.txt URL Google не
+# завантажує, отже й noindex не бачить, і сторінка може осісти в індексі
+# без опису. Заборона лишається тільки на нечитабельні index.php?route=.
+Disallow: /index.php?route=account/
+Disallow: /index.php?route=checkout/
+Disallow: /index.php?route=product/search
+
+# AI-пошук: пускаємо, це джерело трафіку.
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-User
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Perplexity-User
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+Sitemap: https://hydrophob.net.ua/sitemap.xml

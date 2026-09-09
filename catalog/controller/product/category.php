@@ -490,11 +490,33 @@ class ControllerProductCategory extends Controller {
 
 			$data['results'] = sprintf($this->language->get('text_pagination'), ($product_total) ? (($page - 1) * $limit) + 1 : 0, ((($page - 1) * $limit) > ($product_total - $limit)) ? $product_total : ((($page - 1) * $limit) + $limit), $product_total, ceil($product_total / $limit));
 
-			// http://googlewebmastercentral.blogspot.com/2011/09/pagination-with-relnext-and-relprev.html
-			if ($page == 1) {
-			    $this->document->addLink($this->url->link('product/category', 'path=' . $category_info['category_id']), 'canonical');
-			} else {
-				$this->document->addLink($this->url->link('product/category', 'path=' . $category_info['category_id'] . '&page='. $page), 'canonical');
+			// Canonical-політика фільтрів (єдина для всіх магазинів Hydrophob):
+			//  • без фільтра         — self-canonical на категорію;
+			//  • рівно один фільтр   — сторінка самостійна, self-canonical, індексується;
+			//  • два і більше        — комбінація не має пошукового попиту:
+			//                          noindex, follow + canonical на чисту категорію.
+			// Пагінація лишається як була: canonical з page + rel prev/next.
+			$filter_ids = array_values(array_filter(array_map('intval', explode(',', (string)$filter))));
+			$filter_count = count($filter_ids);
+
+			$canonical_query = 'path=' . $category_info['category_id'];
+
+			if ($filter_count === 1) {
+				$canonical_query .= '&filter=' . implode(',', $filter_ids);
+			}
+
+			if ($page > 1) {
+				$canonical_query .= '&page=' . $page;
+			}
+
+			$this->document->addLink($this->url->link('product/category', $canonical_query), 'canonical');
+
+			if ($filter_count > 1) {
+				$this->registry->set('seo_meta_robots', 'noindex, follow');
+
+				if (!headers_sent()) {
+					header('X-Robots-Tag: noindex, follow', true);
+				}
 			}
 			
 			if ($page > 1) {

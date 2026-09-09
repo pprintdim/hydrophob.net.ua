@@ -858,6 +858,14 @@ class ControllerSettingSetting extends Controller {
 			$data['config_robots'] = $this->config->get('config_robots');
 		}
 
+		// Гейт індексації: те саме поле, що й у Дизайн → СЕО-мета. Тут воно
+		// живе поруч із robots, щоб перед запуском усе закривалось з одного місця.
+		if (isset($this->request->post['config_noindex'])) {
+			$data['config_noindex'] = (int)$this->request->post['config_noindex'];
+		} else {
+			$data['config_noindex'] = (int)$this->config->get('config_noindex');
+		}
+
 		if (isset($this->request->post['config_seo_url'])) {
 			$data['config_seo_url'] = $this->request->post['config_seo_url'];
 		} else {

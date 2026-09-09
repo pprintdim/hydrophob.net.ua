@@ -157,3 +157,9 @@ $_['help_invoice_prefix'] = 'Виберіть префікс Рахунку. П�
 $_['text_brevo'] = 'Brevo (HTTP API)';
 $_['help_brevo'] = 'Відправка листів через Brevo API — обхід заблокованих SMTP-портів на сервері. Відправник береться з «E-Mail магазину».';
 $_['help_brevo_key'] = 'Для Brevo сюди вставляється API-ключ (xkeysib-...).';
+
+// Гейт індексації (дубль поля з Дизайн → СЕО-мета)
+$_['entry_noindex']                  = 'Індексація сайту';
+$_['help_noindex']                   = 'Поки сайт у розробці — «Закрито»: усі сторінки віддають meta robots noindex і заголовок X-Robots-Tag. Перед запуском переключити на «Відкрито» і замінити robots.txt на robots-live.txt.';
+$_['text_noindex_open']              = 'Відкрито для пошуковиків';
+$_['text_noindex_closed']            = 'Закрито (noindex, nofollow)';

@@ -3,6 +3,15 @@ class ControllerErrorNotFound extends Controller {
 	public function index() {
 		$this->load->language('error/not_found');
 
+		// Сторінку 404 не індексуємо: реєстр читає common/header (він
+		// рендериться нижче), заголовок дублює правило для ботів, які
+		// дивляться тільки хедери.
+		$this->registry->set('seo_meta_robots', 'noindex, follow');
+
+		if (!headers_sent()) {
+			header('X-Robots-Tag: noindex, follow', true);
+		}
+
 		$this->document->setTitle($this->language->get('heading_title'));
 
 		$data['breadcrumbs'] = array();

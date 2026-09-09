@@ -208,3 +208,9 @@ $_['error_encryption']               = 'Ключ шифрования долже
 $_['text_brevo'] = 'Brevo (HTTP API)';
 $_['help_brevo'] = 'Отправка писем через Brevo API — обход заблокированных SMTP-портов на сервере. Отправитель берётся из «E-Mail магазина».';
 $_['help_brevo_key'] = 'Для Brevo сюда вставляется API-ключ (xkeysib-...).';
+
+// Гейт индексации (дубль поля из Дизайн → СЕО-мета)
+$_['entry_noindex']                  = 'Индексация сайта';
+$_['help_noindex']                   = 'Пока сайт в разработке — «Закрыто»: все страницы отдают meta robots noindex и заголовок X-Robots-Tag. Перед запуском переключить на «Открыто» и заменить robots.txt на robots-live.txt.';
+$_['text_noindex_open']              = 'Открыто для поисковиков';
+$_['text_noindex_closed']            = 'Закрыто (noindex, nofollow)';

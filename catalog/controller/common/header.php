@@ -38,6 +38,17 @@ class ControllerCommonHeader extends Controller {
 			? (string)$this->registry->get('seo_meta_robots')
 			: '';
 
+		// Індексаційний гейт: поки сайт у розробці, `config_noindex` перекриває
+		// будь-які правила seo_meta і закриває від індексації ВЕСЬ магазин.
+		// Знімається одним перемикачем у Налаштування → Сервер (+ robots.txt).
+		if ($this->config->get('config_noindex')) {
+			$data['meta_robots'] = 'noindex, nofollow';
+
+			if (!headers_sent()) {
+				header('X-Robots-Tag: noindex, nofollow', true);
+			}
+		}
+
 		$data['title'] = $this->document->getTitle();
 
 		$data['base'] = $server;
