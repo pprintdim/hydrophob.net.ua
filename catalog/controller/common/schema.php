@@ -24,9 +24,18 @@ class ControllerCommonSchema extends Controller {
 			$organisation['logo'] = $store . 'image/' . $this->config->get('config_logo');
 		}
 
-		// офіційні профілі бренду: так Google зводить сайт і сторінки
-		// в соцмережах в одну сутність (панель знань)
-		$organisation['sameAs'] = array('https://t.me/Hydrophob1');
+		// Один бренд, кілька офіційних майданчиків: перелік дає пошуковикам
+		// звʼязати їх у одну організацію (решта доменів групи + соцмережі
+		// + профіль на маркетплейсі, який пошук уже знає).
+		$organisation['sameAs'] = array_values(array_filter(array(
+			$this->groupSite('https://hydrophob.net/'),
+			$this->groupSite('https://hydrophob.ua/'),
+			$this->groupSite('https://hydrophob.net.ua/'),
+			$this->groupSite('https://hydrophob.com.ua/'),
+			'https://hydrophob.in.ua/',
+			'https://t.me/Hydrophob1',
+			'https://www.tiktok.com/@hydrophob.ua'
+		)));
 
 		$telephone = trim((string)$this->config->get('config_telephone'));
 
@@ -59,5 +68,12 @@ class ControllerCommonSchema extends Controller {
 		$data['blocks'] = array($organisation, $website);
 
 		return $this->load->view('common/schema', $data);
+	}
+
+	// Сайт групи потрапляє в sameAs лише якщо це не поточний домен.
+	private function groupSite($url) {
+		$store = $this->config->get('config_url') ?: HTTP_SERVER;
+
+		return rtrim($url, '/') === rtrim($store, '/') ? '' : $url;
 	}
 }

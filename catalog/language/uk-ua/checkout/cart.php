@@ -20,6 +20,7 @@ $_['text_trial'] = ': %s; Періодичність: %s %s; Кількість 
 $_['text_recurring'] = ': %s; Періодичність: %s %s';
 $_['text_length'] = 'Кількість платежів: %s';
 $_['text_until_cancelled'] = 'до скасування';
+$_['text_payment_cancel'] = 'до скасування';
 $_['text_recurring_item'] = 'Періодичні платежі';
 $_['text_payment_recurring'] = 'Платіжний профіль';
 $_['text_trial_description'] = ': %s; Періодичність: %d %s; Кількість платежів: %d; Далі, ';

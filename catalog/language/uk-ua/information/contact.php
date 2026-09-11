@@ -9,6 +9,7 @@ $_['text_store'] = 'магазини';
 $_['text_contact'] = 'Контакти';
 $_['text_address'] = 'Адреса';
 $_['text_telephone'] = 'Телефон';
+$_['text_agree'] = 'Я прочитав <a href="%s" class="agree"><b>%s</b></a> і погоджуюся з умовами безпеки та обробки персональних даних <input name="personal" checked required type="checkbox">  ';
 $_['text_fax'] = 'Факс';
 $_['text_open'] = 'Режим роботи';
 $_['text_comment'] = 'Додаткова інформація';

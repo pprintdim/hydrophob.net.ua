@@ -25,6 +25,7 @@ $_['text_payment_recurring'] = 'Платіжний профіль';
 $_['text_trial_description'] = 'Сума: %s; регулярних оплат: %d %s; Кількість платежів: %d, Далі ';
 $_['text_payment_description'] = 'Сума: %s; регулярних оплат: %d %s; Кількість платежів: %d ';
 $_['text_payment_until_canceled_description'] = 'Сума: %s; регулярних оплат: %d %s ; Кількість платежів: до скасування';
+$_['text_payment_cancel'] = 'Сума: %s; періодичність: %d %s; кількість платежів: до скасування';
 $_['text_day'] = 'день';
 $_['text_week'] = 'тижня';
 $_['text_semi_month'] = 'півмісяця';

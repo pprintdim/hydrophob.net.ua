@@ -20,11 +20,12 @@ $_['text_trial']               = 'Стоимость: %s; Периодичнос
 $_['text_recurring']           = 'Стоимость: %s; Периодичность: %s %s';
 $_['text_length']              = ' Кол-во платежей: %s';
 $_['text_payment_cancel']     = 'до отмены';
+$_['text_until_cancelled']     = 'до отмены';
 $_['text_recurring_item']      = 'Периодические платежи';
 $_['text_payment_recurring']   = 'Платежный профиль';
 $_['text_trial_description']   = 'Стоимость: %s; Периодичность: %d %s; Кол-во платежей: %d;  Далее,  ';
 $_['text_payment_description'] = 'Стоимость: %s; Периодичность: %d %s; Кол-во платежей: %d';
-$_['text_payment_cancel']      = 'Стоимость: %s; Периодичность: %d %s; Кол-во платежей: до отмены';
+$_['text_payment_until_canceled_description'] = 'Стоимость: %s; Периодичность: %d %s; Количество платежей: до отмены';
 
 // Column
 $_['column_image']             = 'Изображение';
