@@ -175,18 +175,38 @@
 
 }
 @media (max-width: 767px) {
+    /* Рядок товару в шухляді: фото менше, весь текст одним лівим краєм.
+       Кількість і ціна були центровані, а назва ліворуч — рядок виглядав
+       розсипаним. */
     .busket__item-image {
-        width: 107px;
-        height: 124px;
+        width: 78px;
+        height: 90px;
+        flex: 0 0 78px;
     }
+
     .busket__item-info{
         flex-direction: column;
         align-items: start;
-        gap: 10px;
+        gap: 8px;
+        text-align: left;
     }
+
     .busket__item{
-        padding: 24px 0 14px;
-        align-items: center;
+        padding: 14px 0;
+        gap: 12px;
+        align-items: flex-start;
+    }
+
+    .busket__item-content,
+    .busket__item-bottom{
+        align-items: flex-start;
+        justify-content: flex-start;
+        text-align: left;
+    }
+
+    .busket__item-title{
+        font-size: 14px;
+        line-height: 1.3;
     }
     .busket__top{
         height: auto;
@@ -202,7 +222,7 @@
         margin-top: 8px;
     }
     .busket__item-price{
-        font-size: 20px;
+        font-size: 17px;
     }
     .busket__item-content{
         margin: 0;
@@ -1644,5 +1664,17 @@
 @media (max-width: 767px){
     .catalog__crumbs{
         margin-bottom: 16px;
+    }
+}
+
+/* Сповіщення на телефоні: коли відкрита шухляда кошика, тост стояв рівно
+   поверх кнопки «Оформити замовлення». Піднімаємо його над нижнім блоком. */
+@media (max-width: 767px) {
+    .hp-toast{
+        bottom: 16px;
+    }
+
+    body:has(.busket.active) .hp-toast{
+        bottom: 150px;
     }
 }
