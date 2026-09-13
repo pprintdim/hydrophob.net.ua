@@ -65,8 +65,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const viewedSlider = document.querySelector('.product__viewed-slider');
     if (viewedSlider) {
         new Swiper(viewedSlider, {
-            spaceBetween: 24,
-            slidesPerView: 1.15,   /* один крок з .hm-slider: картка 86% + край наступної */
+            spaceBetween: 12,
+            slidesPerView: 2,   /* дві картки на екран, як у стрічках .hm-slider */
             navigation: {
                 nextEl: '.product__viewed-next',
                 prevEl: '.product__viewed-prev',
@@ -81,8 +81,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const relatedSlider = document.querySelector('.product__related-slider');
     if (relatedSlider) {
         new Swiper(relatedSlider, {
-            spaceBetween: 24,
-            slidesPerView: 1.15,   /* один крок з .hm-slider: картка 86% + край наступної */
+            spaceBetween: 12,
+            slidesPerView: 2,   /* дві картки на екран, як у стрічках .hm-slider */
             navigation: {
                 nextEl: '.product__related-next',
                 prevEl: '.product__related-prev',
@@ -97,8 +97,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const gallerySlider = document.querySelector('.product__gallery-slider');
     if (gallerySlider) {
         new Swiper(gallerySlider, {
-            spaceBetween: 16,
-            slidesPerView: 1.4,
+            spaceBetween: 12,
+            slidesPerView: 2,
             mousewheel: {
                 forceToAxis: true,
             },

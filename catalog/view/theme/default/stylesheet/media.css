@@ -446,9 +446,58 @@
         font-size: 20px;
         background-size: 25px;
     }
+    /* Дві картки в ряд у каталозі й дві на екран у стрічках, як в інших
+       проєктах групи. Вміст плитки стиснутий під ширину ~173px, інакше
+       картка виходить удвічі вищою за себе. */
     .catalog__content {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
     }
+
+    .product__item-content {
+        padding: 10px;
+        min-height: 0;
+    }
+
+    .product__item-title h3 {
+        font-size: 13px;
+        -webkit-line-clamp: 2;
+    }
+
+    .product__item-title h3 span {
+        font-size: 11px;
+    }
+
+    .product__item-price {
+        margin-top: 6px;
+        font-size: 15px;
+    }
+
+    .product__item-rating {
+        transform: scale(.85);
+        transform-origin: left center;
+    }
+
+    .product__item-add {
+        height: 40px;
+        margin-top: 6px;
+        padding: 0 8px;
+        gap: 6px;
+        font-size: 11px;
+        letter-spacing: 0;
+        white-space: nowrap;
+    }
+
+    /* вміст плитки тягнеться донизу, щоб кнопки в ряду стояли на одній лінії
+       навіть коли в сусіда немає рейтингу */
+    .catalog__content .product__item-content {
+        justify-content: space-between;
+    }
+
+    .catalog__content .product__item-add {
+        margin-top: auto;
+    }
+
     .catalog__founded{
         margin-top: 30px;
     }
@@ -1030,8 +1079,14 @@
     .hm-sec{
         padding-top: 40px;
     }
+    /* Дві картки на екран, як у решті проєктів групи: 86% показували
+       одну плитку й край наступної. */
+    .hm-slider{
+        gap: 12px;
+    }
+
     .hm-slider .hm-slide{
-        flex-basis: 86%;
+        flex-basis: calc((100% - 12px) / 2);
         min-width: 0;
     }
     .hm-arrow{
