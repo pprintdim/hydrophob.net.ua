@@ -104,6 +104,10 @@ class ControllerCommonWelcome extends Controller {
 
 		$data['powered'] = sprintf($this->language->get('text_powered'), $this->config->get('config_name'), date('Y', time()));
 
+		// Головний URL сайту — саме ця сторінка, тож організація й логотип
+		// мають бути й тут, а не лише на внутрішніх.
+		$data['schema'] = $this->load->controller('common/schema');
+
 		return $this->load->view('common/welcome', $data);
 	}
 }

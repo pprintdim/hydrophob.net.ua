@@ -20,7 +20,11 @@ class ControllerCommonSchema extends Controller {
 			'brand'    => array('@type' => 'Brand', 'name' => 'Hydrophob')
 		);
 
-		if ($this->config->get('config_logo') && is_file(DIR_IMAGE . $this->config->get('config_logo'))) {
+		// Google бере логотип організації лише растром (мін. 112×112), тому
+		// беремо спільний PNG групи, а не svg із налаштувань магазину.
+		if (is_file(DIR_IMAGE . 'catalog/logo.png')) {
+			$organisation['logo'] = $store . 'image/catalog/logo.png';
+		} elseif ($this->config->get('config_logo') && is_file(DIR_IMAGE . $this->config->get('config_logo'))) {
 			$organisation['logo'] = $store . 'image/' . $this->config->get('config_logo');
 		}
 
