@@ -11,11 +11,27 @@ class ControllerExtensionModuleGroupIdentity extends Controller {
 	public function export() {
 		$this->load->library('group');
 
+		// Apache без спеціальної директиви не віддає PHP заголовок Authorization,
+		// тому CRM шле токен ще й у власному заголовку X-Group-Token.
 		$token = '';
 
-		if (isset($this->request->server['HTTP_AUTHORIZATION']) && stripos($this->request->server['HTTP_AUTHORIZATION'], 'Bearer ') === 0) {
-			$token = trim(substr($this->request->server['HTTP_AUTHORIZATION'], 7));
-		} elseif (isset($this->request->get['token'])) {
+		foreach (array('HTTP_X_GROUP_TOKEN', 'HTTP_AUTHORIZATION', 'REDIRECT_HTTP_AUTHORIZATION') as $key) {
+			if (!empty($this->request->server[$key])) {
+				$token = preg_replace('/^Bearer\s+/i', '', trim($this->request->server[$key]));
+				break;
+			}
+		}
+
+		if ($token === '' && function_exists('getallheaders')) {
+			foreach (getallheaders() as $name => $value) {
+				if (in_array(strtolower($name), array('x-group-token', 'authorization'))) {
+					$token = preg_replace('/^Bearer\s+/i', '', trim($value));
+					break;
+				}
+			}
+		}
+
+		if ($token === '' && isset($this->request->get['token'])) {
 			$token = (string)$this->request->get['token'];
 		}
 
