@@ -852,13 +852,23 @@
         flex-shrink: 0;
         opacity: .7;
     }
+    /* Мови й валюта вирівняні ліворуч, як решта пунктів меню: посилання
+       успадковували розтягування на всю ширину, тому UA і RU роз'їжджались
+       по краях, а валюта висіла сама по центру. */
     .header__menu-lang{
         display: flex;
         align-items: center;
-        justify-content: center;
-        gap: 24px;
-        padding: 18px 4px;
+        justify-content: flex-start;
+        gap: 18px;
+        padding: 16px 4px;
         font-size: 15px;
+    }
+
+    .header__menu-lang a,
+    .header__menu-lang .language-select{
+        flex: 0 0 auto;
+        width: auto;
+        padding: 0;
     }
     .header__menu-lang span{
         opacity: .5;
@@ -1603,7 +1613,13 @@
 /* у бургер-меню валюта показується випадашкою по центру рядка */
 @media (max-width: 999px){
     .header__menu-currency{
-        justify-content: center;
+        justify-content: flex-start;
+    }
+
+    .header__menu-currency .header__currency,
+    .header__menu-currency form,
+    .header__menu-currency > *{
+        margin: 0;
     }
     .header__menu-currency .header__currency{
         display: inline-block;
