@@ -89,6 +89,9 @@ class ControllerAccountOrder extends Controller {
 		$data['footer'] = $this->load->controller('common/footer');
 		$data['header'] = $this->load->controller('common/header');
 
+		// замовлення цієї ж людини в інших магазинах групи Hydrophob
+		$data['group_orders'] = $this->load->controller('extension/module/group_identity/orders');
+
 		$this->response->setOutput($this->load->view('account/order_list', $data));
 	}
 

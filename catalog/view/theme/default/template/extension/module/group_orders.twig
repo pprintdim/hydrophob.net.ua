@@ -1,0 +1,28 @@
+<div class="order-group">
+    <h2 class="order-group__title">{{ heading_group_orders }}</h2>
+    <p class="order-group__intro">{{ text_group_intro }}</p>
+    <div class="order-list order-list--group">
+        {% for order in orders %}
+        <div class="order order--group">
+            <div class="order__row order__row--static">
+                <span class="order__col order__col--site">
+                    <span class="order-group__badge"{% if order.badge_color %} style="--badge: {{ order.badge_color }}"{% endif %}>{{ order.site_name }}</span>
+                </span>
+                <span class="order__col order__col--id">
+                    <span class="order__label">№</span>
+                    <span class="order__value">{{ order.order_id }}</span>
+                </span>
+                <span class="order__col">
+                    <span class="order__label">{{ order.date_added }}</span>
+                    <span class="order__value">{{ text_group_items|format(order.items) }}</span>
+                </span>
+                <span class="order__col">
+                    <span class="order__value">{{ order.total }}</span>
+                </span>
+                <span class="order__status">{{ order.status }}</span>
+                {% if order.href %}<a class="order__open" href="{{ order.href }}" target="_blank" rel="noopener">{{ text_group_open }} ↗</a>{% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>

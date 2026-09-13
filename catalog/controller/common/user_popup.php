@@ -153,6 +153,22 @@ class ControllerCommonUserPopup extends Controller {
 		if (!$json) {
 			$this->load->model('account/customer');
 
+			// Спільна база групи Hydrophob: якщо людину вже знають в іншому
+			// магазині, підтягуємо імʼя й телефон, яких вона тут не вводила.
+			$this->load->library('group');
+
+			if ($this->group->enabled() && isset($otp['data']) && is_array($otp['data'])) {
+				$group_profile = $this->group->resolve($email, isset($otp['data']['telephone']) ? $otp['data']['telephone'] : '');
+
+				if ($group_profile) {
+					foreach (array('firstname', 'lastname', 'telephone') as $field) {
+						if (empty($otp['data'][$field]) && !empty($group_profile[$field])) {
+							$otp['data'][$field] = $group_profile[$field];
+						}
+					}
+				}
+			}
+
 			if ($otp['type'] == 'checkout' && !$this->model_account_customer->getTotalCustomersByEmail($email)) {
 				$this->model_account_customer->addCustomer(array(
 					'customer_group_id' => (int)$this->config->get('config_customer_group_id'),
@@ -197,6 +213,37 @@ class ControllerCommonUserPopup extends Controller {
 
 			if (!$json && !isset($json['success'])) {
 				$this->customer->login($email, '', true);
+
+				// Привʼязка до єдиного профілю групи (згода — текст під полем коду):
+				// порожні імʼя/телефон і адреси доставки беремо з інших магазинів.
+				$this->load->library('group');
+
+				if ($this->group->enabled()) {
+					$group_profile = $this->group->link($this->customer->getId(), array(
+						'email'     => $this->customer->getEmail(),
+						'telephone' => $this->customer->getTelephone(),
+						'firstname' => $this->customer->getFirstName(),
+						'lastname'  => $this->customer->getLastName()
+					), true);
+
+					if ($group_profile) {
+						$fill = array();
+
+						foreach (array('firstname' => 'getFirstName', 'lastname' => 'getLastName', 'telephone' => 'getTelephone') as $field => $getter) {
+							if (!$this->customer->$getter() && !empty($group_profile[$field])) {
+								$fill[] = "`" . $field . "` = '" . $this->db->escape($group_profile[$field]) . "'";
+							}
+						}
+
+						if ($fill) {
+							$this->db->query("UPDATE `" . DB_PREFIX . "customer` SET " . implode(', ', $fill) . " WHERE customer_id = '" . (int)$this->customer->getId() . "'");
+						}
+
+						if (!empty($group_profile['addresses'])) {
+							$this->group->importAddresses($this->customer->getId(), $group_profile['addresses']);
+						}
+					}
+				}
 
 				unset($this->session->data['otp']);
 				unset($this->session->data['guest']);
