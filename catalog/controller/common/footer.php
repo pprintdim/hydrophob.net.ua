@@ -36,7 +36,7 @@ $data['store_phone'] = $this->config->get('config_telephone');
 		// Тексти OTP-модалки (спільна для всього сайту)
 		$this->load->language('common/user_popup');
 		foreach (array('otp_title', 'otp_close', 'otp_sent', 'otp_digit', 'otp_confirm',
-			'otp_resend', 'otp_sending', 'otp_resend_in', 'otp_error_generic', 'otp_error_incomplete', 'otp_need_email') as $otp_key) {
+			'otp_resend', 'otp_sending', 'otp_resend_in', 'otp_error_generic', 'otp_error_incomplete', 'otp_need_email', 'otp_group_consent') as $otp_key) {
 			$data[$otp_key] = $this->language->get($otp_key);
 		}
 

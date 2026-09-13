@@ -6710,3 +6710,16 @@ main.main > .hm-light > section:last-of-type{
     top: 50%;
     transform: translateY(-50%);
 }
+
+
+/* ===== Спільна база групи: плашки замовлень з інших магазинів + згода ===== */
+.order-group { margin-top: 32px; }
+.order-group__title { margin: 0 0 6px; font-size: 20px; font-weight: 800; }
+.order-group__intro { margin: 0 0 14px; font-size: 14px; line-height: 1.5; opacity: .75; }
+.order__row--static { cursor: default; }
+.order__col--site { flex: 0 0 auto; min-width: 140px; }
+.order-group__badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; letter-spacing: .02em; text-transform: uppercase; background: color-mix(in srgb, var(--badge, #1ea7e0) 18%, transparent); color: var(--badge, #1ea7e0); white-space: nowrap; }
+.order-group__badge::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--badge, #1ea7e0); }
+.order__open { margin-left: auto; font-size: 13px; font-weight: 700; text-decoration: none; white-space: nowrap; color: inherit; opacity: .85; }
+.order__open:hover { opacity: 1; text-decoration: underline; }
+.otp-modal__consent { margin: 12px 0 0; font-size: 12px; line-height: 1.45; opacity: .65; }
