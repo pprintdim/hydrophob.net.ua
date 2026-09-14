@@ -23,3 +23,4 @@ deploy.sh
 
 # звіти PageSpeed/Lighthouse — робочі файли, на сайті не потрібні
 /pagespeed/
+.claude/
