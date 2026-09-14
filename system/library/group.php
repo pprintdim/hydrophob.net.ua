@@ -32,6 +32,110 @@ class Group {
 		return $this->url !== '' && $this->token !== '' && function_exists('curl_init');
 	}
 
+	/**
+	 * Телефон одним правилом на всі форми магазину і на CRM: український
+	 * мобільний → +380XXXXXXXXX. Не схоже на телефон — порожній рядок,
+	 * тож перевірка форми бачить «телефону немає», а не сміття.
+	 */
+	public static function normalizePhone($phone) {
+		$digits = preg_replace('/\D+/', '', (string)$phone);
+
+		if ($digits === '') {
+			return '';
+		}
+
+		if (strlen($digits) == 10 && $digits[0] === '0') {
+			return '+38' . $digits;
+		}
+
+		if (strlen($digits) == 11 && strpos($digits, '80') === 0) {
+			return '+3' . $digits;
+		}
+
+		if (strlen($digits) == 12 && strpos($digits, '380') === 0) {
+			return '+' . $digits;
+		}
+
+		if (strlen($digits) == 9) {
+			return '+380' . $digits;
+		}
+
+		return strlen($digits) >= 10 ? '+' . $digits : '';
+	}
+
+	/**
+	 * Дозаповнити порожні поля форми (firstname, lastname, telephone, email)
+	 * тим, що вже відомо: спершу з профілю залогіненого покупця, потім зі
+	 * спільної бази групи за поштою/телефоном. Перевірки форм ідуть уже по
+	 * дозаповнених значеннях, тому відоме поле не дає помилки «обовʼязкове».
+	 */
+	public function complete(array $fields, $email = '', $phone = '') {
+		$customer = $this->registry->get('customer');
+
+		$fields += array('firstname' => '', 'lastname' => '', 'telephone' => '', 'email' => '');
+
+		if (isset($fields['telephone'])) {
+			$normalized = self::normalizePhone($fields['telephone']);
+
+			if ($normalized !== '') {
+				$fields['telephone'] = $normalized;
+			}
+		}
+
+		if ($customer && $customer->isLogged()) {
+			foreach (array('firstname' => 'getFirstName', 'lastname' => 'getLastName', 'telephone' => 'getTelephone', 'email' => 'getEmail') as $field => $getter) {
+				if (trim((string)$fields[$field]) === '' && $customer->$getter()) {
+					$fields[$field] = $field === 'telephone' ? (self::normalizePhone($customer->$getter()) ?: $customer->$getter()) : $customer->$getter();
+				}
+			}
+		}
+
+		$email = $email ?: $fields['email'];
+		$phone = $phone ?: $fields['telephone'];
+
+		if ($this->enabled() && ($email || $phone) && (trim((string)$fields['firstname']) === '' || trim((string)$fields['lastname']) === '' || trim((string)$fields['telephone']) === '')) {
+			$profile = $this->resolve($email, $phone);
+
+			if ($profile) {
+				foreach (array('firstname', 'lastname', 'telephone') as $field) {
+					if (trim((string)$fields[$field]) === '' && !empty($profile[$field])) {
+						$fields[$field] = $profile[$field];
+					}
+				}
+			}
+		}
+
+		return $fields;
+	}
+
+	/** Стан єдиного профілю для кабінету: згода, у яких магазинах є акаунти. */
+	public function status($customer_id) {
+		return $this->cached('status', $customer_id, function () use ($customer_id) {
+			$result = $this->request('GET', '/status?customer_id=' . (int)$customer_id);
+
+			return (is_array($result) && !empty($result['data'])) ? $result['data'] : array('linked' => false, 'consent' => false, 'sites' => array());
+		});
+	}
+
+	/** Профіль змінили в кабінеті — оновити в спільній базі, згоду не чіпаючи. */
+	public function pushProfile($customer_id, array $customer) {
+		if (!$this->enabled()) {
+			return false;
+		}
+
+		$result = $this->request('POST', '/link', array(
+			'customer_id' => (int)$customer_id,
+			'email'       => isset($customer['email']) ? (string)$customer['email'] : '',
+			'telephone'   => isset($customer['telephone']) ? (string)$customer['telephone'] : '',
+			'firstname'   => isset($customer['firstname']) ? (string)$customer['firstname'] : '',
+			'lastname'    => isset($customer['lastname']) ? (string)$customer['lastname'] : ''
+		));
+
+		$this->forget($customer_id);
+
+		return (bool)$result;
+	}
+
 	/** Чи знає група цю людину. Повертає профіль або false. */
 	public function resolve($email, $phone = '') {
 		$result = $this->request('POST', '/resolve', array('email' => (string)$email, 'phone' => (string)$phone));
@@ -216,7 +320,7 @@ class Group {
 	private function forget($customer_id) {
 		$session = $this->registry->get('session');
 
-		unset($session->data['group_cache']['orders:' . (int)$customer_id], $session->data['group_cache']['addresses:' . (int)$customer_id]);
+		unset($session->data['group_cache']['orders:' . (int)$customer_id], $session->data['group_cache']['addresses:' . (int)$customer_id], $session->data['group_cache']['status:' . (int)$customer_id]);
 	}
 
 	private function request($method, $path, array $body = array()) {

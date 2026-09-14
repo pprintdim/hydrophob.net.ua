@@ -28,6 +28,16 @@ class ControllerCommonUserPopup extends Controller {
 			$lastname = isset($this->request->post['lastname']) ? trim($this->request->post['lastname']) : '';
 			$telephone = isset($this->request->post['telephone']) ? trim($this->request->post['telephone']) : '';
 
+			// Дозаповнення з профілю групи / залогіненого покупця: відоме поле
+			// не має давати помилку «обовʼязкове», телефон — одним правилом.
+			$this->load->library('group');
+
+			$completed = $this->group->complete(array('firstname' => $firstname, 'lastname' => $lastname, 'telephone' => $telephone), $email);
+
+			$firstname = $completed['firstname'];
+			$lastname = $completed['lastname'];
+			$telephone = $completed['telephone'];
+
 			if ((utf8_strlen($firstname) < 1) || (utf8_strlen($firstname) > 32)) {
 				$json['error']['firstname'] = $this->language->get('error_firstname');
 			}
@@ -69,6 +79,9 @@ class ControllerCommonUserPopup extends Controller {
 				'lastname'  => isset($this->request->post['lastname']) ? trim($this->request->post['lastname']) : '',
 				'telephone' => isset($this->request->post['telephone']) ? trim($this->request->post['telephone']) : ''
 			);
+
+			$this->load->library('group');
+			$data = $this->group->complete($data, $email);
 		}
 
 		// Код на цю пошту вже надіслано й ще дійсний — новий лист не шлемо, але

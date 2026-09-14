@@ -1,0 +1,36 @@
+<div class="account__panel account-group{% if consent %} is-on{% endif %}" data-group-panel data-action="{{ action }}" data-text-on="{{ text_group_on }}" data-text-off="{{ text_group_off }}" data-text-saved="{{ text_group_saved }}" data-text-error="{{ text_group_error }}">
+    <h2 class="account__legend">{{ heading_group_profile }}</h2>
+    <p class="account-group__text">{{ text_group_profile }}</p>
+    <label class="account-group__switch">
+        <input type="checkbox" data-group-consent{% if consent %} checked{% endif %}>
+        <span class="account-group__track" aria-hidden="true"></span>
+        <span class="account-group__label">{{ entry_group_consent }} <small data-group-state>{% if consent %}{{ text_group_on }}{% else %}{{ text_group_off }}{% endif %}</small></span>
+    </label>
+    {% if sites %}
+    <p class="account-group__sites">{{ text_group_sites }}
+        {% for site in sites %}<span class="order-group__badge{% if site.own %} order-group__badge--own{% endif %}">{{ site.name }}</span>{% endfor %}
+    </p>
+    {% endif %}
+    <p class="account-group__note" data-group-note hidden></p>
+</div>
+<script>
+(function () {
+    var box = document.querySelector("[data-group-panel]"); if (!box) return;
+    var input = box.querySelector("[data-group-consent]"), state = box.querySelector("[data-group-state]"), note = box.querySelector("[data-group-note]");
+    var onText = box.getAttribute("data-text-on"), offText = box.getAttribute("data-text-off");
+    input.addEventListener("change", function () {
+        var on = input.checked; input.disabled = true; note.hidden = true;
+        var fd = new FormData(); fd.append("consent", on ? "1" : "0");
+        fetch(box.getAttribute("data-action"), { method: "POST", body: fd, credentials: "same-origin", headers: { "X-Requested-With": "XMLHttpRequest" } })
+            .then(function (r) { return r.json(); })
+            .then(function (json) {
+                if (!json.success) { throw new Error("fail"); }
+                state.textContent = on ? onText : offText; box.classList.toggle("is-on", on);
+                note.textContent = box.getAttribute("data-text-saved"); note.hidden = false;
+                setTimeout(function () { note.hidden = true; }, 2500);
+            })
+            .catch(function () { input.checked = !on; note.textContent = box.getAttribute("data-text-error"); note.hidden = false; })
+            .then(function () { input.disabled = false; });
+    });
+})();
+</script>

@@ -166,6 +166,40 @@ class ControllerExtensionModuleGroupIdentity extends Controller {
 		return $this->load->view('extension/module/group_orders', $data);
 	}
 
+	/** Блок «Єдиний профіль Hydrophob» у кабінеті: стан і перемикач згоди. */
+	public function panel() {
+		if (!$this->customer->isLogged()) {
+			return '';
+		}
+
+		$this->load->library('group');
+
+		if (!$this->group->enabled()) {
+			return '';
+		}
+
+		$this->load->language('extension/module/group_identity');
+
+		$status = $this->group->status($this->customer->getId());
+
+		$data['consent'] = !empty($status['consent']);
+		$data['sites'] = array();
+
+		if (!empty($status['sites']) && is_array($status['sites'])) {
+			foreach ($status['sites'] as $site) {
+				$data['sites'][] = array(
+					'name'   => $site['name'],
+					'domain' => $site['domain'],
+					'own'    => !empty($site['own'])
+				);
+			}
+		}
+
+		$data['action'] = $this->url->link('extension/module/group_identity/consent', '', true);
+
+		return $this->load->view('extension/module/group_panel', $data);
+	}
+
 	/** Перемикач згоди на єдиний профіль групи (кабінет). */
 	public function consent() {
 		$json = array();

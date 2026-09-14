@@ -23,6 +23,10 @@ class ControllerAccountEdit extends Controller {
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
 			$this->model_account_customer->editCustomer($this->customer->getId(), $this->request->post);
 
+			// оновлений профіль — у спільну базу групи (згоду не чіпаємо)
+			$this->load->library('group');
+			$this->group->pushProfile($this->customer->getId(), $this->request->post);
+
 			$this->session->data['success'] = $this->language->get('text_success');
 
 			$this->response->redirect($this->url->link('account/account', '', true));
@@ -186,6 +190,10 @@ class ControllerAccountEdit extends Controller {
 		if (($this->customer->getEmail() != $this->request->post['email']) && $this->model_account_customer->getTotalCustomersByEmail($this->request->post['email'])) {
 			$this->error['warning'] = $this->language->get('error_exists');
 		}
+
+		// телефон одним правилом групи; нерозпізнаний лишаємо як є — далі його відсіє перевірка
+		$this->load->library('group');
+		$this->request->post['telephone'] = Group::normalizePhone(isset($this->request->post['telephone']) ? $this->request->post['telephone'] : '') ?: (isset($this->request->post['telephone']) ? trim($this->request->post['telephone']) : '');
 
 		if ((utf8_strlen($this->request->post['telephone']) < 3) || (utf8_strlen($this->request->post['telephone']) > 32)) {
 			$this->error['telephone'] = $this->language->get('error_telephone');

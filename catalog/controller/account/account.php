@@ -57,6 +57,9 @@ $this->load->language('account/edit'); // entry_firstname/lastname/email/telepho
 		$data['footer'] = $this->load->controller('common/footer');
 		$data['header'] = $this->load->controller('common/header');
 		
+		// блок «Єдиний профіль Hydrophob»: стан і перемикач згоди
+		$data['group_panel'] = $this->load->controller('extension/module/group_identity/panel');
+
 		$this->response->setOutput($this->load->view('account/account', $data));
 	}
 
@@ -82,6 +85,9 @@ $this->load->language('account/edit'); // entry_firstname/lastname/email/telepho
 			$lastname  = isset($this->request->post['lastname']) ? trim($this->request->post['lastname']) : '';
 			$telephone = isset($this->request->post['telephone']) ? trim($this->request->post['telephone']) : '';
 
+			$this->load->library('group');
+			$telephone = Group::normalizePhone($telephone) ?: $telephone;
+
 			if ((utf8_strlen($firstname) < 1) || (utf8_strlen($firstname) > 32)) {
 				$json['error']['firstname'] = $this->language->get('error_firstname');
 			}
@@ -106,6 +112,9 @@ $this->load->language('account/edit'); // entry_firstname/lastname/email/telepho
 			));
 
 			$this->model_account_customer->editNewsletter(!empty($this->request->post['newsletter']) ? 1 : 0);
+
+			// оновлений профіль — у спільну базу групи (згоду не чіпаємо)
+			$this->group->pushProfile($this->customer->getId(), array('email' => $this->customer->getEmail(), 'telephone' => $telephone, 'firstname' => $firstname, 'lastname' => $lastname));
 
 			$json['success'] = true;
 		}

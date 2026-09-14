@@ -24,6 +24,15 @@ class ControllerCheckoutQuick extends Controller {
 		$email      = isset($post['email']) ? trim($post['email']) : '';
 		$comment    = isset($post['comment']) ? trim($post['comment']) : '';
 
+		// дозаповнення з профілю групи / залогіненого покупця; телефон одним правилом
+		$this->load->library('group');
+
+		$completed = $this->group->complete(array('firstname' => $firstname, 'telephone' => $telephone, 'email' => $email));
+
+		$firstname = $completed['firstname'];
+		$telephone = $completed['telephone'];
+		$email     = $completed['email'];
+
 		// приховане поле-пастка: люди його не заповнюють, боти — так
 		if (!empty($post['company_website'])) {
 			$json['error']['warning'] = $this->language->get('error_request');
