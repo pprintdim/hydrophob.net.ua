@@ -179,10 +179,12 @@ document.addEventListener('DOMContentLoaded', function () {
         var narrow = window.matchMedia && window.matchMedia('(max-width: 900px)').matches;
         var slow = conn.saveData || /2g/.test(conn.effectiveType || '');
 
-        if (narrow || slow) return;
-
+        if (slow) return;
+        // на телефоні гріємо лише перше відео головної — саме воно грає на першому екрані
+        var list = {{ prefetch|json_encode|raw }};
+        if (narrow) list = list.slice(0, 1);
         setTimeout(function () {
-            {{ prefetch|json_encode|raw }}.forEach(function (url) {
+            list.forEach(function (url) {
                 try { fetch(url, { priority: 'low' }).catch(function () {}); } catch (e) {}
             });
         }, 2500);

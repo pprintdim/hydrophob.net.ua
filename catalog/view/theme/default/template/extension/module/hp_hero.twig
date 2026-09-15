@@ -52,11 +52,20 @@
         if (!src) { cb(null); return; }
         if (loader) loader.hidden = false;
         v = document.createElement('video');
-        v.src = src;
+        /* iOS/Android дозволяють автоплей лише беззвучному inline-відео, і атрибути
+           мають стояти ДО вставки в DOM і до load() — інакше play() відхиляється */
+        v.setAttribute('muted', '');
+        v.setAttribute('playsinline', '');
+        v.setAttribute('webkit-playsinline', '');
+        v.setAttribute('autoplay', '');
+        v.defaultMuted = true;
         v.muted = true;
         v.playsInline = true;
-        v.setAttribute('playsinline', '');
         v.preload = 'auto';
+        if (slide.querySelector('.hero__video img')) {
+            v.setAttribute('poster', slide.querySelector('.hero__video img').getAttribute('src') || '');
+        }
+        v.src = src;
         v.addEventListener('canplay', function onReady() {
             v.removeEventListener('canplay', onReady);
             if (loader) loader.hidden = true;
@@ -141,6 +150,26 @@
     if (first) {
         first.onended = function () { show(1); };
         applySound(first, slides[0]);
+    }
+
+    /* Автоплей на телефоні може не стартувати (режим енергозбереження, економія
+       трафіку, вкладка у фоні): повторюємо play() для активного відео при
+       першому дотику/скролі і при поверненні на вкладку. */
+    function kickActive() {
+        var v = videoOf(slides[current]);
+        if (v && v.paused && !v.ended) {
+            var p = v.play();
+            if (p && p.catch) p.catch(function () {});
+        }
+    }
+    ['touchstart', 'touchend', 'scroll', 'click', 'keydown'].forEach(function (evt) {
+        window.addEventListener(evt, kickActive, { passive: true });
+    });
+    document.addEventListener('visibilitychange', function () { if (!document.hidden) kickActive(); });
+    window.addEventListener('pageshow', kickActive);
+    if (first) {
+        var fp = first.play();
+        if (fp && fp.catch) fp.catch(function () {});
     }
     animateSlideText(slides[0]);
 
