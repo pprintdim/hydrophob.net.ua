@@ -67,9 +67,10 @@ class ControllerCommonHome extends Controller {
 		$first = isset($parts[2]) ? $parts[2] : 0;
 
 		// стара мітка першого візиту (hydro_visited) — перший показ уже був
-		if ($shows === 0 && isset($this->request->cookie['hydro_visited'])) {
+		if ($shows === 0 && $first === 0 && isset($this->request->cookie['hydro_visited'])) {
 			$shows = 1;
 			$last = $now;
+			$first = $now;
 		}
 
 		if ($first === 0 || $now - $first > $month) {
