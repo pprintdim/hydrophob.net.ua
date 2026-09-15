@@ -6761,5 +6761,17 @@ main.main > .hm-light > section:last-of-type{
 .footer__info .footer__socials svg { width: 28px; height: 28px; }
 
 /* ===== Головна, «Питання та відповіді»: повітря знизу, щоб SEO-текст не прилипав ===== */
-.hm-faq-sec { padding-bottom: 72px; }
-@media (max-width: 767px) { .hm-faq-sec { padding-bottom: 48px; } }
+/* «Питання та відповіді» на головній: власне повітря зверху й знизу */
+.hm-faq-sec { padding-top: 96px; padding-bottom: 96px; }
+
+
+/* ===== Leaflet: компактна атрибуція карти (умова CARTO/OSM) ===== */
+.leaflet-control-attribution {
+    padding: 1px 6px !important;
+    font-size: 9px !important;
+    line-height: 1.5 !important;
+    background: rgba(255, 255, 255, .72) !important;
+    color: #444 !important;
+}
+.leaflet-control-attribution a { color: #444 !important; text-decoration: none; }
+.leaflet-control-attribution a:hover { text-decoration: underline; }

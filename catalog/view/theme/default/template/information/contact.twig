@@ -130,8 +130,14 @@ document.addEventListener('DOMContentLoaded', function () {
     window.hpWhenVisible(el, function () { window.hpLeaflet(draw); });
 
     function draw() {
-    var map = L.map(el, { scrollWheelZoom: false, attributionControl: false }).setView([lat, lng], 16);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
+    var map = L.map(el, { scrollWheelZoom: false, attributionControl: true }).setView([lat, lng], 16);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        maxZoom: 19,
+        subdomains: 'abcd',
+        /* публічні тайли openstreetmap.org заборонені політикою для продакшн-сайтів
+           і блокуються («Tile access blocked») — беремо CARTO, атрибуція обовʼязкова */
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener">CARTO</a>'
+    }).addTo(map);
 
     var gmaps = 'https://www.google.com/maps/search/?api=1&query=' + lat + ',' + lng;
 
