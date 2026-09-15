@@ -6748,3 +6748,18 @@ main.main > .hm-light > section:last-of-type{
     object-fit: contain;
     object-position: center;
 }
+
+
+/* ===== Футер: без колонки «Ми у соцмережах» — три колонки посилань, ширша карта,
+   іконки соцмереж під контактами ===== */
+@media (min-width: 992px) {
+    .footer__content { grid-template-columns: repeat(3, minmax(120px, 1fr)); max-width: 600px; }
+    .footer__map { width: 340px; }
+    .footer__box--brand { gap: 36px; }
+}
+.footer__info .footer__socials { margin-top: 4px; }
+.footer__info .footer__socials svg { width: 28px; height: 28px; }
+
+/* ===== Головна, «Питання та відповіді»: повітря знизу, щоб SEO-текст не прилипав ===== */
+.hm-faq-sec { padding-bottom: 72px; }
+@media (max-width: 767px) { .hm-faq-sec { padding-bottom: 48px; } }

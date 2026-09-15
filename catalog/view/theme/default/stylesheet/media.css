@@ -1678,3 +1678,9 @@
         bottom: 150px;
     }
 }
+
+
+/* FAQ на головній: повітря знизу і на телефоні (media.css вантажиться останнім) */
+@media (max-width: 767px) {
+    .hm-faq-sec { padding-bottom: 48px; }
+}
