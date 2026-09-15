@@ -1682,5 +1682,6 @@
 
 /* SEO-текст під головною: те саме повітря на телефоні (media.css вантажиться останнім) */
 @media (max-width: 767px) {
-    .seo-desc { padding: 56px 0 64px; }
+    .seo-desc,
+    main.main > .seo-desc:has(~ :is(section, div)) { padding: 56px 0 64px; }
 }
