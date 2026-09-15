@@ -74,6 +74,8 @@ gtag('config', {{ ga4_id|json_encode|raw }});
         </button>
     </section>
 
+    {% if content_top %}<div class="wl-modules">{{ content_top }}</div>{% endif %}
+
     <section class="welcome wl-choose" id="wl-choose">
         <div class="container">
             <p class="welcome__eyebrow">{{ text_choose_eyebrow }}</p>
@@ -119,6 +121,8 @@ gtag('config', {{ ga4_id|json_encode|raw }});
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10"/></svg>
             </a>
         </div>
+
+        {% if content_bottom %}<div class="wl-modules">{{ content_bottom }}</div>{% endif %}
 
         <footer class="wl-footer">
             <nav class="footer__legal">
@@ -350,9 +354,4 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 
 
-<script>
-/* мітка візиту: кука — щоб сервер наступного разу віддав головну одразу, без редіректів */
-document.cookie = 'hydro_visited=1; path=/; max-age=' + (60 * 60 * 24 * 365) + '; SameSite=Lax';
-try { localStorage.setItem('hydro_visited', '1'); } catch (e) {}
-</script>
 </body></html>

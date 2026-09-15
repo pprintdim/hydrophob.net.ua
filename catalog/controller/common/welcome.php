@@ -108,6 +108,20 @@ class ControllerCommonWelcome extends Controller {
 		// мають бути й тут, а не лише на внутрішніх.
 		$data['schema'] = $this->load->controller('common/schema');
 
+		// Модулі макета «Welcome» (Дизайн → Макети, маршрут common/welcome): сторінка
+		// віддається з common/home, тож маршрут для вибору макета підмінюємо на час виклику.
+		$route_backup = isset($this->request->get['route']) ? $this->request->get['route'] : null;
+		$this->request->get['route'] = 'common/welcome';
+
+		$data['content_top'] = $this->load->controller('common/content_top');
+		$data['content_bottom'] = $this->load->controller('common/content_bottom');
+
+		if ($route_backup === null) {
+			unset($this->request->get['route']);
+		} else {
+			$this->request->get['route'] = $route_backup;
+		}
+
 		return $this->load->view('common/welcome', $data);
 	}
 }

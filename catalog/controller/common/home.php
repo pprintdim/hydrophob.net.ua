@@ -1,13 +1,8 @@
 <?php
 class ControllerCommonHome extends Controller {
 	public function index() {
-		// Перший візит (кука ще не стоїть) — віддаємо вітальну сторінку прямо на «/»,
-		// щоб прогріти кеш hero-відео; URL не змінюється, редіректу немає.
-		// Пошуковим ботам кука не ставиться ніколи, тож для них головною
-		// назавжди лишалась би вітальна заглушка — їм одразу віддаємо
-		// справжню головну. Вимірювачі швидкості (PageSpeed/Lighthouse)
-		// лишаються на вітальній: саме її бачить перший відвідувач.
-		if (!isset($this->request->cookie['hydro_visited']) && !$this->isSearchBot()) {
+		// вітальна сторінка з відео — за спільною для групи логікою показів
+		if ($this->shouldShowWelcome()) {
 			$this->response->setOutput($this->load->controller('common/welcome/render'));
 
 			return;
@@ -47,6 +42,60 @@ class ControllerCommonHome extends Controller {
 	 * Пошуковий чи соцмережевий бот? Вимірювачі швидкості (Lighthouse,
 	 * PageSpeed, GTmetrix) сюди НЕ входять — їм показуємо вітальну.
 	 */
+	/**
+	 * Вітальна сторінка: перший візит — завжди; далі протягом місяця (стільки
+	 * живе кука) ще до трьох показів у випадкові моменти при відкритті головної,
+	 * не частіше ніж раз на 6 годин. Пошуковим ботам і вимірювачам швидкості
+	 * вітальну не показуємо ніколи. ?welcome=1 показує примусово (для перевірки).
+	 */
+	private function shouldShowWelcome() {
+		if ($this->isSearchBot()) {
+			return false;
+		}
+
+		if (isset($this->request->get['welcome'])) {
+			return (bool)$this->request->get['welcome'];
+		}
+
+		$now = time();
+		$month = 60 * 60 * 24 * 30;
+		$raw = isset($this->request->cookie['hydro_welcome']) ? (string)$this->request->cookie['hydro_welcome'] : '';
+		$parts = $raw !== '' ? array_map('intval', explode('|', $raw)) : array();
+
+		$shows = isset($parts[0]) ? $parts[0] : 0;
+		$last = isset($parts[1]) ? $parts[1] : 0;
+		$first = isset($parts[2]) ? $parts[2] : 0;
+
+		// стара мітка першого візиту (hydro_visited) — перший показ уже був
+		if ($shows === 0 && isset($this->request->cookie['hydro_visited'])) {
+			$shows = 1;
+			$last = $now;
+		}
+
+		if ($first === 0 || $now - $first > $month) {
+			$first = $now;
+			$shows = 0;
+		}
+
+		$show = false;
+
+		if ($shows === 0) {
+			$show = true;
+		} elseif ($shows < 4 && $now - $last > 6 * 3600 && mt_rand(1, 100) <= 20) {
+			$show = true;
+		}
+
+		if ($show) {
+			$shows++;
+			$last = $now;
+		}
+
+		$secure = isset($this->request->server['HTTPS']) && $this->request->server['HTTPS'] && $this->request->server['HTTPS'] != 'off';
+		setcookie('hydro_welcome', $shows . '|' . $last . '|' . $first, $first + $month, '/', '', $secure, true);
+
+		return $show;
+	}
+
 	private function isSearchBot() {
 		$agent = isset($this->request->server['HTTP_USER_AGENT']) ? strtolower($this->request->server['HTTP_USER_AGENT']) : '';
 
@@ -60,19 +109,6 @@ class ControllerCommonHome extends Controller {
 			}
 		}
 
-		$bots = array(
-			'googlebot', 'adsbot-google', 'mediapartners-google', 'google-inspectiontool',
-			'bingbot', 'bingpreview', 'yandexbot', 'applebot', 'duckduckbot', 'baiduspider',
-			'slurp', 'facebookexternalhit', 'facebookcatalog', 'twitterbot', 'telegrambot',
-			'whatsapp', 'viberbot', 'linkedinbot', 'ahrefsbot', 'semrushbot', 'petalbot'
-		);
-
-		foreach ($bots as $bot) {
-			if (strpos($agent, $bot) !== false) {
-				return true;
-			}
-		}
-
-		return false;
+		return (bool)preg_match('/bot|crawl|spider|slurp|yandex|bingpreview|facebookexternalhit|telegrambot|whatsapp|twitterbot|linkedinbot|pinterest|embedly|quora|applebot|duckduck|semrush|ahrefs|mj12|petalbot|headlesschrome/', $agent);
 	}
 }
