@@ -204,9 +204,9 @@ class ControllerProductCategory extends Controller {
 
 			foreach ($results as $result) {
 				if ($result['image']) {
-					$image = $this->model_tool_image->resize($result['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_product_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_product_height'));
+					$image = $this->model_tool_image->fit($result['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_product_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_product_height'));
 				} else {
-					$image = $this->model_tool_image->resize('placeholder.png', $this->config->get('theme_' . $this->config->get('config_theme') . '_image_product_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_product_height'));
+					$image = $this->model_tool_image->fit('placeholder.png', $this->config->get('theme_' . $this->config->get('config_theme') . '_image_product_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_product_height'));
 				}
 
 				if ($this->customer->isLogged() || !$this->config->get('config_customer_price')) {
@@ -384,8 +384,8 @@ class ControllerProductCategory extends Controller {
 
 			foreach ($popular_results as $popular_item) {
 				$popular_thumb = $popular_item['image']
-					? $this->model_tool_image->resize($popular_item['image'], 200, 200)
-					: $this->model_tool_image->resize('placeholder.png', 200, 200);
+					? $this->model_tool_image->fit($popular_item['image'], 450, 450)
+					: $this->model_tool_image->fit('placeholder.png', 450, 450);
 
 				if ((float)$popular_item['special']) {
 					$popular_price = $this->currency->format($this->tax->calculate($popular_item['special'], $popular_item['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
