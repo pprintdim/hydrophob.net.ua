@@ -122,6 +122,30 @@ class ControllerCommonWelcome extends Controller {
 			$this->request->get['route'] = $route_backup;
 		}
 
+		$data['asset_version'] = self::assetVersion();
+
 		return $this->load->view('common/welcome', $data);
+	}
+
+	/**
+	 * Версія статики: найсвіжіший час зміни css/js теми. Доти версії були зашиті
+	 * руками (?v=20260906n), тож у відвідувача з кешем правки просто не зʼявлялись.
+	 */
+	public static function assetVersion() {
+		static $version = null;
+
+		if ($version !== null) {
+			return $version;
+		}
+
+		$time = 0;
+
+		foreach (array('stylesheet/*.css', 'js/*.js') as $mask) {
+			foreach (glob(DIR_TEMPLATE . 'default/' . $mask) as $file) {
+				$time = max($time, (int)filemtime($file));
+			}
+		}
+
+		return $version = $time ?: date('Ymd');
 	}
 }

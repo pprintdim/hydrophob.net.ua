@@ -198,7 +198,7 @@ window.hpWhenVisible = function (el, cb) {
     });
 })();
 </script>
-<script src="catalog/view/theme/default/js/script.js?v=20260905e" type="text/javascript" defer></script>
+<script src="catalog/view/theme/default/js/script.js?v={{ asset_version }}" type="text/javascript" defer></script>
 <!-- Спільна модалка коду підтвердження: одна на весь сайт, відкривається будь-яким [data-code-trigger] -->
 <div class="otp-modal" data-code-modal hidden role="dialog" aria-modal="true" aria-label="{{ otp_title }}">
     <div class="otp-modal__dialog">
@@ -325,11 +325,11 @@ window.hpReviewText = {
     action: {{ review_action|json_encode|raw }}
 };
 </script>
-<script src="catalog/view/theme/default/js/review-modal.js?v=20260906b" defer></script>
+<script src="catalog/view/theme/default/js/review-modal.js?v={{ asset_version }}" defer></script>
 <script src="catalog/view/theme/default/vendor/intlTelInput.min.js" defer></script>
-<script src="catalog/view/theme/default/js/phone-input.js?v=20260905b" defer></script>
-<script src="catalog/view/theme/default/js/otp.js?v=20260905a" type="text/javascript" defer></script>
-<script src="catalog/view/theme/default/js/hp-form-modal.js?v=20260905a" defer></script>
+<script src="catalog/view/theme/default/js/phone-input.js?v={{ asset_version }}" defer></script>
+<script src="catalog/view/theme/default/js/otp.js?v={{ asset_version }}" type="text/javascript" defer></script>
+<script src="catalog/view/theme/default/js/hp-form-modal.js?v={{ asset_version }}" defer></script>
 
 {# Єдиний попап успіху для всіх форм сайту: розмітка одна, текст підставляє форма #}
 <div class="cdm okm" data-ok-modal hidden>

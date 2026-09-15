@@ -47,14 +47,14 @@
 {# Montserrat роздаємо самі: два зовнішні домени давали зайвий ланцюг запитів #}
 <link rel="preload" href="catalog/view/theme/default/fonts/montserrat-var-cyr.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="catalog/view/theme/default/fonts/montserrat-var-lat.woff2" as="font" type="font/woff2" crossorigin>
-<link href="catalog/view/theme/default/stylesheet/montserrat.css?v=20260904b" rel="stylesheet">
+<link href="catalog/view/theme/default/stylesheet/montserrat.css?v={{ asset_version }}" rel="stylesheet">
 {# Стилі маски телефону підключаємо звичайно, не асинхронно: intlTelInput
    рахує відступ поля по ширині кнопки з прапорцем, і якщо стилі ще не
    застосовані на момент ініціалізації — виходить padding-left у 250px. #}
 <link href="catalog/view/theme/default/vendor/intlTelInput.css" rel="stylesheet">
-<link href="catalog/view/theme/default/stylesheet/style.css?v=20260907a" rel="stylesheet">
-<link href="catalog/view/theme/default/stylesheet/pages.css?v=20260906n" rel="stylesheet">
-<link href="catalog/view/theme/default/stylesheet/media.css?v=20260907a" rel="stylesheet">
+<link href="catalog/view/theme/default/stylesheet/style.css?v={{ asset_version }}" rel="stylesheet">
+<link href="catalog/view/theme/default/stylesheet/pages.css?v={{ asset_version }}" rel="stylesheet">
+<link href="catalog/view/theme/default/stylesheet/media.css?v={{ asset_version }}" rel="stylesheet">
 {% for style in styles %}
 <link href="{{ style.href }}" type="text/css" rel="{{ style.rel }}" media="{{ style.media }}" />
 {% endfor %}
@@ -63,7 +63,7 @@
 <script src="{{ script }}" type="text/javascript"></script>
 {% endfor %}
 <script src="catalog/view/javascript/common.js" type="text/javascript" defer></script>
-<script src="catalog/view/theme/default/js/checkout.js?v=20260821" type="text/javascript" defer></script>
+<script src="catalog/view/theme/default/js/checkout.js?v={{ asset_version }}" type="text/javascript" defer></script>
 {% if hreflangs %}
 {% for hl in hreflangs %}
 <link rel="alternate" hreflang="{{ hl.code }}" href="{{ hl.href }}" />
