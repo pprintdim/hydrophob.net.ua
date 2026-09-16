@@ -6780,3 +6780,54 @@ main.main > .seo-desc:has(~ :is(section, div)) { padding-bottom: 104px; }
 }
 .leaflet-control-attribution a { color: #444 !important; text-decoration: none; }
 .leaflet-control-attribution a:hover { text-decoration: underline; }
+
+
+/* ===== Зони дотику: іконкові кнопки лишаються візуально такими ж, але зона
+   натискання росте до 44×44 (рекомендація Apple HIG і Google) ===== */
+.header__busket,
+.header__burger,
+.header__account,
+.header__search-open,
+.header__fav,
+.product__item-wish,
+.hm-arrow,
+.hero__dot { position: relative; }
+
+.header__busket::after,
+.header__burger::after,
+.header__account::after,
+.header__search-open::after,
+.header__fav::after,
+.product__item-wish::after,
+.hm-arrow::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 44px;
+    height: 44px;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+}
+
+/* крапки слайдера — смужки 34×4, зона дотику по всій висоті ряду */
+.hero__dot::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 100%;
+    height: 44px;
+    transform: translateY(-50%);
+}
+
+
+/* ===== Чекаут: підсвітка полів, які сервер позначив помилковими ===== */
+#checkout-form .is-invalid,
+#checkout-form input.is-invalid,
+#checkout-form select.is-invalid,
+#checkout-form textarea.is-invalid {
+    border-color: #e35d5d !important;
+    box-shadow: 0 0 0 3px rgba(227, 93, 93, .18);
+}
+#checkout-form label.is-invalid { color: #e35d5d; }

@@ -35,12 +35,50 @@
         return el ? el.value.trim() : '';
     }
 
-    function showError(msg) {
+    /* Сервер віддає помилки по полях (json.error['telephone'] тощо), а показувалась
+       лише перша в загальному рядку. Тепер підсвічуємо самі поля й ведемо до першого. */
+    function clearInvalid() {
+        form.querySelectorAll('.is-invalid').forEach(function (el) { el.classList.remove('is-invalid'); });
+    }
+
+    function markInvalid(errors) {
+        clearInvalid();
+        if (!errors || typeof errors !== 'object') return null;
+
+        var first = null;
+
+        Object.keys(errors).forEach(function (name) {
+            var field = form.querySelector('[name="' + name + '"]')
+                || form.querySelector('[name="' + name.replace(/_id$/, '') + '"]');
+            if (!field) return;
+            field.classList.add('is-invalid');
+            var wrap = field.closest('.checkout__field, .checkout__row, label');
+            if (wrap) wrap.classList.add('is-invalid');
+            if (!first) first = field;
+        });
+
+        return first;
+    }
+
+    function showError(msg, errors) {
+        var field = markInvalid(errors);
+
         errBox.textContent = msg;
         errBox.hidden = false;
         submitBtn.disabled = false;
-        errBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        (field || errBox).scrollIntoView({ behavior: 'smooth', block: 'center' });
+        if (field && field.focus) { try { field.focus({ preventScroll: true }); } catch (e) { field.focus(); } }
     }
+
+    // виправили поле — підсвітка зникає одразу
+    form.addEventListener('input', function (event) {
+        event.target.classList.remove('is-invalid');
+        var wrap = event.target.closest('.is-invalid');
+        if (wrap) wrap.classList.remove('is-invalid');
+    });
+    form.addEventListener('change', function (event) {
+        event.target.classList.remove('is-invalid');
+    });
 
     function esc(s) {
         return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
@@ -118,7 +156,7 @@
                 btn.disabled = false;
 
                 if (json && json.error) {
-                    showError(json.error[Object.keys(json.error)[0]]);
+                    showError(json.error[Object.keys(json.error)[0]], json.error);
                 }
             }).catch(function () {
                 btn.disabled = false;
@@ -350,7 +388,7 @@
             }).then(function (json) {
                 if (json && json.error) {
                     var first = Object.keys(json.error)[0];
-                    showError(json.error[first]);
+                    showError(json.error[first], json.error);
                 }
             });
 
@@ -414,14 +452,17 @@
         }).catch(function (err) {
             var message = C.text.common;
 
+            var fields = null;
+
             if (typeof err === 'string') {
                 message = err;
             } else if (err && typeof err === 'object') {
+                fields = err;
                 var first = Object.values(err)[0];
                 if (typeof first === 'string') message = first;
             }
 
-            showError(message);
+            showError(message, fields);
         });
     }
 })();
