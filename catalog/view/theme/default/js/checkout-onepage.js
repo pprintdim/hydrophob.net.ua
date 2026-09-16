@@ -106,7 +106,11 @@
             box.hidden = login;
 
             box.querySelectorAll('input').forEach(function (input) {
-                // приховані поля не мають блокувати reportValidity
+                // Чіпаємо лише справжні поля форми: intl-tel-input додає сюди
+                // власний пошук країни без name, і позначка required на ньому
+                // ламала reportValidity («invalid form control is not focusable»).
+                if (!input.name || input.type === 'hidden') return;
+
                 input.required = !login && input.name !== 'lastname';
                 input.disabled = login;
             });
@@ -323,7 +327,23 @@
     submitBtn.addEventListener('click', function () {
         errBox.hidden = true;
 
-        if (!form.reportValidity()) return;
+        // Страхувальна сітка: браузер не вміє показати підказку на полі, якого
+        // не видно, і мовчки блокує сабміт. Знімаємо required з таких полів
+        // (сервер усе одно перевіряє) і повертаємо після перевірки.
+        var muted = [];
+
+        form.querySelectorAll('[required]').forEach(function (el) {
+            var unreachable = !el.name || el.type === 'hidden' || el.disabled
+                || (el.offsetParent === null && getComputedStyle(el).position !== 'fixed');
+
+            if (unreachable) { el.required = false; muted.push(el); }
+        });
+
+        var valid = form.reportValidity();
+
+        muted.forEach(function (el) { el.required = true; });
+
+        if (!valid) return;
 
         var carrier = currentCarrier();
         var type = destType();

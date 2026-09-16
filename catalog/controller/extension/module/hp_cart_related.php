@@ -72,7 +72,7 @@ class ControllerExtensionModuleHpCartRelated extends Controller {
 				continue;
 			}
 
-			$image = $this->model_tool_image->resize($product_info['image'] ? $product_info['image'] : 'placeholder.png', 450, 450);
+			$image = $this->model_tool_image->fit($product_info['image'] ? $product_info['image'] : 'placeholder.png', 450, 450);
 
 			$special = false;
 

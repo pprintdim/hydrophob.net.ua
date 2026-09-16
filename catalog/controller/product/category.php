@@ -603,6 +603,9 @@ class ControllerProductCategory extends Controller {
 			$data['footer'] = $this->load->controller('common/footer');
 			$data['header'] = $this->load->controller('common/header');
 
+			// версія статики для скриптів шаблону — щоб правки доходили без ручного ?v=
+			$data['asset_version'] = ControllerCommonHeader::assetVersion();
+
 			$this->response->setOutput($this->load->view('product/category', $data));
 		} else {
 			$url = '';

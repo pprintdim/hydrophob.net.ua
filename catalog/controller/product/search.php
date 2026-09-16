@@ -632,6 +632,9 @@ class ControllerProductSearch extends Controller {
 		// форма пошуку в сайдбарі шле на ЧПУ, а не на index.php?route=…
 		$data['search_action'] = html_entity_decode($this->url->link('product/search'), ENT_QUOTES, 'UTF-8');
 
+		// версія статики для скриптів шаблону — щоб правки доходили без ручного ?v=
+		$data['asset_version'] = ControllerCommonHeader::assetVersion();
+
 		$this->response->setOutput($this->load->view('product/search', $data));
 	}
 }

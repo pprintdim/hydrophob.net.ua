@@ -14,9 +14,9 @@ class ControllerExtensionModuleLatest extends Controller {
 		if ($results) {
 			foreach ($results as $result) {
 				if ($result['image']) {
-					$image = $this->model_tool_image->resize($result['image'], $setting['width'], $setting['height']);
+					$image = $this->model_tool_image->fit($result['image'], $setting['width'], $setting['height']);
 				} else {
-					$image = $this->model_tool_image->resize('placeholder.png', $setting['width'], $setting['height']);
+					$image = $this->model_tool_image->fit('placeholder.png', $setting['width'], $setting['height']);
 				}
 
 				if ($this->customer->isLogged() || !$this->config->get('config_customer_price')) {

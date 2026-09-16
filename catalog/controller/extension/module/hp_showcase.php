@@ -75,9 +75,9 @@ class ControllerExtensionModuleHpShowcase extends Controller {
 
 		foreach ($results as $product_info) {
 			if ($product_info['image']) {
-				$image = $this->model_tool_image->resize($product_info['image'], $width, $height);
+				$image = $this->model_tool_image->fit($product_info['image'], $width, $height);
 			} else {
-				$image = $this->model_tool_image->resize('placeholder.png', $width, $height);
+				$image = $this->model_tool_image->fit('placeholder.png', $width, $height);
 			}
 
 			if ($this->customer->isLogged() || !$this->config->get('config_customer_price')) {

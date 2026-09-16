@@ -43,7 +43,7 @@ class ControllerCommonAjaxSearch extends Controller {
 		$results = $this->model_catalog_product->getProducts($filter_data);
 
 		foreach ($results as $result) {
-			$image = $this->model_tool_image->resize($result['image'] ? $result['image'] : 'placeholder.png', 80, 80);
+			$image = $this->model_tool_image->fit($result['image'] ? $result['image'] : 'placeholder.png', 80, 80);
 
 			$price = $this->currency->format($this->tax->calculate($result['price'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
 
