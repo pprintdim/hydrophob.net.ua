@@ -1,0 +1,54 @@
+<div class="hp-cookie" data-cookie-banner hidden role="region" aria-label="cookie">
+    <p class="hp-cookie__text">{{ text_message }}{% if privacy_href %} <a class="hp-cookie__link" href="{{ privacy_href }}">{{ text_more }}</a>{% endif %}</p>
+    <div class="hp-cookie__actions">
+        <button type="button" class="hp-cookie__btn hp-cookie__btn--ghost" data-cookie="necessary">{{ button_necessary }}</button>
+        <button type="button" class="hp-cookie__btn hp-cookie__btn--accept" data-cookie="accept">{{ button_accept }}</button>
+    </div>
+</div>
+<script>
+(function () {
+    var KEY = 'hydro_cookie_consent';
+    var banner = document.querySelector('[data-cookie-banner]');
+    if (!banner) return;
+
+    function read() { try { return localStorage.getItem(KEY); } catch (e) { return null; } }
+
+    function apply(granted) {
+        if (typeof gtag === 'function') {
+            gtag('consent', 'update', {
+                analytics_storage: granted ? 'granted' : 'denied',
+                ad_storage: granted ? 'granted' : 'denied',
+                ad_user_data: granted ? 'granted' : 'denied',
+                ad_personalization: granted ? 'granted' : 'denied'
+            });
+        }
+    }
+
+    var stored = read();
+
+    if (stored) {
+        apply(stored === 'granted');
+        return;
+    }
+
+    // поки вибору немає — аналітика без збереження даних
+    apply(false);
+
+    banner.hidden = false;
+    requestAnimationFrame(function () { banner.classList.add('is-visible'); });
+
+    banner.addEventListener('click', function (event) {
+        var btn = event.target.closest('[data-cookie]');
+        if (!btn) return;
+
+        var granted = btn.getAttribute('data-cookie') === 'accept';
+
+        try { localStorage.setItem(KEY, granted ? 'granted' : 'denied'); } catch (e) {}
+        document.cookie = KEY + '=' + (granted ? 'granted' : 'denied') + '; path=/; max-age=' + (60 * 60 * 24 * 180) + '; SameSite=Lax';
+
+        apply(granted);
+        banner.classList.remove('is-visible');
+        setTimeout(function () { banner.hidden = true; }, 350);
+    });
+})();
+</script>

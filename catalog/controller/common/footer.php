@@ -118,6 +118,7 @@ $data['store_phone'] = $this->config->get('config_telephone');
 		$data['faq_href'] = $this->url->link('information/faq');
 
 		$data['schema'] = $this->load->controller('common/schema');
+		$data['cookie'] = $this->load->controller('common/cookie');
 
 		// дані залогіненого покупця для автозаповнення форм (попапи: швидке
 		// замовлення, питання, відгук)

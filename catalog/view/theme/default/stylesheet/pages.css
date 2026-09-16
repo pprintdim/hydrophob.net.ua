@@ -6939,3 +6939,54 @@ summary:focus-visible,
     white-space: nowrap;
     border: 0;
 }
+
+
+/* ===== Cookie-банер ===== */
+.hp-cookie {
+    position: fixed;
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    z-index: 130;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 14px 18px;
+    border: 1px solid rgba(255,255,255,.16);
+    border-radius: 14px;
+    background: #161616;
+    color: #fff;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, .28);
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity .28s ease, transform .28s ease;
+}
+.hp-cookie.is-visible { opacity: 1; transform: translateY(0); }
+.hp-cookie[hidden] { display: none; }
+.hp-cookie__text { margin: 0; font-size: 13px; line-height: 1.45; }
+.hp-cookie__link { color: #A7C70E; text-decoration: underline; text-underline-offset: 2px; }
+.hp-cookie__actions { display: flex; gap: 8px; flex: 0 0 auto; }
+.hp-cookie__btn {
+    min-height: 40px;
+    padding: 0 16px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,.16);
+    background: transparent;
+    color: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+}
+.hp-cookie__btn--accept { border-color: #A7C70E; background: #A7C70E; color: #161616; }
+.hp-cookie__btn:hover { opacity: .88; }
+/* липка панель купівлі не має перекриватись банером */
+.hp-buybar.is-visible ~ .hp-cookie { bottom: 78px; }
+@media (max-width: 767px) {
+    .hp-cookie { flex-direction: column; align-items: stretch; gap: 10px; padding: 14px; }
+    .hp-cookie__actions { justify-content: stretch; }
+    .hp-cookie__btn { flex: 1; }
+}
+@media (prefers-reduced-motion: reduce) { .hp-cookie { transition: none; } }
