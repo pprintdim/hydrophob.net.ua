@@ -980,3 +980,61 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }, { passive: true });
 })();
+
+
+/* ===== Повернення до каталогу зберігає позицію =====
+   Людина відкривала товар, тиснула «назад» і опинялась на початку списку.
+   Запамʼятовуємо прокрутку каталогу і відновлюємо її при поверненні. */
+(function () {
+    var KEY = 'hp:list-scroll';
+    var isList = /\/(katalog|catalog|shop|blog)(\/|$|\?)/.test(location.pathname) || document.querySelector('[data-product-list], .catalog__content, .hp-catalog, .shop__grid');
+
+    function save() {
+        if (!isList) return;
+        try { sessionStorage.setItem(KEY, JSON.stringify({ url: location.pathname + location.search, y: window.scrollY, t: Date.now() })); } catch (e) {}
+    }
+
+    window.addEventListener('pagehide', save);
+    window.addEventListener('beforeunload', save);
+    document.addEventListener('click', function (event) {
+        if (event.target.closest('a[href]')) save();
+    }, true);
+
+    if (!isList) return;
+
+    try {
+        var raw = sessionStorage.getItem(KEY);
+        if (!raw) return;
+        var data = JSON.parse(raw);
+        // тільки та сама сторінка списку і не старше пів години
+        if (data.url !== location.pathname + location.search || Date.now() - data.t > 1800000 || data.y < 200) return;
+        if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+        window.addEventListener('load', function () {
+            setTimeout(function () { window.scrollTo(0, data.y); }, 60);
+        });
+    } catch (e) {}
+})();
+
+/* ===== Кошик озвучується скрінрідером ===== */
+(function () {
+    var region = document.createElement('div');
+    region.setAttribute('aria-live', 'polite');
+    region.setAttribute('aria-atomic', 'true');
+    region.className = 'hp-sr-only';
+    document.body.appendChild(region);
+
+    window.hpAnnounce = function (text) {
+        if (!text) return;
+        region.textContent = '';
+        setTimeout(function () { region.textContent = text; }, 40);
+    };
+
+    // повідомлення-тости дублюємо в область для скрінрідера
+    var seen = '';
+    new MutationObserver(function () {
+        var toast = document.querySelector('.hp-toast.is-visible, .hp-toast[data-toast], [data-toast]:not([hidden])');
+        if (!toast) return;
+        var text = toast.textContent.trim();
+        if (text && text !== seen) { seen = text; window.hpAnnounce(text); }
+    }).observe(document.body, { childList: true, subtree: true, characterData: true });
+})();
