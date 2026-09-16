@@ -6831,3 +6831,53 @@ main.main > .seo-desc:has(~ :is(section, div)) { padding-bottom: 104px; }
     box-shadow: 0 0 0 3px rgba(227, 93, 93, .18);
 }
 #checkout-form label.is-invalid { color: #e35d5d; }
+
+
+/* ===== Липка панель купівлі на телефоні ===== */
+.hp-buybar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 120;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px calc(10px + env(safe-area-inset-bottom));
+    background: #161616;
+    border-top: 1px solid rgba(255,255,255,.12);
+    box-shadow: 0 -8px 24px rgba(0, 0, 0, .18);
+    transform: translateY(110%);
+    transition: transform .25s ease;
+}
+.hp-buybar.is-visible { transform: translateY(0); }
+.hp-buybar__info { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+.hp-buybar__title {
+    font-size: 12px;
+    line-height: 1.3;
+    opacity: .75;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+}
+.hp-buybar__price { font-size: 17px; font-weight: 800; line-height: 1.2; }
+.hp-buybar__btn {
+    flex: 0 0 auto;
+    min-height: 44px;
+    padding: 0 20px;
+    border: 0;
+    border-radius: 25px;
+    background: #A7C70E;
+    color: #161616;
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    cursor: pointer;
+}
+.hp-buybar__btn:disabled { opacity: .5; cursor: default; }
+.hp-buybar.is-added .hp-buybar__btn { background: rgba(46, 204, 113, .18); color: #2ecc71; }
+@media (min-width: 768px) { .hp-buybar { display: none; } }
+@media (prefers-reduced-motion: reduce) { .hp-buybar { transition: none; } }

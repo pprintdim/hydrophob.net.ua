@@ -889,3 +889,62 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     };
 })();
+
+
+/* ===== Липка панель купівлі на телефоні =====
+   Коли справжня кнопка «в кошик» іде за межі екрана (опис, характеристики,
+   відгуки), знизу зʼявляється вузька панель із назвою, ціною і тією ж дією.
+   Клік по ній просто натискає оригінальну кнопку, тож уся логіка лишається одна. */
+(function () {
+    var cfg = { button: "#button-cart", title: ".product__name", price: ".product__price" };
+    var btn = document.querySelector(cfg.button);
+    if (!btn || !window.matchMedia) return;
+
+    var mobile = window.matchMedia('(max-width: 767px)');
+    var title = document.querySelector(cfg.title);
+    var price = document.querySelector(cfg.price);
+    var bar = null;
+
+    function build() {
+        if (bar) return bar;
+        bar = document.createElement('div');
+        bar.className = 'hp-buybar';
+        bar.innerHTML = '<div class="hp-buybar__info">'
+            + '<span class="hp-buybar__title"></span>'
+            + '<span class="hp-buybar__price"></span>'
+            + '</div><button type="button" class="hp-buybar__btn"></button>';
+        bar.querySelector('.hp-buybar__title').textContent = title ? title.textContent.trim() : '';
+        document.body.appendChild(bar);
+
+        bar.querySelector('.hp-buybar__btn').addEventListener('click', function () {
+            btn.click();
+        });
+        return bar;
+    }
+
+    function sync() {
+        if (!bar) return;
+        if (price) bar.querySelector('.hp-buybar__price').textContent = price.textContent.trim();
+        var label = btn.textContent.trim();
+        bar.querySelector('.hp-buybar__btn').textContent = label;
+        bar.classList.toggle('is-added', btn.classList.contains('is-added') || btn.hasAttribute('data-in-cart'));
+        bar.querySelector('.hp-buybar__btn').disabled = btn.disabled;
+    }
+
+    function show(on) {
+        if (!mobile.matches) { if (bar) bar.classList.remove('is-visible'); return; }
+        build();
+        sync();
+        bar.classList.toggle('is-visible', on);
+    }
+
+    if ('IntersectionObserver' in window) {
+        new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) { show(!entry.isIntersecting && entry.boundingClientRect.top < 0); });
+        }, { threshold: 0 }).observe(btn);
+    }
+
+    // текст кнопки міняється після додавання — панель має це повторити
+    new MutationObserver(sync).observe(btn, { childList: true, subtree: true, attributes: true });
+    mobile.addEventListener('change', function () { show(false); });
+})();
