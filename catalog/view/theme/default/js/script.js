@@ -948,3 +948,35 @@ document.addEventListener('DOMContentLoaded', function () {
     new MutationObserver(sync).observe(btn, { childList: true, subtree: true, attributes: true });
     mobile.addEventListener('change', function () { show(false); });
 })();
+
+
+/* ===== Кнопка «нагору» =====
+   Довгі сторінки каталогу й блогу вимагали ручного скролу назад. Кнопка
+   зʼявляється після двох екранів і не заважає липкій панелі купівлі. */
+(function () {
+    if (document.querySelector('[data-to-top]')) return;
+
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'hp-totop';
+    btn.setAttribute('data-to-top', '');
+    btn.setAttribute('aria-label', document.documentElement.lang === 'ru' ? 'Наверх' : 'Нагору');
+    btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m18 15-6-6-6 6"/></svg>';
+    document.body.appendChild(btn);
+
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    btn.addEventListener('click', function () {
+        window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });
+    });
+
+    var ticking = false;
+    window.addEventListener('scroll', function () {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(function () {
+            ticking = false;
+            btn.classList.toggle('is-visible', window.scrollY > window.innerHeight * 2);
+        });
+    }, { passive: true });
+})();

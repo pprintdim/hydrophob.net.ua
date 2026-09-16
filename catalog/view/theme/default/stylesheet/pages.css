@@ -6881,3 +6881,46 @@ main.main > .seo-desc:has(~ :is(section, div)) { padding-bottom: 104px; }
 .hp-buybar.is-added .hp-buybar__btn { background: rgba(46, 204, 113, .18); color: #2ecc71; }
 @media (min-width: 768px) { .hp-buybar { display: none; } }
 @media (prefers-reduced-motion: reduce) { .hp-buybar { transition: none; } }
+
+
+/* ===== Кнопка «нагору» ===== */
+.hp-totop {
+    position: fixed;
+    right: 16px;
+    bottom: 16px;
+    z-index: 110;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 1px solid rgba(255,255,255,.18);
+    border-radius: 50%;
+    background: rgba(22,22,22,.92);
+    color: #fff;
+    cursor: pointer;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(8px);
+    transition: opacity .2s ease, transform .2s ease, visibility .2s;
+}
+.hp-totop.is-visible { opacity: .9; visibility: visible; transform: translateY(0); }
+.hp-totop:hover { opacity: 1; }
+/* липка панель купівлі на телефоні — піднімаємо кнопку над нею */
+.hp-buybar.is-visible ~ .hp-totop { bottom: 80px; }
+@media (max-width: 767px) { .hp-totop { right: 12px; bottom: 12px; } }
+@media (prefers-reduced-motion: reduce) { .hp-totop { transition: none; } }
+
+/* ===== Видимий фокус з клавіатури =====
+   Був прибраний або ледь помітний, через це навігація з клавіатури ламалась. */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+summary:focus-visible,
+[tabindex]:focus-visible {
+    outline: 2px solid #A7C70E;
+    outline-offset: 2px;
+    border-radius: 4px;
+}
