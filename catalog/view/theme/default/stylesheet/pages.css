@@ -6784,13 +6784,13 @@ main.main > .seo-desc:has(~ :is(section, div)) { padding-bottom: 104px; }
 
 /* ===== Зони дотику: іконкові кнопки лишаються візуально такими ж, але зона
    натискання росте до 44×44 (рекомендація Apple HIG і Google) ===== */
+/* position ставимо лише статичним: у absolute-елементів (.product__item-wish, .hm-arrow)
+   він ламає розташування, а ::after їм і так є де чіплятись */
 .header__busket,
 .header__burger,
 .header__account,
 .header__search-open,
 .header__fav,
-.product__item-wish,
-.hm-arrow,
 .hero__dot { position: relative; }
 
 .header__busket::after,
