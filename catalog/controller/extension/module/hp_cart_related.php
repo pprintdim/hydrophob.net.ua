@@ -86,6 +86,8 @@ class ControllerExtensionModuleHpCartRelated extends Controller {
 				'thumb'      => $image,
 				'price'      => $this->currency->format($this->tax->calculate($product_info['price'], $product_info['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']),
 				'special'    => $special,
+				// рейтинг потрібен спільній картці — вона малює зірки, як у каталозі
+				'rating'     => $this->config->get('config_review_status') ? (int)$product_info['rating'] : false,
 				'minimum'    => $product_info['minimum'] > 0 ? (int)$product_info['minimum'] : 1,
 				'href'       => $this->url->link('product/product', 'product_id=' . $product_id)
 			);
@@ -110,6 +112,12 @@ class ControllerExtensionModuleHpCartRelated extends Controller {
 		$data['text_prev'] = $this->language->get('text_prev');
 		$data['text_next'] = $this->language->get('text_next');
 		$data['button_cart'] = $this->language->get('button_cart');
+		// підписи для спільної картки common/product_card
+		$data['text_badge_sale'] = $this->language->get('text_badge_sale');
+		$data['text_badge_new'] = $this->language->get('text_badge_new');
+		$data['text_badge_top'] = $this->language->get('text_badge_top');
+		$data['text_wishlist_add'] = $this->language->get('text_wishlist_add');
+		$data['text_rating'] = $this->language->get('text_rating');
 		$data['button_more'] = $this->language->get('button_more');
 		$data['button_add_short'] = $this->language->get('button_add_short');
 

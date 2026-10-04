@@ -11,6 +11,18 @@ class ControllerProductProduct extends Controller {
 			'text' => $this->language->get('text_home'),
 			'href' => $this->url->link('common/home')
 		);
+
+		// «Каталог» і повний ланцюг категорій товару — однаково для переходу з
+		// категорії (path) і для прямого входу з пошуку/карти сайту
+		$root = $this->catalogRootCrumb();
+
+		if ($root) {
+			$data['breadcrumbs'][] = $root['crumb'];
+		}
+
+		foreach ($this->productCategoryCrumbs((int)($this->request->get['product_id'] ?? 0), $root ? $root['id'] : 0) as $crumb) {
+			$data['breadcrumbs'][] = $crumb;
+		}
 $this->load->model('catalog/product');
 $this->load->model('catalog/category');
 
@@ -31,58 +43,6 @@ $data['main_category_name'] = $main_category_name;
 $data['main_category_id'] = $main_category_id;
 		$this->load->model('catalog/category');
 
-		if (isset($this->request->get['path'])) {
-			$path = '';
-
-			$parts = explode('_', (string)$this->request->get['path']);
-
-			$category_id = (int)array_pop($parts);
-
-			foreach ($parts as $path_id) {
-				if (!$path) {
-					$path = $path_id;
-				} else {
-					$path .= '_' . $path_id;
-				}
-
-				$category_info = $this->model_catalog_category->getCategory($path_id);
-
-				if ($category_info) {
-					$data['breadcrumbs'][] = array(
-						'text' => $category_info['name'],
-						'href' => $this->url->link('product/category', 'path=' . $path)
-					);
-				}
-			}
-
-			// Set the last category breadcrumb
-			$category_info = $this->model_catalog_category->getCategory($category_id);
-
-			if ($category_info) {
-				$url = '';
-
-				if (isset($this->request->get['sort'])) {
-					$url .= '&sort=' . $this->request->get['sort'];
-				}
-
-				if (isset($this->request->get['order'])) {
-					$url .= '&order=' . $this->request->get['order'];
-				}
-
-				if (isset($this->request->get['page'])) {
-					$url .= '&page=' . $this->request->get['page'];
-				}
-
-				if (isset($this->request->get['limit'])) {
-					$url .= '&limit=' . $this->request->get['limit'];
-				}
-
-				$data['breadcrumbs'][] = array(
-					'text' => $category_info['name'],
-					'href' => $this->url->link('product/category', 'path=' . $this->request->get['path'] . $url)
-				);
-			}
-		}
 
 		$this->load->model('catalog/manufacturer');
 
@@ -337,6 +297,35 @@ $data['main_category_id'] = $main_category_id;
 				$data['popup'] = $data['thumb'];
 			}
 
+			// розміри з налаштувань теми → width/height на <img> галереї (без стрибків макета)
+			$theme_prefix = 'theme_' . $this->config->get('config_theme') . '_image_';
+
+			foreach (array('thumb', 'popup', 'additional') as $size_key) {
+				$data['image_' . $size_key . '_width'] = (int)$this->config->get($theme_prefix . $size_key . '_width');
+				$data['image_' . $size_key . '_height'] = (int)$this->config->get($theme_prefix . $size_key . '_height');
+			}
+
+			$data['text_photo_alt'] = $this->language->get('text_photo_alt');
+			$data['text_faq_title'] = $this->language->get('text_faq_title');
+			$data['text_related_products'] = $this->language->get('text_related_products');
+
+			// Питання й відповіді блоку FAQ раніше були зашиті в шаблон
+			// українською, тому російська версія показувала їх без перекладу.
+			$data['faq_items'] = array();
+
+			for ($i = 1; $i <= 4; $i++) {
+				$question = $this->language->get('faq_q' . $i);
+
+				if ($question === 'faq_q' . $i) {
+					continue;
+				}
+
+				$data['faq_items'][] = array(
+					'question' => $question,
+					'answer'   => $this->language->get('faq_a' . $i)
+				);
+			}
+
 			if ($this->customer->isLogged() || !$this->config->get('config_customer_price')) {
 				$data['price'] = $this->currency->format($this->tax->calculate($product_info['price'], $product_info['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
 			} else {
@@ -346,6 +335,10 @@ $data['main_category_id'] = $main_category_id;
 			// стікери як на картках: ХІТ — товар у топі продажів
 			$data['text_badge_top'] = $this->language->get('text_badge_top');
 			$data['text_badge_sale'] = $this->language->get('text_badge_sale');
+			// картки «З цим товаром купують» малюються спільним common/product_card
+			$data['text_badge_new'] = $this->language->get('text_badge_new');
+			$data['text_wishlist_add'] = $this->language->get('text_wishlist_add');
+			$data['text_rating'] = $this->language->get('text_rating');
 			$data['badge_top'] = false;
 
 			foreach ($this->model_catalog_product->getBestSellerProducts(8) as $bestseller) {
@@ -840,6 +833,8 @@ $data['main_category_id'] = $main_category_id;
 		$this->load->model('tool/image');
 
 		$json = array('products' => array());
+		// підпис кнопки в картках «Переглянутих» — шаблон бере його звідси
+		$json['button_cart'] = $this->language->get('button_cart');
 
 		$ids = isset($this->request->get['ids']) ? explode(',', $this->request->get['ids']) : array();
 		$ids = array_slice(array_filter(array_map('intval', $ids)), 0, 12);
@@ -853,19 +848,33 @@ $data['main_category_id'] = $main_category_id;
 
 			$image = $this->model_tool_image->resize($product_info['image'] ? $product_info['image'] : 'placeholder.png', 450, 450);
 
-			$price = $this->currency->format($this->tax->calculate($product_info['special'] ? $product_info['special'] : $product_info['price'], $product_info['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+			// Картка «Переглянутих» така сама, як у каталозі, тож віддаємо і
+			// звичайну ціну, і акційну окремо, і рейтинг — зірки малює той же
+			// шаблон, що й common/product_card.
+			$price = $this->currency->format($this->tax->calculate($product_info['price'], $product_info['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+
+			$special = false;
+
+			if (!is_null($product_info['special']) && (float)$product_info['special'] >= 0) {
+				$special = $this->currency->format($this->tax->calculate($product_info['special'], $product_info['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+			}
 
 			$json['products'][] = array(
 				'product_id' => (int)$product_info['product_id'],
 				'name'       => $product_info['name'],
 				'thumb'      => $image,
 				'price'      => $price,
+				'special'    => $special,
+				'rating'     => $this->config->get('config_review_status') ? (int)$product_info['rating'] : 0,
 				'minimum'    => $product_info['minimum'] > 0 ? (int)$product_info['minimum'] : 1,
 				'href'       => html_entity_decode($this->url->link('product/product', 'product_id=' . $product_info['product_id']), ENT_QUOTES, 'UTF-8')
 			);
 		}
 
 		$json['button_cart'] = $this->language->get('button_cart');
+		$json['text_badge_sale'] = $this->language->get('text_badge_sale');
+		$json['text_wishlist_add'] = $this->language->get('text_wishlist_add');
+		$json['text_rating'] = $this->language->get('text_rating');
 
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));
@@ -1087,4 +1096,89 @@ $data['main_category_id'] = $main_category_id;
     ]));
 }
 
+
+	/**
+	 * Крихта «Каталог» — коренева сторінка каталогу (/katalog). Її id беремо з
+	 * ЧПУ, щоб не зашивати число: так крихти однакові на всіх сторінках групи
+	 * (Головна -> Каталог -> ланцюг категорій -> товар).
+	 */
+	private function catalogRootCrumb() {
+		$query = $this->db->query("SELECT query FROM " . DB_PREFIX . "seo_url WHERE keyword = 'katalog' LIMIT 1");
+
+		// ЧПУ кореня буває і як path=33, і як category_id=33 — приймаємо обидва
+		if (!$query->num_rows || !preg_match('/(?:path|category_id)=([0-9_]+)/', $query->row['query'], $match)) {
+			return null;
+		}
+
+		$ids = array_filter(array_map('intval', explode('_', $match[1])));
+		$root_id = (int)end($ids);
+
+		$this->load->model('catalog/category');
+
+		$category_info = $this->model_catalog_category->getCategory($root_id);
+
+		if (!$category_info) {
+			return null;
+		}
+
+		return array(
+			'id'    => $root_id,
+			'crumb' => array(
+				'text' => $category_info['name'],
+				'href' => $this->url->link('product/category', 'path=' . $root_id)
+			)
+		);
+	}
+
+	/**
+	 * Ланцюг категорій товару для крихт: з path посилання або з найглибшої
+	 * категорії самого товару. Кореневу категорію «Каталог» пропускаємо —
+	 * вона вже стоїть окремою крихтою.
+	 */
+	private function productCategoryCrumbs($product_id, $root_id = 0) {
+		$this->load->model('catalog/category');
+
+		$path = isset($this->request->get['path']) ? (string)$this->request->get['path'] : '';
+
+		if ($path === '') {
+			$query = $this->db->query("SELECT p2c.category_id, MAX(cp.level) AS level FROM " . DB_PREFIX . "product_to_category p2c LEFT JOIN " . DB_PREFIX . "category_path cp ON (cp.category_id = p2c.category_id) INNER JOIN " . DB_PREFIX . "category c ON (c.category_id = p2c.category_id AND c.status = '1') WHERE p2c.product_id = '" . (int)$product_id . "' GROUP BY p2c.category_id ORDER BY level DESC, p2c.category_id ASC LIMIT 1");
+
+			if (!$query->num_rows) {
+				return array();
+			}
+
+			$chain = $this->db->query("SELECT path_id FROM " . DB_PREFIX . "category_path WHERE category_id = '" . (int)$query->row['category_id'] . "' ORDER BY level ASC");
+			$ids = array();
+
+			foreach ($chain->rows as $row) {
+				$ids[] = (int)$row['path_id'];
+			}
+		} else {
+			$ids = array_filter(array_map('intval', explode('_', $path)));
+		}
+
+		$crumbs = array();
+		$trail = '';
+
+		foreach ($ids as $id) {
+			$trail = $trail === '' ? (string)$id : $trail . '_' . $id;
+
+			if ($id === (int)$root_id) {
+				continue;
+			}
+
+			$category_info = $this->model_catalog_category->getCategory($id);
+
+			if (!$category_info) {
+				continue;
+			}
+
+			$crumbs[] = array(
+				'text' => $category_info['name'],
+				'href' => $this->url->link('product/category', 'path=' . $trail)
+			);
+		}
+
+		return $crumbs;
+	}
 }

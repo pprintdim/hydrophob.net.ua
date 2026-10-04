@@ -94,3 +94,6 @@ $_['text_show_more']      = 'Show more';
 $_['text_show_less']      = 'Show less';
 $_['text_badge_top'] = 'TOP';
 $_['text_badge_sale'] = 'SALE';
+$_['text_badge_new'] = 'NEW';
+$_['text_wishlist_add'] = 'Add to wish list';
+$_['text_rating'] = 'Rating %s out of 5';

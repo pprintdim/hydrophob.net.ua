@@ -1,25 +1,6 @@
 {{ header }}
 <link rel="stylesheet" href="catalog/view/theme/default/vendor/swiper-bundle.min.css">
-{# -- 2026-08-21 TODO: приберемо весь цей {% set %}-блок цілком, коли контролер product.php почне передавати faq_items / recently_viewed_products / related_products -- #}
-{% set faq_items = [
-    {
-        'question': 'Скільки тримається гідрофобне покриття?',
-        'answer': 'Залежно від поверхні та умов експлуатації ефект зберігається від 6 до 18 місяців. На склі та лакофарбовому покритті авто — довше, на текстилі — менше.'
-    },
-    {
-        'question': 'Як наносити засіб правильно?',
-        'answer': 'Поверхню очистіть і знежирте, нанесіть тонкий шар засобу мікрофіброю, дайте полімеризуватись 10-15 хвилин і зніміть залишки сухою серветкою.'
-    },
-    {
-        'question': 'Чи можна використовувати на кількох поверхнях?',
-        'answer': 'Так, більшість засобів лінійки підходять для скла, металу, пластику та текстилю — уточнюйте сумісність у характеристиках конкретного товару.'
-    },
-    {
-        'question': 'Що робити, якщо ефект гідрофобності зник раніше строку?',
-        'answer': 'Найчастіше причина — абразивне миття або хімічно агресивні мийні засоби. Повторно нанесіть засіб на очищену поверхню.'
-    }
-] %}
-{# -- END TODO fake data -- #}
+{# faq_items і заголовок блоку супутніх приходять з контролера (мовні файли product/product) #}
     <main class="main main--light">
        
 <section class="product" id="product-product">
@@ -35,6 +16,10 @@
         {% for block in schema_blocks %}
         <script type="application/ld+json">{{ block|json_encode(constant('JSON_UNESCAPED_UNICODE') b-or constant('JSON_UNESCAPED_SLASHES'))|raw }}</script>
         {% endfor %}
+        {# FAQPage — ті самі питання, що в блоці FAQ нижче (faq_items) #}
+        {% if faq_items %}
+        <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{% for item in faq_items %}{"@type":"Question","name":{{ item.question|striptags|trim|json_encode(constant('JSON_UNESCAPED_UNICODE'))|raw }},"acceptedAnswer":{"@type":"Answer","text":{{ item.answer|striptags|trim|json_encode(constant('JSON_UNESCAPED_UNICODE'))|raw }}}}{% if not loop.last %},{% endif %}{% endfor %}]}</script>
+        {% endif %}
         {% if ga_item %}
         <script>
         /* GA4: перегляд картки; той самий набір даних піде в add_to_cart */
@@ -58,13 +43,14 @@
 								<div class="swiper-wrapper">
 								{% if thumb %}
 									<div class="swiper-slide">
-										<img src="{{ thumb }}" alt="{{ heading_title }}">
+										{# alt унікальний на кожне фото («Назва — фото N»); перше — LCP, решта ліниві #}
+										<img src="{{ thumb }}" alt="{{ text_photo_alt|default('%s — фото %d')|format(heading_title, 1) }}" width="{{ image_thumb_width|default(450) }}" height="{{ image_thumb_height|default(450) }}" fetchpriority="high" decoding="async">
 									</div>
 								{% endif %}
 								{% if images %}
 									{% for image in images %}
 									<div class="swiper-slide">
-										<img src="{{ image.popup }}" alt="{{ heading_title }}">
+										<img src="{{ image.popup }}" alt="{{ text_photo_alt|default('%s — фото %d')|format(heading_title, loop.index + (thumb ? 1 : 0)) }}" width="{{ image_popup_width|default(800) }}" height="{{ image_popup_height|default(800) }}"{% if thumb or loop.index > 1 %} loading="lazy"{% else %} fetchpriority="high"{% endif %} decoding="async">
 									</div>
 									{% endfor %}
 								{% endif %}
@@ -87,13 +73,14 @@
 									<div class="swiper-wrapper">
 									{% if thumb %}
 										<div class="swiper-slide">
-											<img src="{{ thumb }}" alt="{{ heading_title }}">
+											{# той самий файл, що й перший великий слайд — без lazy, повторно не вантажиться #}
+											<img src="{{ thumb }}" alt="{{ text_photo_alt|default('%s — фото %d')|format(heading_title, 1) }}" width="{{ image_thumb_width|default(450) }}" height="{{ image_thumb_height|default(450) }}" decoding="async">
 										</div>
 									{% endif %}
 									{% if images %}
 										{% for image in images %}
 										<div class="swiper-slide">
-											<img src="{{ image.thumb }}" alt="{{ heading_title }}">
+											<img src="{{ image.thumb }}" alt="{{ text_photo_alt|default('%s — фото %d')|format(heading_title, loop.index + (thumb ? 1 : 0)) }}" width="{{ image_additional_width|default(120) }}" height="{{ image_additional_height|default(120) }}"{% if thumb or loop.index > 1 %} loading="lazy"{% endif %} decoding="async">
 										</div>
 										{% endfor %}
 									{% endif %}
@@ -359,20 +346,21 @@ function addToCart() {
                     </div>
                 </div>
                         <div class="product__bottom">
-                            <div class="product__selects">
-                                <button class="product__selects-btn active">{{ tab_description }}</button>
-                                <button class="product__selects-btn">{{ tab_specs }}</button>
-                                <button class="product__selects-btn">{{ tab_instruction }}</button>
-                                <button class="product__selects-btn">{{ tab_reviews }}{% if reviews_total %} ({{ reviews_total }}){% endif %}</button>
+                            {# вкладки за ARIA-патерном tabs: ролі, aria-selected, стрілки ←/→ у product.js #}
+                            <div class="product__selects" role="tablist">
+                                <button class="product__selects-btn active" type="button" role="tab" id="ptab-description" aria-selected="true" aria-controls="ppanel-description" tabindex="0">{{ tab_description }}</button>
+                                <button class="product__selects-btn" type="button" role="tab" id="ptab-specs" aria-selected="false" aria-controls="ppanel-specs" tabindex="-1">{{ tab_specs }}</button>
+                                <button class="product__selects-btn" type="button" role="tab" id="ptab-instruction" aria-selected="false" aria-controls="ppanel-instruction" tabindex="-1">{{ tab_instruction }}</button>
+                                <button class="product__selects-btn" type="button" role="tab" id="ptab-reviews" aria-selected="false" aria-controls="ppanel-reviews" tabindex="-1">{{ tab_reviews }}{% if reviews_total %} ({{ reviews_total }}){% endif %}</button>
                             </div>
                             <div class="product__result">
-                                <div class="product__result-content active">
+                                <div class="product__result-content active" role="tabpanel" id="ppanel-description" aria-labelledby="ptab-description" tabindex="0">
 									<div class="desc{% if description_long %} is-collapsible{% endif %}" data-product-desc>{{ description }}</div>
 									{% if description_long %}
 									<button type="button" class="desc-toggle" data-desc-toggle data-more="{{ text_show_more }}" data-less="{{ text_show_less }}"><span>{{ text_show_more }}</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
 									{% endif %}
                                 </div>
-                                <div class="product__result-content">
+                                <div class="product__result-content" role="tabpanel" id="ppanel-specs" aria-labelledby="ptab-specs" tabindex="0">
 									<ul class="product__specs">
 										{% for attribute_group in attribute_groups %}
 										<li class="product__specs-group">{{ attribute_group.name }}</li>
@@ -385,7 +373,7 @@ function addToCart() {
 										<li class="product__specs-row"><span class="product__specs-name">{{ text_brand_label }}</span><span class="product__specs-value">HYDROPHOB</span></li>
 									</ul>
 								</div>
-                                <div class="product__result-content">
+                                <div class="product__result-content" role="tabpanel" id="ppanel-instruction" aria-labelledby="ptab-instruction" tabindex="0">
 									<p><b>{{ text_how_to_use }}</b></p>
 									<ol class="product__instruction">
 										<li>{{ text_step1 }}</li>
@@ -396,7 +384,7 @@ function addToCart() {
 									</ol>
 									<p>{{ text_storage }}</p>
                                 </div>
-                                <div class="product__result-content">
+                                <div class="product__result-content" role="tabpanel" id="ppanel-reviews" aria-labelledby="ptab-reviews" tabindex="0">
 									{% if reviews %}
 									{% for review in reviews %}
 									<div class="product__review">
@@ -420,11 +408,11 @@ function addToCart() {
             </div>
        </section>
 
-       {# TODO: text_faq_title зараз hardcoded fallback — перенести в catalog/language/*/product/product.php коли контролер підключить FAQ #}
+       {# faq_items поки не наповнює контролер product/product.php — блок і FAQPage-схема вище готові до підключення #}
        {% if faq_items %}
        <section class="product__faq">
            <div class="container">
-               <h2 class="product__faq-title">{{ text_faq_title is defined ? text_faq_title : 'Часті запитання' }}</h2>
+               <h2 class="product__faq-title">{{ text_faq_title|default('Часті запитання') }}</h2>
                <div class="product__faq-list" data-faq>
                    {% for item in faq_items %}
                    <div class="product__faq-item{% if loop.first %} active{% endif %}">
@@ -468,23 +456,7 @@ function addToCart() {
                    <div class="swiper-wrapper">
                        {% for product in products %}
                        <div class="swiper-slide">
-                           <div class="product__item">
-                               <a class="product__item-image" href="{{ product.href }}">
-                                   <img src="{{ product.thumb }}" alt="{{ product.name }}" title="{{ product.name }}">
-                               </a>
-                               <div class="product__item-content">
-                                   <a class="product__item-title" href="{{ product.href }}">
-                                       <h3>{{ product.name }}</h3>
-                                   </a>
-                                   <p class="product__item-price">{{ product.price }}</p>
-                                   <button class="product__item-add btn-2" onclick="cart.add('{{ product.product_id }}', '{{ product.minimum }}');">
-                                       {{ button_cart }}
-                                       <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 17 17" fill="none">
-                                           <path fill-rule="evenodd" clip-rule="evenodd" d="M9.56706 2.90039H6.90039V6.90039L2.90039 6.90039V9.56706H6.90039V13.5671H9.56706V9.56706H13.5671V6.90039L9.56706 6.90039V2.90039Z" fill="white"/>
-                                       </svg>
-                                   </button>
-                               </div>
-                           </div>
+                           {% include 'default/template/common/product_card.twig' %}
                        </div>
                        {% endfor %}
                    </div>

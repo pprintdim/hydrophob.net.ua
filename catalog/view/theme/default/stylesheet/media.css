@@ -1,13 +1,18 @@
 /* media.css — усі @media-адаптиви для style.css + pages.css. Завантажується на всіх сторінках, КРІМ welcome (welcome.css має власні медіа-запити). */
 
+/* Контейнер лишається плинним: ступінчасті max-width (1000/768) залишали
+   широкі порожні поля на планшетах і вузьких ноутбуках. Звужуються лише
+   бокові відступи — так само, як на hydrophob.ua. */
 @media (max-width: 1279px) {
     .container{
-        max-width: 1000px;
+        max-width: 100%;
+        padding: 0 24px;
     }
 }
 @media (max-width: 999px) {
     .container{
-        max-width: 768px;
+        max-width: 100%;
+        padding: 0 20px;
     }
     .page-name,
     .product__viewed-title,
@@ -107,6 +112,11 @@
         position: initial;
     }
     .header__search-form{
+        /* зі style.css сюди приходить top:50% + translateY(-50%): у 60-піксельній
+           шапці це притискало попап до самого верху екрана. Ставимо його під
+           шапкою з відступом */
+        top: calc(100% + 10px);
+        transform: none;
         left: 10px;
         right: 10px;
         width: calc(100% - 20px);
@@ -175,38 +185,38 @@
 
 }
 @media (max-width: 767px) {
-    /* Рядок товару в шухляді: фото менше, весь текст одним лівим краєм.
-       Кількість і ціна були центровані, а назва ліворуч — рядок виглядав
-       розсипаним. */
-    .busket__item-image {
-        width: 78px;
-        height: 90px;
-        flex: 0 0 78px;
-    }
-
-    .busket__item-info{
-        flex-direction: column;
-        align-items: start;
-        gap: 8px;
-        text-align: left;
-    }
-
+    /* Картка товару в шухляді на телефоні: та сама сітка «фото + текст», лише
+       трохи щільніша. Кількість і сума лишаються в одному рядку — раніше вони
+       ставали колонкою по центру і картка тягнулась на пів екрана. */
     .busket__item{
-        padding: 14px 0;
+        grid-template-columns: 76px minmax(0, 1fr);
         gap: 12px;
-        align-items: flex-start;
+        padding: 12px 36px 12px 12px;
     }
 
-    .busket__item-content,
-    .busket__item-bottom{
-        align-items: flex-start;
-        justify-content: flex-start;
-        text-align: left;
+    .busket__item-image {
+        width: 76px;
+        height: 88px;
+    }
+
+    .busket__item-content{
+        min-height: 88px;
+        gap: 10px;
     }
 
     .busket__item-title{
         font-size: 14px;
         line-height: 1.3;
+    }
+    .busket__item-bottom{
+        align-items: center;
+        justify-content: space-between;
+        text-align: left;
+    }
+    .busket__item-count{
+        max-width: 96px;
+        height: 34px;
+        padding: 6px 10px;
     }
     .busket__top{
         height: auto;
@@ -229,9 +239,22 @@
     }
 }
 @media (max-width: 479px) {
-    .busket__item-bottom{
-        flex-direction: column;
-        align-items: start;
+    /* На найвужчих екранах картка лишається рядком — колонкою вона розповзалась.
+       Місце вивільняємо за рахунок фото і відступів. */
+    .busket__item{
+        grid-template-columns: 68px minmax(0, 1fr);
+        gap: 10px;
+        padding: 10px 32px 10px 10px;
+    }
+    .busket__item-image{
+        width: 68px;
+        height: 78px;
+    }
+    .busket__item-content{
+        min-height: 78px;
+    }
+    .busket__item-price{
+        font-size: 16px;
     }
 }
 @media (max-width: 1279px) {
@@ -247,16 +270,31 @@
     }
 }
 @media (max-width: 767px) {
+    /* Герой на телефоні: текст тримається низу, щоб над ним лишався кадр
+       відео. Раніше блок займав усю висоту секції й ролика було не видно. */
+    .hero__inner{
+        justify-content: flex-end;
+        min-height: 72vh;
+        padding-top: 72px;
+        padding-bottom: 44px;
+    }
     .hero__title {
-        font-size: 36px;
+        /* біла плашка під заголовком ховала відео — лишаємо сам текст */
+        background: transparent;
+        color: #FFF;
+        padding: 0;
+        font-size: 34px;
         margin: 0 auto;
+        text-shadow: 0 2px 18px rgba(0, 0, 0, .55);
     }
     .hero__descr{
+        margin-top: 12px;
         text-align: center;
-        font-size: 24px;
+        font-size: 18px;
+        text-shadow: 0 2px 14px rgba(0, 0, 0, .5);
     }
     .hero__btn {
-        margin: 50px auto 0;
+        margin: 24px auto 0;
         height: 50px;
         max-width: 220px;
     }
@@ -283,14 +321,28 @@
         align-items: start;
     }
     .contacts__block{
-        margin-top: 40px;
-        gap: 40px;
+        margin-top: 32px;
+        gap: 24px;
     }
     .contacts__item{
-        font-size: 22px;
+        /* було 22px — адреса займала два рядки й рядок контактів виглядав
+           крупнішим за сам текст сторінки */
+        font-size: 16px;
+        line-height: 1.4;
+        gap: 12px;
+    }
+    .contacts__item-icon{
+        width: 36px;
+        height: 36px;
+        flex: 0 0 36px;
+    }
+    .contacts__item-icon svg{
+        width: 18px;
+        height: 18px;
     }
     .contacts__time{
-        margin-top: 40px;
+        margin-top: 28px;
+        font-size: 14px;
     }
     .contacts__map iframe{
         height: 500px;
@@ -378,7 +430,8 @@
         height: 60px;
     }
     .product__content{
-        padding: 0 0 60px;
+        /* було 60px — разом із відступом вкладок під іконками зяяла прогалина */
+        padding: 0 0 16px;
     }
     .product__slider-btns button {
         width: 44px;
@@ -614,7 +667,9 @@
         padding: 6px 8px;
         font-size: 14px;
     }
-.pagination li.active {padding: 6px;}
+/* Активна сторінка мала власний падінг 6px — її квадратик ставав ширшим
+       за сусідні й випадав із рядка. Розмір тримає саме посилання. */
+    .pagination li.active {padding: 0;}
 }
 @media (max-width: 1279px) {
     .account__wishlist{
@@ -679,8 +734,11 @@
     }
 }
 @media (max-width: 479px) {
+    /* дві картки в рядок і на вузьких екранах: одна на всю ширину виглядає
+       порожньо, а список стає вдвічі довшим */
     .account__wishlist{
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
     }
 }
 
@@ -1119,12 +1177,18 @@
         flex-basis: calc((100% - 12px) / 2);
         min-width: 0;
     }
+    /* стрілки слайдерів на телефоні — 52px: у 38px складно влучити пальцем */
     .hm-arrow{
-        width: 38px;
-        height: 38px;
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
     }
-    .hm-arrow--prev{ left: -4px; }
-    .hm-arrow--next{ right: -4px; }
+    .hm-arrow svg{
+        width: 20px;
+        height: 20px;
+    }
+    .hm-arrow--prev{ left: 0; }
+    .hm-arrow--next{ right: 0; }
     .hm-faq__btn{
         font-size: 15px;
         padding: 14px 16px;
@@ -1644,6 +1708,45 @@
     .header__menu-currency .header__currency{
         display: inline-block;
     }
+
+    /* Валюта в меню — простим рядком, без випадашки. У шапці це дропдаун
+       (обрана + решта під нею), але в бургері поруч уже стоїть мовний
+       перемикач простим рядком, і випадашка там виглядає чужорідно.
+       Розмітку не чіпаємо: усі валюти в ній уже є, просто розгортаємо. */
+    .header__menu-currency .header__lang{
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+
+    .header__menu-currency .header__lang-selected{
+        cursor: default;
+        color: #A7C70E;
+    }
+
+    .header__menu-currency .header__lang-selected:after{
+        display: none;
+    }
+
+    .header__menu-currency .header__lang-content{
+        position: static;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 14px;
+        min-width: 0;
+        padding: 0;
+        background: none;
+        border-radius: 0;
+    }
+
+    /* у випадашці кожен пункт мав свою ширину під рядок — у рядку через це
+       між символами зяяли нерівні проміжки */
+    .header__menu-currency .header__lang-content a{
+        width: auto;
+        min-width: 0;
+        padding: 0;
+    }
 }
 
 /* карта сайту: на мобільному компактніше */
@@ -1684,4 +1787,274 @@
 @media (max-width: 767px) {
     .seo-desc,
     main.main > .seo-desc:has(~ :is(section, div)) { padding: 56px 0 64px; }
+}
+
+/* на широкому екрані крапок немає — там лишаються стрілки */
+.hm-swiper-dots {
+    display: none;
+}
+
+/* ===== Слайдери на Swiper: крапки замість стрілок на телефоні =====
+   Стосується «Ви переглядали», «З цим товаром купують» і рекомендацій кошика.
+   Смужки такі самі, як у героя й у стрічок .hm-slider; більше восьми Swiper
+   згортає сам (dynamicBullets). */
+@media (max-width: 767px) {
+    .product__viewed-btns,
+    .product__related-btns {
+        display: none;
+    }
+
+    .hm-swiper-dots {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        margin-top: 16px;
+    }
+
+    .hm-swiper-dots .swiper-pagination-bullet {
+        width: 34px;
+        height: 4px;
+        margin: 0;
+        border-radius: 2px;
+        background: rgba(22, 22, 22, .2);
+        opacity: 1;
+        transition: background .3s ease;
+    }
+
+    .hm-swiper-dots .swiper-pagination-bullet-active {
+        background: #A7C70E;
+    }
+}
+
+/* ==========================================================================
+   Меню їде в бургер раніше — з 999px.
+
+   На планшеті горизонтальний список пунктів уже не вміщався в рядок шапки.
+   Панель, кнопка бургера й вигляд пунктів описані в телефонних блоках вище;
+   тут ті самі правила з ширшим порогом і В ТОМУ Ж ПОРЯДКУ, щоб зберігся
+   каскад (той самий селектор трапляється двічі й друге правило уточнює перше).
+   Телефонні дрібниці — розмір лого, компактні відступи, тулбар каталогу —
+   лишаються тільки на телефоні.
+   ========================================================================== */
+@media (max-width: 999px) {
+    /* Коли список пунктів ховається, шапка лишається з трьох частин: лого,
+       порожній контейнер меню та іконки. Без цього іконки збиралися впритул
+       до лого, а праворуч зяяла порожнеча. */
+    .header__content {
+        width: auto;
+        max-width: none;
+    }
+
+    .header__block {
+        width: auto;
+        margin-left: auto;
+    }
+
+    .header__menu {
+        position: fixed;
+        inset: 0;
+        background-color: #161616;
+        max-width: 100%;
+        width: 100%;
+        overflow: auto;
+        z-index: 111;
+        transform: translateX(100%);
+        transition: all .5s ease;
+    }
+
+    .header__menu.active {
+        transform: translateX(0);
+    }
+
+    .header__menu ul {
+        flex-direction: column;
+        align-items: center;
+        gap: 40px;
+        padding: 75px 20px 40px;
+    }
+
+    .header__menu-close, .header__burger {
+        display: flex;
+    }
+
+    .header__menu-close {
+        position: absolute;
+        top: 30px;
+        right: 30px;
+    }
+
+    .header__menu ul {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+        padding: 84px 20px 32px;
+    }
+
+    .header__menu ul li {
+        border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+
+    .header__menu ul li a {
+        display: flex;
+        width: 100%;
+        padding: 18px 4px;
+        font-size: 18px;
+    }
+
+    .header__menu ul li a:active {
+        color: #A7C70E;
+    }
+
+    .header__menu-close {
+        top: 18px;
+        right: 16px;
+        width: 44px;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .header__icons .header__account {
+        display: none;
+    }
+
+    .header__lang {
+        display: none;
+    }
+
+    .header__menu-mob {
+        display: block;
+    }
+
+    .header__menu-mob a {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .header__menu-mob a svg {
+        flex-shrink: 0;
+        opacity: .7;
+    }
+
+    .header__menu-lang {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 18px;
+        padding: 16px 4px;
+        font-size: 15px;
+    }
+
+    .header__menu-lang a, .header__menu-lang .language-select {
+        flex: 0 0 auto;
+        width: auto;
+        padding: 0;
+    }
+
+    .header__menu-lang span {
+        opacity: .5;
+        text-transform: uppercase;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .header__menu-lang a {
+        font-weight: 700;
+        opacity: .6;
+    }
+
+    .header__menu-lang a.is-current {
+        opacity: 1;
+        color: #A7C70E;
+    }
+
+}
+
+/* ===== iOS: без зуму при фокусі в полі =====
+   Safari на iPhone збільшує масштаб сторінки, щойно фокус потрапляє в поле з
+   текстом дрібнішим за 16px, і назад уже не повертає. Тому на телефоні всі
+   поля вводу — рівно 16px, незалежно від того, який розмір їм задано в макеті.
+   Прапорці, перемикачі й повзунки не чіпаємо: у них тексту нема. */
+@media (max-width: 767px) {
+    input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]),
+    select,
+    textarea {
+        font-size: 16px;
+    }
+}
+
+/* Поле під листалкою в темному блоці відгуків. Правило живе саме тут, бо
+   media.css на цьому сайті вантажиться останнім і перебиває pages.css. */
+@media (max-width: 767px) {
+    /* нижче в pages.css є правило `main.main > .rv-teaser:has(~ section)`, яке
+       обнуляє нижній відступ, коли під блоком є ще секції (картка товару).
+       Тому повторюємо селектор із :has, інакше крапки впираються в край. */
+    .rv-teaser.rv-teaser--dark{
+        /* !important свідомо: нижній відступ цього блоку перетинається з
+           правилом `main.main > .rv-teaser:has(~ section)`, яке обнуляє його
+           на картці товару, і зі змінною --page-bottom у базовому правилі */
+        padding-bottom: 52px !important;
+    }
+}
+
+/* Крапки Swiper-слайдерів: максимум вісім, решту ховаємо. Раніше їх згортав
+   dynamicBullets, але він ламав позиціонування контейнера (див. script.js). */
+@media (max-width: 767px) {
+    .hm-swiper-dots{
+        width: 100%;
+        transform: none;
+    }
+    .hm-swiper-dots .swiper-pagination-bullet:nth-child(n+9){
+        display: none;
+    }
+}
+
+/* ===== Крапки стрічок: колір неактивних залежить від фону сторінки =====
+   Було одне значення на весь сайт — rgba(22,22,22,.2), тобто майже чорне.
+   На світлих сторінках (картка товару, кошик — там `main--light`) це правильно,
+   а на темних (головна, каталог) неактивні смужки зливалися з фоном #121212 і
+   було видно лише активну. Тому:
+     • типово (темний фон) — світлі смужки;
+     • усередині `.main--light` / `.hm-light` повертаємо темні.
+   Активна скрізь лишається салатовою. */
+@media (max-width: 767px) {
+    .hm-dot,
+    .hm-swiper-dots .swiper-pagination-bullet {
+        background: rgba(255, 255, 255, .35);
+    }
+
+    .main--light .hm-dot,
+    .hm-light .hm-dot,
+    .main--light .hm-swiper-dots .swiper-pagination-bullet,
+    .hm-light .hm-swiper-dots .swiper-pagination-bullet {
+        background: rgba(22, 22, 22, .2);
+    }
+
+    .hm-dot.is-active,
+    .main--light .hm-dot.is-active,
+    .hm-light .hm-dot.is-active,
+    .hm-swiper-dots .swiper-pagination-bullet-active,
+    .main--light .hm-swiper-dots .swiper-pagination-bullet-active,
+    .hm-light .hm-swiper-dots .swiper-pagination-bullet-active {
+        background: #A7C70E;
+    }
+}
+
+/* Темний тизер відгуків трапляється і всередині світлої сторінки — там
+   світлі смужки лишаються, інакше правило вище робить їх темними на темному. */
+@media (max-width: 767px) {
+    .main--light .rv-teaser--dark .hm-dot,
+    .hm-light .rv-teaser--dark .hm-dot,
+    .main--light .rv-teaser--dark .hm-swiper-dots .swiper-pagination-bullet,
+    .hm-light .rv-teaser--dark .hm-swiper-dots .swiper-pagination-bullet {
+        background: rgba(255, 255, 255, .5);
+    }
+
+    .main--light .rv-teaser--dark .hm-dot.is-active,
+    .hm-light .rv-teaser--dark .hm-dot.is-active {
+        background: #A7C70E;
+    }
 }
