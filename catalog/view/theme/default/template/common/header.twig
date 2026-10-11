@@ -6,8 +6,22 @@
 <html dir="{{ direction }}" lang="{{ lang }}">
 <!--<![endif]-->
 <head>
+{# Consent Mode v2: до відповіді на cookie-банер усі сигнали заборонені.
+   Має стояти раніше за будь-який gtag('config'), інакше перший хіт іде як
+   дозволений. Раніше дана згода підхоплюється одразу з localStorage. #}
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){ dataLayer.push(arguments); }
+gtag('consent', 'default', { ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', analytics_storage: 'denied', wait_for_update: 500 });
+try {
+    if (localStorage.getItem('hydro_cookie_consent') === 'granted') {
+        gtag('consent', 'update', { ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted', analytics_storage: 'granted' });
+    }
+} catch (e) {}
+</script>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#161616">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>{{ title }}</title>
 <base href="{{ base }}" />
@@ -47,6 +61,8 @@
 {# Montserrat роздаємо самі: два зовнішні домени давали зайвий ланцюг запитів #}
 <link rel="preload" href="catalog/view/theme/default/fonts/montserrat-var-cyr.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="catalog/view/theme/default/fonts/montserrat-var-lat.woff2" as="font" type="font/woff2" crossorigin>
+{# Inter — шрифт заголовків; кирилицю тягнемо одразу, щоб H1 не блимав #}
+<link rel="preload" href="catalog/view/theme/default/fonts/inter-var-cyr.woff2" as="font" type="font/woff2" crossorigin>
 <link href="catalog/view/theme/default/stylesheet/montserrat.css?v={{ asset_version }}" rel="stylesheet">
 {# Стилі маски телефону підключаємо звичайно, не асинхронно: intlTelInput
    рахує відступ поля по ширині кнопки з прапорцем, і якщо стилі ще не
@@ -94,6 +110,10 @@ window.gtag = function (type, name, params) {
     console.log('%cGA4 · ' + name, 'background:#A7C70E;color:#161616;font-weight:700;padding:2px 6px;border-radius:3px', params || {});
 };
 </script>
+{% elseif gtm_id %}
+{# GA4 і Ads підключені всередині контейнера; gtag()-виклики сторінок ідуть у той самий dataLayer #}
+<script>window.hpGaCurrency = {{ ga4_currency|json_encode|raw }};</script>
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer',{{ gtm_id|json_encode|raw }});</script>
 {% elseif ga4_id %}
 <script async src="https://www.googletagmanager.com/gtag/js?id={{ ga4_id }}"></script>
 <script>
@@ -101,11 +121,15 @@ window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', {{ ga4_id|json_encode|raw }});
+{% if ads_id %}gtag('config', {{ ads_id|json_encode|raw }});{% endif %}
 window.hpGaCurrency = {{ ga4_currency|json_encode|raw }};
 </script>
 {% endif %}
 </head>
 <body class="body">
+{% if gtm_id %}<noscript><iframe src="https://www.googletagmanager.com/ns.html?id={{ gtm_id }}" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>{% endif %}
+<a class="hp-skip" href="#main">{% if lang starts with 'ru' %}Перейти к содержимому{% elseif lang starts with 'en' %}Skip to content{% else %}Перейти до вмісту{% endif %}</a>
+{% if telephone %}<a class="call-fab" href="tel:{{ telephone|replace({' ': '', '(': '', ')': '', '-': ''}) }}" data-call-fab aria-label="{% if lang starts with 'ru' %}Позвонить{% elseif lang starts with 'en' %}Call us{% else %}Зателефонувати{% endif %}"><svg aria-hidden="true" viewBox="0 0 32 32"><path d="M11.5 4.5h-4A2.5 2.5 0 0 0 5 7c.6 11.3 8.7 19.4 20 20a2.5 2.5 0 0 0 2.5-2.5v-4l-5-2-2.6 2.6c-3.3-1.6-6-4.3-7.6-7.6L14.9 11l-2-5z"/></svg></a>{% endif %}
 	<div id="alert-container">
   {% for alert in alerts %}
     <div class="alert alert-{{ alert.type }} alert-dismissible">
@@ -122,9 +146,9 @@ window.hpGaCurrency = {{ ga4_currency|json_encode|raw }};
                     <img src="catalog/view/theme/default/img/logo-animated.svg" alt="Hydrophob" width="250" height="52">
                 </a>
                 <div class="header__content">
-                    <nav class="header__menu">
+                    <nav class="header__menu" id="header-menu" aria-label="{{ text_menu_open|default('Меню') }}">
                         <button class="header__menu-close" type="button" aria-label="{{ text_menu_close|default('Закрити меню') }}">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
                                 <path d="M0.515398 0.514573C0.905923 0.124049 1.53909 0.124049 1.92961 0.514573L17.486 16.0709C17.8765 16.4614 17.8765 17.0946 17.486 17.4851C17.0954 17.8757 16.4623 17.8757 16.0717 17.4851L0.515399 1.92879C0.124874 1.53826 0.124874 0.905097 0.515398 0.514573Z" fill="white"/>
                                 <path d="M0.515398 0.514573C0.905923 0.124049 1.53909 0.124049 1.92961 0.514573L17.486 16.0709C17.8765 16.4614 17.8765 17.0946 17.486 17.4851C17.0954 17.8757 16.4623 17.8757 16.0717 17.4851L0.515399 1.92879C0.124874 1.53826 0.124874 0.905097 0.515398 0.514573Z" fill="white"/>
                                 <path d="M0.515398 0.514573C0.905923 0.124049 1.53909 0.124049 1.92961 0.514573L17.486 16.0709C17.8765 16.4614 17.8765 17.0946 17.486 17.4851C17.0954 17.8757 16.4623 17.8757 16.0717 17.4851L0.515399 1.92879C0.124874 1.53826 0.124874 0.905097 0.515398 0.514573Z" fill="white"/>
@@ -178,14 +202,14 @@ window.hpGaCurrency = {{ ga4_currency|json_encode|raw }};
                     </nav>
                     <div class="header__block">
 						<div class="header__icons">
-							<a href="{{ account }}" class="header__account" title="{{ text_account }}">
-								<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+							<a href="{{ account }}" class="header__account" title="{{ text_account }}" aria-label="{{ text_account }}">
+								<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
 									<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
 									<circle cx="12" cy="7" r="4"/>
 								</svg>
 							</a>
-							<a href="{{ wishlist }}" class="header__account header__wishlist" title="{{ text_wishlist_menu|default('Вибране') }}">
-								<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+							<a href="{{ wishlist }}" class="header__account header__wishlist" title="{{ text_wishlist_menu|default('Вибране') }}" aria-label="{{ text_wishlist_menu|default('Вибране') }}">
+								<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
 									<path d="M20.8 5.6a5.2 5.2 0 0 0-7.4 0l-1.4 1.4-1.4-1.4a5.2 5.2 0 1 0-7.4 7.4l8.8 8.8 8.8-8.8a5.2 5.2 0 0 0 0-7.4z"/>
 								</svg>
 							</a>
@@ -194,8 +218,8 @@ window.hpGaCurrency = {{ ga4_currency|json_encode|raw }};
 						</div>
 						{{ language }}
 						{{ currency }}
-                        <button class="header__burger" type="button" aria-label="{{ text_menu_open|default('Меню') }}" aria-expanded="false">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="16" viewBox="0 0 24 16" fill="none">
+                        <button class="header__burger" type="button" aria-label="{{ text_menu_open|default('Меню') }}" aria-expanded="false" aria-controls="header-menu">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="16" viewBox="0 0 24 16" fill="none" aria-hidden="true">
                                 <path d="M0 1C0 0.447715 0.447715 0 1 0H23C23.5523 0 24 0.447715 24 1C24 1.55228 23.5523 2 23 2H1C0.447716 2 0 1.55228 0 1Z" fill="white"/>
                                 <path d="M0 1C0 0.447715 0.447715 0 1 0H23C23.5523 0 24 0.447715 24 1C24 1.55228 23.5523 2 23 2H1C0.447716 2 0 1.55228 0 1Z" fill="white"/>
                                 <path d="M0 1C0 0.447715 0.447715 0 1 0H23C23.5523 0 24 0.447715 24 1C24 1.55228 23.5523 2 23 2H1C0.447716 2 0 1.55228 0 1Z" fill="white"/>

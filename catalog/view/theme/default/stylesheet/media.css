@@ -2058,3 +2058,29 @@
         background: #A7C70E;
     }
 }
+
+/* ===== Шрифтова пара (2026-10-11, картка Trello) =====
+   Текст, кнопки, ціни й поля — Montserrat, як і було. Заголовки сторінок,
+   секцій і попапів — Inter: він рівніший на великих кеглях і не сперечається
+   з Montserrat у тексті. Назви товарів у картках лишаються на Montserrat — це
+   дрібні підписи (~16px), і поруч із ціною вони мають читатися як текст. */
+h1, h2, h3, h4,
+.page-name,
+.hero__title,
+.product__name,
+.catalog__name,
+.product__viewed-title,
+.product__related-title,
+.account__title, .hm-sec__title, .busket__title, .status__title,
+.checkout__title, .cdm__title, .catalog__title, .about__title,
+.wl-intro__title, .thanks__title, .sitemap-page__title, .seo-desc__title,
+.rvm__title, .product__title, .otp-modal__title, .order-group__title,
+.okm__title, .nf__title, .faq-group__title, .dx-steps__title,
+.delivery__title, .contacts__title {
+    font-family: 'Inter', 'Montserrat', sans-serif;
+}
+
+.product__item-title h3,
+.product__item h3 {
+    font-family: 'Montserrat', sans-serif;
+}
