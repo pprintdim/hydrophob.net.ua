@@ -1,0 +1,373 @@
+{# Вітальний тизер поверх головної.
+
+   Життя накладки — чотири стани, і жоден не настає «сам по собі»:
+     1. завантаження — прелоадер із лого, доки не готовий перший кадр;
+     2. очікування   — розмитий кадр, тексти й кнопка запуску; тут накладка
+                       стоїть скільки завгодно, нікуди не зникаючи;
+     3. перегляд     — клік знімає розмиття і пускає ролик зі звуком;
+     4. вихід        — ролик догрався, накладка їде вниз і відкриває головну.
+
+   Закриття без перегляду буває лише коли ролик не завантажився взагалі. #}
+<div class="wl-overlay" id="wl-overlay" role="dialog" aria-modal="true" aria-label="{{ heading_title }}">
+    <div class="wl-preloader" id="wl-preloader" aria-hidden="true">
+        <div class="wl-preloader__inner">
+            <img class="wl-preloader__logo" src="{{ logo }}" alt="" width="280" height="58">
+            <div class="wl-preloader__bar"><i id="wl-progress"></i></div>
+            <div class="wl-preloader__pct" id="wl-pct">0%</div>
+        </div>
+    </div>
+
+    <div class="wl-intro is-blurred" id="wl-intro">
+        <div class="wl-intro__video">
+            <video id="wl-video" src="{{ video }}"{% if video_mobile %} data-src-mobile="{{ video_mobile }}"{% endif %} poster="{{ poster }}" preload="auto" muted playsinline aria-label="{{ heading_title }}" data-warm="skip"></video>
+        </div>
+        <div class="wl-intro__overlay" aria-hidden="true"></div>
+        <div class="wl-intro__content" id="wl-content">
+            <p class="wl-intro__eyebrow" data-wl-line>{{ text_eyebrow }}</p>
+            <p class="wl-intro__title" data-wl-title>{{ heading_title }}</p>
+            <p class="wl-intro__descr" data-wl-type>{{ text_lead }}</p>
+        </div>
+
+    </div>
+</div>
+
+<script>
+(function () {
+    var overlay = document.getElementById('wl-overlay');
+    var intro = document.getElementById('wl-intro');
+    var vid = document.getElementById('wl-video');
+    var pre = document.getElementById('wl-preloader');
+    var progEl = document.getElementById('wl-progress');
+    var pctEl = document.getElementById('wl-pct');
+
+    if (!overlay || !vid) return;
+
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var mobileSrc = vid.getAttribute('data-src-mobile');
+
+    if (mobileSrc && window.matchMedia('(max-width: 767px)').matches) {
+        vid.src = mobileSrc;
+    }
+
+    // поки накладка зверху, сторінка під нею не гортається
+    var htmlEl = document.documentElement;
+
+    htmlEl.classList.add('wl-lock');
+    document.body.classList.add('wl-behind', 'wl-loading');
+
+    var closed = false;
+    var exitTimer = null;
+
+    /* ── 4. вихід ─────────────────────────────────────────────────────── */
+    function close() {
+        if (closed) return;
+        closed = true;
+
+        if (exitTimer) clearTimeout(exitTimer);
+
+        overlay.classList.add('is-leaving');
+        document.body.classList.add('wl-behind--out');
+
+        // прибираємо з DOM лише коли анімація виходу дограла
+        // скрол лишається замкненим, доки накладка не зникла зовсім —
+        // інакше сторінка поповзе під ще видимим тизером
+        window.setTimeout(function () {
+            try { vid.pause(); } catch (e) {}
+            overlay.remove();
+            document.body.classList.remove('wl-behind', 'wl-behind--out', 'wl-loading');
+            htmlEl.classList.remove('wl-lock');
+        }, 1700);
+    }
+
+    /* ── 1. завантаження ──────────────────────────────────────────────── */
+    var prog = 0;
+    var progTimer = window.setInterval(function () {
+        prog = Math.min(90, prog + Math.random() * 7 + 2);
+        if (progEl) progEl.style.width = prog + '%';
+        if (pctEl) pctEl.textContent = Math.round(prog) + '%';
+    }, 180);
+
+    /* ── 2. очікування: кадр готовий, зʼявляються тексти й кнопка ─────── */
+    function ready() {
+        if (!pre || pre.dataset.done) return;
+        pre.dataset.done = '1';
+
+        window.clearInterval(progTimer);
+
+        if (progEl) progEl.style.width = '100%';
+        if (pctEl) pctEl.textContent = '100%';
+
+        window.setTimeout(function () {
+            pre.classList.add('is-hidden');
+            window.setTimeout(function () { pre.remove(); }, 700);
+
+            // прелоадер поїхав — можна показувати cookie-банер
+            document.body.classList.remove('wl-loading');
+
+            intro.classList.add('is-ready');
+            typeDescr();
+        }, 300);
+    }
+
+    var videoReady = new Promise(function (resolve) {
+        if (vid.readyState >= 2) {
+            resolve();
+        } else {
+            vid.addEventListener('loadeddata', resolve, { once: true });
+            vid.addEventListener('error', resolve, { once: true });
+        }
+    });
+
+    var pageReady = new Promise(function (resolve) {
+        if (document.readyState === 'complete') {
+            resolve();
+        } else {
+            window.addEventListener('load', resolve, { once: true });
+        }
+    });
+
+    // мінімум, скільки прелоадер лишається на екрані: інакше при закешованому
+    // ролику він просто мигне, а саме під ним ми й ховаємо довантаження
+    var minShow = new Promise(function (resolve) {
+        window.setTimeout(resolve, reduce ? 0 : 1200);
+    });
+
+    /* Поки горить прелоадер, прогріваємо ролики головної (video-warmup.js):
+       усе — у кеш, перший екран — ще й як blob, щоб після накладки вони
+       стартували без паузи. Серверний список додає те, чого ще немає в DOM;
+       на телефоні це легкі копії. Стартуємо після першого кадру самого тизера
+       (щоб не відбирати в нього канал) і коли розмітка головної вже розібрана —
+       накладка стоїть перед <main>, раніше роликів ще не видно. */
+    var prefetch = {{ prefetch|json_encode|raw }};
+    var prefetchMobile = {{ prefetch_mobile|default([])|json_encode|raw }};
+
+    var warm = new Promise(function (resolve) {
+        function go() {
+            var warmup = window.videoWarmup;
+
+            // ролик забарився — показуємо постер, накладка все одно жива
+            window.setTimeout(ready, 6500);
+
+            if (!warmup) { resolve(); return; }
+
+            if (prefetchMobile.length && warmup.isMobile) {
+                prefetch = prefetchMobile;
+            }
+
+            // webm не чіпаємо: у <source> mp4 стоїть першим, його й грає браузер
+            warmup.start({ urls: prefetch.filter(function (url) { return !/\.webm$/i.test(url); }) });
+            warmup.gate(6000).then(resolve);
+        }
+
+        videoReady.then(function () {
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', go, { once: true });
+            } else {
+                go();
+            }
+        });
+    });
+
+    Promise.all([videoReady, pageReady, minShow, warm]).then(ready);
+
+    /* підзаголовок набирається по літерах, як було на вітальній сторінці */
+    function typeDescr() {
+        var el = document.querySelector('[data-wl-type]');
+        if (!el || el.dataset.typed) { showCta(); return; }
+
+        el.dataset.typed = '1';
+
+        var full = el.textContent;
+
+        if (reduce) {
+            showCta();
+
+            return;
+        }
+
+        el.textContent = '';
+
+        var i = 0;
+
+        window.setTimeout(function tick() {
+            if (i <= full.length) {
+                el.textContent = full.slice(0, i);
+                i++;
+                window.setTimeout(tick, 32);
+
+                return;
+            }
+
+            // текст дочитано — аж тепер пропонуємо подивитись
+            showCta();
+        }, 900);
+    }
+
+    /* Що вважаємо командою «показуй».
+
+       Якщо на екрані cookie-банер, це єдина дія, на яку ми реагуємо: людина
+       спершу відповідає йому, і вже ця відповідь дає браузеру право на звук.
+       Реагувати на скрол у цей момент неправильно — ролик стартував би
+       з-під банера, який ще висить.
+
+       Банера немає — годиться будь-яка дія: клік, скрол, дотик, клавіша.
+       У будь-якому разі не раніше, ніж допечатається текст: дію, зроблену
+       до того, просто запамʼятовуємо. */
+    var MOVES = ['pointerdown', 'wheel', 'touchstart', 'keydown'];
+    var armed = false;
+    var pending = false;
+    var cookieBar = null;
+
+    function visibleCookieBar() {
+        var bar = document.querySelector('[data-cookie-banner], .hp-cookie, .cookie-banner');
+
+        if (!bar || bar.hidden) return null;
+
+        var box = bar.getBoundingClientRect();
+
+        return box.width > 0 && box.height > 0 ? bar : null;
+    }
+
+    function interact() {
+        if (armed) {
+            startShow();
+        } else {
+            pending = true;
+        }
+    }
+
+    function listenMoves() {
+        MOVES.forEach(function (name) {
+            window.addEventListener(name, interact, { passive: true });
+        });
+    }
+
+    function stopMoves() {
+        MOVES.forEach(function (name) {
+            window.removeEventListener(name, interact);
+        });
+    }
+
+    function waitForCookie(bar) {
+        cookieBar = bar;
+
+        // відповідь банеру — клік по ньому або його зникнення з екрана
+        bar.addEventListener('click', function () {
+            window.setTimeout(interact, 150);
+        }, { once: true });
+
+        var watcher = new MutationObserver(function () {
+            if (!visibleCookieBar()) {
+                watcher.disconnect();
+                interact();
+            }
+        });
+
+        watcher.observe(bar, { attributes: true, attributeFilter: ['hidden', 'class', 'style'] });
+    }
+
+    var bar = visibleCookieBar();
+
+    if (bar) {
+        waitForCookie(bar);
+    } else {
+        // банер міг ще не встигнути зʼявитись — дивимось ще раз трохи згодом
+        window.setTimeout(function () {
+            var late = visibleCookieBar();
+
+            if (late && !playing) {
+                stopMoves();
+                waitForCookie(late);
+            }
+        }, 600);
+
+        listenMoves();
+    }
+
+    function showCta() {
+        if (armed) return;
+        armed = true;
+
+        intro.classList.add('is-cta');
+
+        if (pending) startShow();
+    }
+
+    /* ── 3. перегляд ──────────────────────────────────────────────────── */
+    var playing = false;
+
+    function startShow() {
+        if (playing || closed) return;
+        playing = true;
+
+        stopMoves();
+
+        // тексти йдуть, розмиття сходить, ролик починається зі звуком
+        intro.classList.add('is-playing');
+        intro.classList.remove('is-blurred');
+
+        vid.currentTime = 0;
+        vid.muted = false;
+
+        var started = vid.play();
+
+        // звук усе ж заблокували — краще показати без нього, ніж нічого
+        if (started && started.catch) {
+            started.catch(function () {
+                vid.muted = true;
+
+                var retry = vid.play();
+                if (retry && retry.catch) retry.catch(function () {});
+            });
+        }
+    }
+
+    // ролик майже відкрутився — виходимо рівно на його кінці, без обриву
+    vid.addEventListener('timeupdate', function () {
+        if (!vid.duration || !isFinite(vid.duration) || exitTimer || closed) return;
+
+        if (vid.currentTime / vid.duration >= 0.8) {
+            var left = Math.max(0, (vid.duration - vid.currentTime) * 1000);
+            exitTimer = window.setTimeout(close, left + 400);
+        }
+    });
+
+    vid.addEventListener('ended', close);
+
+    /* Ролик не має зупинятись ні від скролу, ні від чужих скриптів теми
+       (вони вішають спостерігачі на відео й паузять те, що поза екраном).
+       Тримаємо відтворення самі, поки тизер на екрані. */
+    function keepPlaying() {
+        if (!playing || closed || vid.ended) return;
+
+        if (vid.paused) {
+            var resume = vid.play();
+            if (resume && resume.catch) resume.catch(function () {});
+        }
+    }
+
+    vid.addEventListener('pause', keepPlaying);
+
+    // окремі браузери паузять відео у фоновій вкладці — повертаємось назад
+    document.addEventListener('visibilitychange', function () {
+        if (!document.hidden) keepPlaying();
+    });
+
+    var guard = window.setInterval(function () {
+        if (closed) {
+            window.clearInterval(guard);
+
+            return;
+        }
+
+        keepPlaying();
+    }, 1000);
+
+    // ролик не завантажився — показувати нічого, йдемо далі
+    vid.addEventListener('error', close);
+
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape') close();
+    });
+})();
+</script>

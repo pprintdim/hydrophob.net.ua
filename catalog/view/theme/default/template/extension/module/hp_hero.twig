@@ -1,8 +1,12 @@
+{% for block in schema|default([]) %}
+<script type="application/ld+json">{{ block|json_encode(constant('JSON_UNESCAPED_UNICODE') b-or constant('JSON_UNESCAPED_SLASHES'))|raw }}</script>
+{% endfor %}
 <section class="hero hero--slider" data-hero-slider>
 {% for slide in slides %}
 <div class="hero__slide{% if loop.first %} is-active{% endif %}">
     {% if loop.first %}
-    <div class="hero__video"><video src="{{ slide.video }}"{% if slide.poster %} poster="{{ slide.poster }}"{% endif %} autoplay muted playsinline preload="auto" data-hero-video></video></div>
+    {# джерело ставить скрипт нижче: під вітальною накладкою ролик спершу прогріває video-warmup.js #}
+    <div class="hero__video"><video data-src="{{ slide.video }}"{% if slide.poster %} poster="{{ slide.poster }}"{% endif %} autoplay muted playsinline preload="auto" data-hero-video data-warm="hero"></video></div>
     {% else %}
     <div class="hero__video" data-video="{{ slide.video }}">{% if slide.poster %}<img src="{{ slide.poster }}" alt="{{ slide.title }}" loading="lazy">{% endif %}</div>
     {% endif %}
@@ -141,15 +145,37 @@
             v.currentTime = 0;
             var p = v.play();
             if (p && p.catch) p.catch(function () {});
-            v.onended = function () { show(current + 1); };
+            v.onended = function () { autoNext(current + 1); };
         });
     }
 
-    /* перший слайд: відео вже в розмітці */
+    /* автоперехід на наступний слайд після кінця ролика; при prefers-reduced-motion
+       слайди не крутяться самі — лише вручну крапками */
+    function autoNext(i) {
+        if (reduceMotion) return;
+        show(i);
+    }
+
+    /* перший слайд: відео вже в розмітці, джерело — з data-src. Під вітальною
+       накладкою його спершу прогріває video-warmup.js — чекаємо, щоб грати blob,
+       а не качати файл удруге; без накладки ставимо одразу */
     var first = videoOf(slides[0]);
+    function startFirst() {
+        if (!first.getAttribute('src') && first.getAttribute('data-src')) {
+            var src = first.getAttribute('data-src');
+            first.src = window.videoWarmup ? window.videoWarmup.resolve(src) : src;
+        }
+        var fp = first.play();
+        if (fp && fp.catch) fp.catch(function () {});
+    }
     if (first) {
-        first.onended = function () { show(1); };
+        first.onended = function () { autoNext(1); };
         applySound(first, slides[0]);
+        if (window.videoWarmup && document.getElementById('wl-overlay')) {
+            document.addEventListener('DOMContentLoaded', function () { window.videoWarmup.gate(6000).then(startFirst); }, { once: true });
+        } else {
+            startFirst();
+        }
     }
 
     /* Автоплей на телефоні може не стартувати (режим енергозбереження, економія
@@ -167,10 +193,6 @@
     });
     document.addEventListener('visibilitychange', function () { if (!document.hidden) kickActive(); });
     window.addEventListener('pageshow', kickActive);
-    if (first) {
-        var fp = first.play();
-        if (fp && fp.catch) fp.catch(function () {});
-    }
     animateSlideText(slides[0]);
 
     dots.forEach(function (d) {
